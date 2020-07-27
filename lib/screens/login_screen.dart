@@ -30,12 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await FirebaseUtils.getCurrentUser();
       if (user != null) {
+        Provider.of<ProviderClass>(context, listen: false).getAppData();
         Navigator.pushNamed(context, AppScreen.id);
       }
     } catch (e) {
       print(e);
     }
   }
+
+  //TODO: error handling , show users snackbar if password wrong etc.
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       final loginSuccessful =
                           await FirebaseUtils.loginUser(_email, _password);
 
-                      if (loginSuccessful)
+                      if (loginSuccessful) {
+                        Provider.of<ProviderClass>(context, listen: false)
+                            .getAppData();
                         Navigator.pushNamed(context, AppScreen.id);
+                      }
 
                       Provider.of<ProviderClass>(context, listen: false)
                           .stopLoadingScreen();

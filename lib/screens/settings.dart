@@ -8,14 +8,10 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(Settings());
 
-class Settings extends StatefulWidget {
-  @override
-  _SettingsState createState() => _SettingsState();
-}
 
 //TODO: change passwords, change theme
 
-class _SettingsState extends State<Settings> {
+class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(

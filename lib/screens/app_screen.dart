@@ -38,6 +38,12 @@ class _AppScreenState extends State<AppScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Password Manager"),
+          centerTitle: true,
+          backgroundColor: kSecondaryColor,
+          leading: Container(),
+        ),
         body: tabs[_selectedIndexBottomNavBar],
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

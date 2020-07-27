@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
@@ -16,14 +15,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-//    getCurrentUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProviderClass>(

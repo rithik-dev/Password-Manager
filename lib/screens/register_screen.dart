@@ -15,6 +15,8 @@ class RegisterScreen extends StatefulWidget {
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
+//TODO: error handling , show users snackbar if password wrong , email already in use etc.
+
 class _RegisterScreenState extends State<RegisterScreen> {
   String _email, _password, _fname, _lname;
 
@@ -84,8 +86,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           await FirebaseUtils.registerUser(_email, _password,
                               firstName: _fname, lastName: _lname);
 
-                      if (registerSuccessful)
+                      if (registerSuccessful) {
+                        Provider.of<ProviderClass>(context, listen: false)
+                            .getAppData();
                         Navigator.pushNamed(context, AppScreen.id);
+                      }
 
                       Provider.of<ProviderClass>(context, listen: false)
                           .stopLoadingScreen();
