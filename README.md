@@ -1,6 +1,6 @@
-# password_manager
+# Password-Manager
 
-A new Flutter application.
+password manager in flutter which uses firebase as a backend. The app handles login/register also.
 
 ## Getting Started
 
