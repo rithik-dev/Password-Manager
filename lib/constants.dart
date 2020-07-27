@@ -10,6 +10,13 @@ ThemeData kTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: kScaffoldBackgroundColor,
 );
 
+const TextStyle kCardTitleTextStyle = TextStyle(
+    color: Colors.cyanAccent, fontSize: 20.0, fontWeight: FontWeight.bold);
+
+const TextStyle kCardContentTextStyle = TextStyle(
+  fontSize: 20.0,
+);
+
 const kTextFieldDecoration = InputDecoration(
   hintText: 'Enter a value',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),

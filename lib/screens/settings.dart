@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
-import 'package:password_manager/firebase_utils.dart';
+import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(Settings());
 
@@ -10,6 +12,8 @@ class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
 }
+
+//TODO: change passwords, change theme
 
 class _SettingsState extends State<Settings> {
   @override
@@ -23,7 +27,9 @@ class _SettingsState extends State<Settings> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RoundedButton(
-                text: "Logout",
+                text: Provider.of<ProviderClass>(context).name == null
+                    ? "Logout"
+                    : "Logout  :  ${Provider.of<ProviderClass>(context).name}",
                 onPressed: () async {
                   await FirebaseUtils.logoutUser();
                   Navigator.pop(context);
