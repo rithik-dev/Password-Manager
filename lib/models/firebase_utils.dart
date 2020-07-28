@@ -72,11 +72,6 @@ class FirebaseUtils {
           "firstName": firstName,
           "lastName": lastName,
         });
-        // creating passwords collection for the new user
-        _firestore
-            .collection("data")
-            .document(currentUser.uid)
-            .collection("passwords");
         return true;
       } else
         return false;
@@ -150,6 +145,99 @@ class FirebaseUtils {
     else
       //fields is empty
       return false;
+  }
+
+  static Future<bool> editPassword(Map<String, dynamic> newFields) async {
+    try {
+      final FirebaseUser currentUser = await _auth.currentUser();
+      final String userId = currentUser.uid;
+
+      //encrypting passwords before sending to firebase
+
+      // not updating newFields directly as it was affection show password details screen
+      String encryptedPassword = await encryptPassword(newFields['Password']);
+
+      print("NEW FIELDS UPDATE : $newFields");
+
+      // deleting existing data
+//      _firestore
+//          .collection("data")
+//          .document(userId)
+//          .collection("passwords")
+//          .document(newFields['documentId'])
+//          .delete();
+
+      // adding new data
+      _firestore
+          .collection("data")
+          .document(userId)
+          .collection("passwords")
+          .document(newFields['documentId'])
+          .setData(newFields, merge: false);
+
+      // adding password
+      _firestore
+          .collection("data")
+          .document(userId)
+          .collection("passwords")
+          .document(newFields['documentId'])
+          .setData({"Password": encryptedPassword}, merge: true);
+
+      // adding new password
+//      _firestore
+//          .collection("data")
+//          .document(userId)
+//          .collection("passwords")
+//          .document(newFields['documentId'])
+//          .setData({"Password": encryptedPassword});
+
+      return true;
+    } catch (e) {
+      print("ERROR WHILE UPDATING PASSWORD $e");
+      return false;
+    }
+  }
+
+  static Future<bool> deletePassword(String documentId) async {
+    try {
+      final FirebaseUser currentUser = await _auth.currentUser();
+      final String userId = currentUser.uid;
+
+      _firestore
+          .collection("data")
+          .document(userId)
+          .collection("passwords")
+          .document(documentId)
+          .delete();
+      return true;
+    } catch (e) {
+      print("ERROR WHILE DELETING PASSWORD $e");
+      return false;
+    }
+  }
+
+  static Future<Map<String, dynamic>> getFieldsFromDocumentId(
+      String documentId) async {
+    try {
+      final currentUser = await getCurrentUser();
+      final documentSnapshot = await _firestore
+          .collection("data")
+          .document(currentUser.uid)
+          .collection("passwords")
+          .document(documentId)
+          .get();
+
+      final Map<String, dynamic> fields = documentSnapshot.data;
+
+      // decrypting password
+      fields['Password'] = await decryptPassword(fields['Password']);
+
+      print("FIELDS RECEIVED FROM FIREBASE : $fields");
+      return fields;
+    } catch (e) {
+      print("ERROR WHILE FETCHING FIELDS FROM FIREBASE : $e");
+      return {};
+    }
   }
 
   static Future<String> encryptPassword(String password) async {

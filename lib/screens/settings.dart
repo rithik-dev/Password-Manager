@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(Settings());
 
-//TODO: change passwords, change theme
+//TODO: change passwords, change theme .  delete account etc.
 
 class Settings extends StatelessWidget {
   @override
@@ -30,7 +30,7 @@ class Settings extends StatelessWidget {
                       onPressed: () async {
                         await FirebaseUtils.logoutUser();
                         Provider.of<ProviderClass>(context, listen: false)
-                            .setNameToNull();
+                            .setDataToNull();
                         Navigator.pop(context);
                       },
                     ),

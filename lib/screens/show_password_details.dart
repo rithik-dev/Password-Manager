@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:password_manager/constants.dart';
+import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/models/provider_class.dart';
+import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/widgets/password_card.dart';
+import 'package:provider/provider.dart';
+
+//TODO: re order text fields display order
 
 class ShowPasswordDetails extends StatelessWidget {
-  final Map<String, dynamic> fields;
+
+  Map<String,dynamic> fields;
 
   ShowPasswordDetails(this.fields);
 
@@ -17,39 +24,125 @@ class ShowPasswordDetails extends StatelessWidget {
       body: Container(
         color: Color(0xFF000014),
         child: Container(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           decoration: BoxDecoration(
             color: kSecondaryColor,
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20.0), topLeft: Radius.circular(20.0)),
+                topRight: Radius.circular(30.0),
+                topLeft: Radius.circular(30.0)),
           ),
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return Card(
-                color: kCardBackgroundColor,
-                child: Builder(
-                  builder: (context) {
-                    return ListTile(
-                      title: Text(keys[index]),
-                      subtitle: Text(fields[keys[index]]),
-                      trailing: IconButton(
-                        icon: Icon(Icons.content_copy),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("  " + fields['Title'].toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold)),
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.edit, size: 30.0),
                         onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: fields[keys[index]]));
+                          //TODO: edit password here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditPasswordScreen(fields)),
+                          );
+                        },
+                      ),
+                      SizedBox(width: 10.0),
+                      Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon: Icon(Icons.delete, size: 30.0),
+                            onPressed: () async {
+                              AlertDialog alert = AlertDialog(
+                                scrollable: false,
+                                title: Text(
+                                    "Delete ${fields['Title'].toUpperCase()} ?",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                content: Text(
+                                    "Are you sure you want to delete ${fields['Title'].toUpperCase()}.\n\nThis action is irreversible !"),
+                                actions: [
+                                  FlatButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("Continue"),
+                                    onPressed: () async {
+                                      bool deletePasswordSuccessful;
+                                      deletePasswordSuccessful = await Provider
+                                              .of<ProviderClass>(context,
+                                                  listen: false)
+                                          .deletePassword(fields['documentId']);
+                                      if (deletePasswordSuccessful) {
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                      } else {
+                                        Scaffold.of(context).showSnackBar(SnackBar(
+                                            content: Text(
+                                                'Error deleting password !')));
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
 
-                          final snackBar = SnackBar(
-                              content: Text("Copied ${keys[index]} !"),
-                              duration: Duration(seconds: 1));
-                          Scaffold.of(context).showSnackBar(snackBar);
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return alert;
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(height: 15.0),
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: kCardBackgroundColor,
+                      child: Builder(
+                        builder: (context) {
+                          return ListTile(
+                            title: Text(keys[index]),
+                            subtitle: Text(fields[keys[index]]),
+                            trailing: IconButton(
+                              icon: Icon(Icons.content_copy),
+                              onPressed: () {
+                                Clipboard.setData(
+                                    ClipboardData(text: fields[keys[index]]));
+
+                                final snackBar = SnackBar(
+                                    content: Text("Copied ${keys[index]} !"),
+                                    duration: Duration(seconds: 1));
+                                Scaffold.of(context).showSnackBar(snackBar);
+                              },
+                            ),
+                          );
                         },
                       ),
                     );
                   },
+                  itemCount: fields.length - 1,
                 ),
-              );
-            },
-            itemCount: fields.length - 1,
+              ),
+            ],
           ),
         ),
       ),

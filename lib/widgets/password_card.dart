@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:password_manager/constants.dart';
+import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/show_password_details.dart';
+import 'package:provider/provider.dart';
 
 class PasswordCard extends StatelessWidget {
   final Map<String, dynamic> fields;

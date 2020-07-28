@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 void main() => runApp(MyVault());
 
 class MyVault extends StatelessWidget {
-//TODO: add bottom modal sheet when user taps on a card to view details and copy /delete    showModalBottomSheet();
 
   @override
   Widget build(BuildContext context) {

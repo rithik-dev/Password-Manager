@@ -5,6 +5,7 @@ import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
+import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -31,8 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await FirebaseUtils.getCurrentUser();
       if (user != null) {
         // TODO: start progress hud here (loading screen)
+
+        Provider.of<ProviderClass>(context, listen: false).startLoadingScreen();
+
         Provider.of<ProviderClass>(context, listen: false).getAppData();
         Navigator.pushNamed(context, AppScreen.id);
+
+        Provider.of<ProviderClass>(context, listen: false).stopLoadingScreen();
 
         // stop here
       }
@@ -45,70 +51,70 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: kTheme,
-      home: ModalProgressHUD(
-        inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
-        child: SafeArea(
-          child: Scaffold(
-            body: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(child: Icon(Icons.security, size: 150.0)),
-                  SizedBox(height: 70.0),
-                  TextField(
-                    keyboardType: TextInputType.emailAddress,
-                    textAlign: TextAlign.center,
-                    decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Enter email.."),
-                    onChanged: (String email) {
-                      _email = email.trim().toLowerCase();
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  TextField(
-                    textAlign: TextAlign.center,
-                    decoration: kTextFieldDecoration.copyWith(
-                        hintText: "Enter password.."),
-                    obscureText: true,
-                    onChanged: (String password) {
-                      _password = password;
-                    },
-                  ),
-                  RoundedButton(
-                    text: "Login",
-                    onPressed: () async {
-                      Provider.of<ProviderClass>(context, listen: false)
-                          .startLoadingScreen();
-                      final loginSuccessful =
-                          await FirebaseUtils.loginUser(_email, _password);
-
-                      if (loginSuccessful) {
+    return ModalProgressHUD(
+      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
+      child: SafeArea(
+        child: Scaffold(
+          body: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(child: Icon(Icons.security, size: 150.0)),
+                SizedBox(height: 70.0),
+                MyTextField(
+                  labelText: "Email",
+                  onChanged: (String email) {
+                    _email = email.trim().toLowerCase();
+                  },
+                ),
+                SizedBox(height: 5.0),
+                MyTextField(
+                  labelText: "Password",
+                  onChanged: (String password) {
+                    _password = password;
+                  },
+                ),
+                Builder(
+                  builder: (context) {
+                    return RoundedButton(
+                      text: "Login",
+                      onPressed: () async {
                         Provider.of<ProviderClass>(context, listen: false)
-                            .getAppData();
-                        Navigator.pushNamed(context, AppScreen.id);
-                      }
+                            .startLoadingScreen();
+                        final loginSuccessful =
+                            await FirebaseUtils.loginUser(_email, _password);
 
-                      Provider.of<ProviderClass>(context, listen: false)
-                          .stopLoadingScreen();
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      FlatButton(
-                        child: Text("Register?"),
-                        onPressed: () {
-                          Navigator.pushNamed(context, RegisterScreen.id);
-                        },
-                      )
-                    ],
-                  )
-                ],
-              ),
+                        if (loginSuccessful) {
+                          Provider.of<ProviderClass>(context, listen: false)
+                              .getAppData();
+                          Navigator.pushNamed(context, AppScreen.id);
+                        } else {
+                          final snackBar = SnackBar(
+                              content: Text(
+                                  'Login Unsuccessful ! Email or password is wrong.'));
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        }
+
+                        Provider.of<ProviderClass>(context, listen: false)
+                            .stopLoadingScreen();
+                      },
+                    );
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("Register?"),
+                      onPressed: () {
+                        Navigator.pushNamed(context, RegisterScreen.id);
+                      },
+                    )
+                  ],
+                )
+              ],
             ),
           ),
         ),

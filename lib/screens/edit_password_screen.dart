@@ -1,68 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
-import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/app_screen.dart';
-import 'package:password_manager/screens/vault.dart';
+import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/widgets/column_builder.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:provider/provider.dart';
 
-Map<String, dynamic> fields = {};
+//FIXME: custom fields add even if one with same name exists
 
-class AddPasswordScreen extends StatefulWidget {
-  static const id = 'add_password_screen';
+Map<String, dynamic> newFields;
+
+class EditPasswordScreen extends StatefulWidget {
+  static const id = 'edit_password_screen';
+
+  final Map<String, dynamic> fields;
+
+  EditPasswordScreen(this.fields);
 
   @override
-  _AddPasswordScreenState createState() => _AddPasswordScreenState();
+  _EditPasswordScreenState createState() => _EditPasswordScreenState();
 }
 
-class _AddPasswordScreenState extends State<AddPasswordScreen> {
-  List<String> textFieldStrings = ['Title', 'Password'];
-  String dropDownValue = 'Email';
-  List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
+class _EditPasswordScreenState extends State<EditPasswordScreen> {
+  List<String> textFieldStrings = [];
 
   String convertToTitleCase(String str) {
     str = str.trim().toLowerCase();
     return '${str[0].toUpperCase()}${str.substring(1)}';
   }
 
-  // TODO: add show hide password?
+  String dropDownValue = 'Email';
+  List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
+
+  void createTextFields(Map<String, dynamic> fields) {
+    List<MyTextField> textFields = [];
+
+    fields.forEach((key, value) {
+      if (key != "documentId") textFieldStrings.add(key.trim());
+    });
+    print(textFieldStrings);
+
+    for (String textFieldString in textFieldStrings) {
+      textFields.add(
+        MyTextField(
+          labelText: textFieldString,
+          defaultValue: newFields[textFieldString],
+          trailing: IconButton(
+            color: Colors.lightBlueAccent,
+            icon: Icon(Icons.delete, size: 30.0),
+            onPressed: () {
+              setState(() {
+                textFieldStrings.remove(textFieldString);
+              });
+            },
+          ),
+          onChanged: (String value) {
+            // not trimming password
+            if (value != "") {
+              if (fields[textFieldString] == "Password")
+                fields[textFieldString] = value;
+              else
+                fields[textFieldString] = value.trim();
+            }
+          },
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fields = {};
+    newFields = widget.fields;
+    createTextFields(newFields);
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> newFields = widget.fields;
     String customFieldKey = "";
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Password"),
+        title: Text("Edit Password"),
         centerTitle: true,
         backgroundColor: kSecondaryColor,
         actions: <Widget>[
           Builder(
             builder: (context) {
               return IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(Icons.edit),
                 onPressed: () async {
                   // title is mandatory field
-                  if (fields['Title'] == null || fields['Title'] == "") {
+                  if (newFields['Title'] == null || newFields['Title'] == "") {
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('Title is a mandatory field !')));
                   } else {
-                    bool addPasswordSuccessful;
-                    fields['Title'] = convertToTitleCase(fields['Title']);
-                    addPasswordSuccessful =
+                    bool editPasswordSuccessful;
+                    editPasswordSuccessful =
                         await Provider.of<ProviderClass>(context, listen: false)
-                            .addPassword(fields);
-                    if (addPasswordSuccessful) Navigator.pop(context);
+                            .editPassword(newFields);
+                    if (editPasswordSuccessful) Navigator.pop(context);
                   }
                 },
               );
@@ -78,19 +117,21 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
               itemBuilder: (context, index) {
                 return MyTextField(
                   labelText: textFieldStrings[index],
+                  defaultValue: newFields[textFieldStrings[index]],
                   onChanged: (String value) {
                     // not trimming password
                     if (value != "") {
                       if (textFieldStrings[index] == "Password")
-                        fields[textFieldStrings[index]] = value;
+                        newFields[textFieldStrings[index]] = value;
                       else
-                        fields[textFieldStrings[index]] = value.trim();
+                        newFields[textFieldStrings[index]] = value.trim();
                     }
                   },
                   trailing: IconButton(
                     color: Colors.lightBlueAccent,
                     icon: Icon(Icons.delete, size: 30.0),
                     onPressed: () {
+                      newFields.remove(textFieldStrings[index]);
                       setState(() {
                         textFieldStrings.removeAt(index);
                       });
