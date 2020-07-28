@@ -6,8 +6,16 @@ const Color kSecondaryColor = Color(0xFF050C25);
 
 const Color kButtonColor = Color(0xFF0000B3);
 
+const Color kCardBackgroundColor = Color(0xFF091642);
+
 ThemeData kTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: kScaffoldBackgroundColor,
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: Colors.deepPurple,
+    contentTextStyle: TextStyle(
+      color: Colors.white,
+    ),
+  ),
 );
 
 const TextStyle kCardTitleTextStyle = TextStyle(

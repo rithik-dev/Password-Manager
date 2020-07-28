@@ -60,6 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 10.0),
                   TextField(
                     textAlign: TextAlign.center,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: kTextFieldDecoration.copyWith(
                         hintText: "Enter email.."),
                     onChanged: (String email) {

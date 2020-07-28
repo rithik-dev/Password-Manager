@@ -43,7 +43,7 @@ class FirebaseUtils {
           .collection("data")
           .document(currentUser.uid)
           .collection("passwords")
-          .orderBy('timestamp')
+          .orderBy('Title')
           .getDocuments();
       for (var document in documentSnapshot.documents) {
         Map<String, dynamic> data = document.data;
@@ -51,6 +51,8 @@ class FirebaseUtils {
         data['Password'] = await decryptPassword(data['Password']);
         passwords.add(data);
       }
+
+      print("PASSWORDS RECEIVED FROM FIREBASE : $passwords");
       return passwords;
     } catch (e) {
       print("ERROR WHILE FETCHING PASSWORDS FROM FIREBASE : $e");
@@ -123,7 +125,6 @@ class FirebaseUtils {
 
         //adding timestamp and documentId to fields
         fields.addAll({
-          "timestamp": FieldValue.serverTimestamp(),
           "documentId": _firestore
               .collection("data")
               .document(userId)

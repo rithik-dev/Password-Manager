@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/password_generator.dart';
 import 'package:password_manager/screens/vault.dart';
 import 'package:password_manager/screens/settings.dart';
@@ -23,18 +24,6 @@ class _AppScreenState extends State<AppScreen> {
   String name;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    getName();
-  }
-
-  void getName() async {
-    name = await FirebaseUtils.getCurrentUserName();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -43,6 +32,15 @@ class _AppScreenState extends State<AppScreen> {
           centerTitle: true,
           backgroundColor: kSecondaryColor,
           leading: Container(),
+          // if user is on vault page , show + icon on app bar to add a new password
+          actions: (_selectedIndexBottomNavBar==0)?<Widget>[
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.pushNamed(context, AddPasswordScreen.id);
+              },
+            )
+          ]:null,
         ),
         body: tabs[_selectedIndexBottomNavBar],
         bottomNavigationBar: BottomNavigationBar(

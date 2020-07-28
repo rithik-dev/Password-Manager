@@ -30,8 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await FirebaseUtils.getCurrentUser();
       if (user != null) {
+        // TODO: start progress hud here (loading screen)
         Provider.of<ProviderClass>(context, listen: false).getAppData();
         Navigator.pushNamed(context, AppScreen.id);
+
+        // stop here
       }
     } catch (e) {
       print(e);
@@ -57,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Flexible(child: Icon(Icons.security, size: 150.0)),
                   SizedBox(height: 70.0),
                   TextField(
+                    keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     decoration: kTextFieldDecoration.copyWith(
                         hintText: "Enter email.."),

@@ -16,8 +16,25 @@ class ProviderClass extends ChangeNotifier {
     return this._passwords;
   }
 
+  Future<bool> addPassword(Map<String, dynamic> fields) async {
+    bool addPasswordSuccessful = await FirebaseUtils.addPassword(fields);
+    getPasswords();
+    notifyListeners();
+    return addPasswordSuccessful;
+  }
+
+  void setNameToNull() {
+    this._name = null;
+    notifyListeners();
+  }
+
   void getAppData() async {
     this._name = await FirebaseUtils.getCurrentUserName();
+    this._passwords = await FirebaseUtils.getPasswords();
+    notifyListeners();
+  }
+
+  void getPasswords() async {
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();
   }

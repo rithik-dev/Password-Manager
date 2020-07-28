@@ -8,29 +8,29 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(MyVault());
 
-class MyVault extends StatefulWidget {
-  @override
-  _MyVaultState createState() => _MyVaultState();
-}
-
-//TODO: add bottom modal sheet when user taps on a card to view details and copy     showModalBottomSheet();
-
-class _MyVaultState extends State<MyVault> {
-  List<Map<String, dynamic>> passwords = [];
+class MyVault extends StatelessWidget {
+//TODO: add bottom modal sheet when user taps on a card to view details and copy /delete    showModalBottomSheet();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Center(
-            child: ListView(
-          children: [],
-        )),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, AddPasswordScreen.id);
-          },
+          child: Consumer<ProviderClass>(
+            builder: (context, data, child) {
+              return (data.passwords == null)
+                  ? CircularProgressIndicator()
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return PasswordCard(data.passwords[index]);
+                        },
+                        itemCount: data.passwords.length,
+                      ),
+                    );
+            },
+          ),
         ),
       ),
     );

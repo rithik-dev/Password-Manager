@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(Settings());
 
-
 //TODO: change passwords, change theme
 
 class Settings extends StatelessWidget {
@@ -18,21 +17,25 @@ class Settings extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
         child: Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              RoundedButton(
-                text: Provider.of<ProviderClass>(context).name == null
-                    ? "Logout"
-                    : "Logout  :  ${Provider.of<ProviderClass>(context).name}",
-                onPressed: () async {
-                  await FirebaseUtils.logoutUser();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
+          // waiting to load the name of the user
+          body: (Provider.of<ProviderClass>(context).name == null)
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    RoundedButton(
+                      text:
+                          "Logout  :  ${Provider.of<ProviderClass>(context).name}",
+                      onPressed: () async {
+                        await FirebaseUtils.logoutUser();
+                        Provider.of<ProviderClass>(context, listen: false)
+                            .setNameToNull();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
         ),
       ),
     );
