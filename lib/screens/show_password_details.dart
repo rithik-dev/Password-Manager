@@ -6,8 +6,6 @@ import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:provider/provider.dart';
 
-//TODO: re order text fields display order
-
 class ShowPasswordDetails extends StatelessWidget {
   final Map<String,dynamic> fields;
 
@@ -15,8 +13,10 @@ class ShowPasswordDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> keys = fields.keys.toList();
-    keys.remove("documentId");
+    List<String> tempKeys = fields.keys.toList();
+    tempKeys.remove("documentId");
+
+    final List<String> keys = Functions.reorderTextFieldsDisplayOrder(tempKeys);
 
     return Scaffold(
       body: Container(

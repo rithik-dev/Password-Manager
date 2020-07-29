@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
-import 'package:password_manager/screens/password_generator.dart';
-import 'package:password_manager/screens/vault.dart';
-import 'package:password_manager/screens/settings.dart';
+import 'package:password_manager/screens/app_screens/password_generator.dart';
+import 'package:password_manager/screens/app_screens/vault.dart';
+import 'package:password_manager/screens/app_screens/settings.dart';
 
 void main() => runApp(AppScreen());
 
@@ -17,7 +17,8 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> {
   int _selectedIndexBottomNavBar = 0;
 
-  final tabs = [MyVault(), PasswordGenerator(), Settings()];
+  final List<Widget> tabs = [MyVault(), PasswordGenerator(), Settings()];
+  final List<String> titles = ["Vault","Password Generator","Settings"];
   String name;
 
   @override
@@ -25,7 +26,7 @@ class _AppScreenState extends State<AppScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Password Manager"),
+          title: Text(titles[_selectedIndexBottomNavBar]),
           centerTitle: true,
           backgroundColor: kSecondaryColor,
           leading: Container(),

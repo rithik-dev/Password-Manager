@@ -9,8 +9,6 @@ import 'package:provider/provider.dart';
 
 Map<String, dynamic> newFields;
 
-//TODO: re order text fields display order
-
 class EditPasswordScreen extends StatefulWidget {
   static const id = 'edit_password_screen';
 
@@ -28,6 +26,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
 
+  String customFieldKey = "";
+
   @override
   void initState() {
     super.initState();
@@ -35,14 +35,17 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     newFields = widget.fields;
 
     newFields.forEach((key, value) {
-      if (key != "documentId") textFieldStrings.add(key);
+      if (key != "documentId") textFieldStrings.add(key.trim());
     });
+
+    textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> newFields = widget.fields;
-    String customFieldKey = "";
+    //FIXME: keeping this here and adding new field , the new field by default has a default value which it should not have.
+    // this function is called every time a new field is added.
+    //    textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
 
     return Consumer<ProviderClass>(
       builder: (context,data,child) {
@@ -92,11 +95,12 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     itemBuilder: (context, index) {
                       return MyTextField(
                           labelText: textFieldStrings[index],
-                          defaultValue: newFields[textFieldStrings[index]],
+                          defaultValue: newFields[textFieldStrings[index]]??"",
                           onChanged: (String value) {
                             newFields[textFieldStrings[index]] = value;
                           },
                           trailingFunction: () {
+                            print(newFields[textFieldStrings[index]]);
                             newFields.remove(textFieldStrings[index]);
                             setState(() {
                               textFieldStrings.removeAt(index);

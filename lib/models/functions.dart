@@ -34,4 +34,25 @@ class Functions {
       },
     );
   }
+
+  // function for show password screen and edit screen to reorder widgets accordingly
+  static List<String> reorderTextFieldsDisplayOrder(List<String> keys) {
+    List<String> displayOrder = ['Title','Email','Username','Password','Phone','Link'];
+
+    Set keysSet = Set.from(keys);
+    Set displayOrderSet = Set.from(displayOrder);
+    List<String> customFieldsList = List.from(keysSet.difference(displayOrderSet));
+    customFieldsList.sort();
+
+    List<String> reorderedDisplayOrderList = [];
+
+    for(int index = 0; index < displayOrder.length; index++) {
+      if(keys.contains(displayOrder[index])) {
+        reorderedDisplayOrderList.add(displayOrder[index]);
+      }
+    }
+
+    final List<String> finalList = reorderedDisplayOrderList + customFieldsList;
+    return finalList;
+  }
 }

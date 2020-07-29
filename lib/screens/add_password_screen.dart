@@ -21,6 +21,8 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
 
+  String customFieldKey = "";
+
   @override
   void initState() {
     super.initState();
@@ -29,8 +31,6 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String customFieldKey = "";
-
     return Consumer<ProviderClass>(
       builder: (context, data, child) {
         return ModalProgressHUD(
@@ -125,10 +125,11 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                       customFieldKey = value;
                     },
                     trailingFunction: () {
+                      customFieldKey = Functions.capitalizeFirstLetter(customFieldKey);
+
                       if (!textFieldStrings.contains(customFieldKey) &&
                           customFieldKey != "" &&
                           customFieldKey != null) {
-                        customFieldKey = Functions.capitalizeFirstLetter(customFieldKey);
                         setState(() {
                           textFieldStrings.add(customFieldKey);
                         });

@@ -75,7 +75,7 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
-    bool useDefaultValue = (this.widget.defaultValue != "");
+    bool useDefaultValue = (this.widget.defaultValue != "" || this.widget.defaultValue == null);
     if (useDefaultValue) _controller.text = this.widget.defaultValue;
 
     return ListTile(

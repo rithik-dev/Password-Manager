@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
+import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ class Settings extends StatelessWidget {
                         await FirebaseUtils.logoutUser();
                         Provider.of<ProviderClass>(context, listen: false).setDataToNull();
                         Navigator.pop(context);
+                        Navigator.pushNamed(context, LoginScreen.id);
                       },
                     ),
                   ],

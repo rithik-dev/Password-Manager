@@ -3,7 +3,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/app_screen.dart';
+import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
@@ -26,6 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await FirebaseUtils.getCurrentUser();
       if (user != null) {
         Provider.of<ProviderClass>(context, listen: false).getAppData();
+        //removing login screen from the stack if user is already logged in
+        Navigator.pop(context);
         Navigator.pushNamed(context, AppScreen.id);
       }
     } catch (e) {
@@ -82,6 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             if (loginSuccessful) {
                               data.getAppData();
+
+                              //removing login screen from the stack on successful login
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, AppScreen.id);
                             } else {
                               Functions.showSnackBar(context, 'Login Unsuccessful ! Email or password is wrong.');
@@ -98,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         FlatButton(
                           child: Text("Register?"),
                           onPressed: () {
+                            Navigator.pop(context);
                             Navigator.pushNamed(context, RegisterScreen.id);
                           },
                         )
