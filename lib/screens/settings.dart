@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +27,7 @@ class Settings extends StatelessWidget {
                           "Logout  :  ${Provider.of<ProviderClass>(context).name}",
                       onPressed: () async {
                         await FirebaseUtils.logoutUser();
-                        Provider.of<ProviderClass>(context, listen: false)
-                            .setDataToNull();
+                        Provider.of<ProviderClass>(context, listen: false).setDataToNull();
                         Navigator.pop(context);
                       },
                     ),

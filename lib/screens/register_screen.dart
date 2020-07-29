@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:password_manager/constants.dart';
+import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screen.dart';
@@ -16,98 +16,96 @@ class RegisterScreen extends StatefulWidget {
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-//TODO: error handling , show users snackbar if password wrong , email already in use etc.
+//TODO: error handling , show users snack bar if password wrong , email already in use etc.
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  String _email, _password, _fname, _lname;
+  String _email, _password, _firstName, _lastName;
 
   @override
   Widget build(BuildContext context) {
-    return ModalProgressHUD(
-      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
-      child: SafeArea(
-        child: Scaffold(
-          body: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Flexible(child: Icon(Icons.security, size: 100.0)),
-                SizedBox(height: 70.0),
-                MyTextField(
-                  labelText: "First Name",
-                  onChanged: (String firstName) {
-                    _fname = firstName.trim().toLowerCase();
-                    _fname = '${_fname[0].toUpperCase()}${_fname.substring(1)}';
-                  },
-                ),
-                SizedBox(height: 5.0),
-                MyTextField(
-                  labelText: "Last Name",
-                  onChanged: (String lastName) {
-                    _lname = lastName.trim().toLowerCase();
-                    _lname = '${_lname[0].toUpperCase()}${_lname.substring(1)}';
-                  },
-                ),
-                SizedBox(height: 5.0),
-                MyTextField(
-                  labelText: "Email",
-                  onChanged: (String email) {
-                    _email = email.trim().toLowerCase();
-                  },
-                ),
-                SizedBox(height: 5.0),
-                MyTextField(
-                  labelText: "Password",
-                  onChanged: (String password) {
-                    _password = password;
-                  },
-                ),
-                Builder(
-                  builder: (context) {
-                    return RoundedButton(
-                      text: "Register",
-                      onPressed: () async {
-                        Provider.of<ProviderClass>(context, listen: false)
-                            .startLoadingScreen();
-
-                        final registerSuccessful =
-                            await FirebaseUtils.registerUser(_email, _password,
-                                firstName: _fname, lastName: _lname);
-
-                        if (registerSuccessful) {
-                          Provider.of<ProviderClass>(context, listen: false)
-                              .getAppData();
-                          Navigator.pushNamed(context, AppScreen.id);
-                        } else {
-                          final snackBar = SnackBar(
-                              content: Text('Registering new user failed !'));
-                          Scaffold.of(context).showSnackBar(snackBar);
-                        }
-
-                        Provider.of<ProviderClass>(context, listen: false)
-                            .stopLoadingScreen();
-                      },
-                    );
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+    return Consumer<ProviderClass>(
+      builder: (context, data, child) {
+        return ModalProgressHUD(
+          inAsyncCall: data.showLoadingScreen,
+          child: SafeArea(
+            child: Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    FlatButton(
-                      child: Text("Login?"),
-                      onPressed: () {
-                        Navigator.pushNamed(context, LoginScreen.id);
+                    Flexible(child: Icon(Icons.security, size: 100.0)),
+                    SizedBox(height: 70.0),
+                    MyTextField(
+                      labelText: "First Name",
+                      showTrailingWidget: false,
+                      onChanged: (String firstName) {
+                        _firstName = Functions.capitalizeFirstLetter(firstName);
                       },
+                    ),
+                    SizedBox(height: 5.0),
+                    MyTextField(
+                      labelText: "Last Name",
+                      showTrailingWidget: false,
+                      onChanged: (String lastName) {
+                        _lastName = Functions.capitalizeFirstLetter(lastName);
+                      },
+                    ),
+                    SizedBox(height: 5.0),
+                    MyTextField(
+                      labelText: "Email",
+                      showTrailingWidget: false,
+                      onChanged: (String email) {
+                        _email = email.trim().toLowerCase();
+                      },
+                    ),
+                    SizedBox(height: 5.0),
+                    MyTextField(
+                      labelText: "Password",
+                      onChanged: (String password) {
+                        _password = password;
+                      },
+                    ),
+                    Builder(
+                      builder: (context) {
+                        return RoundedButton(
+                          text: "Register",
+                          onPressed: () async {
+                            data.startLoadingScreen();
+
+                            final registerSuccessful =
+                                await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
+
+                            if (registerSuccessful) {
+                              data.getAppData();
+                              Navigator.pushNamed(context, AppScreen.id);
+                            } else {
+                              Functions.showSnackBar(context, 'Registering new user failed !');
+                            }
+
+                            data.stopLoadingScreen();
+                          },
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        FlatButton(
+                          child: Text("Login?"),
+                          onPressed: () {
+                            Navigator.pushNamed(context, LoginScreen.id);
+                          },
+                        )
+                      ],
                     )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

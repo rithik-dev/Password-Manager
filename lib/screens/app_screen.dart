@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
-import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/password_generator.dart';
 import 'package:password_manager/screens/vault.dart';
 import 'package:password_manager/screens/settings.dart';
-import 'package:provider/provider.dart';
 
 void main() => runApp(AppScreen());
 

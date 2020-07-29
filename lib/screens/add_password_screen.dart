@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
-import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/app_screen.dart';
-import 'package:password_manager/screens/vault.dart';
 import 'package:password_manager/widgets/column_builder.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:provider/provider.dart';
@@ -23,16 +21,8 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
 
-  String convertToTitleCase(String str) {
-    str = str.trim().toLowerCase();
-    return '${str[0].toUpperCase()}${str.substring(1)}';
-  }
-
-  // TODO: add show hide password?
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fields = {};
   }
@@ -41,120 +31,116 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
   Widget build(BuildContext context) {
     String customFieldKey = "";
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Password"),
-        centerTitle: true,
-        backgroundColor: kSecondaryColor,
-        actions: <Widget>[
-          Builder(
-            builder: (context) {
-              return IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () async {
-                  // title is mandatory field
-                  if (fields['Title'] == null || fields['Title'] == "") {
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Title is a mandatory field !')));
-                  } else {
-                    bool addPasswordSuccessful;
-                    fields['Title'] = convertToTitleCase(fields['Title']);
-                    addPasswordSuccessful =
-                        await Provider.of<ProviderClass>(context, listen: false)
-                            .addPassword(fields);
-                    if (addPasswordSuccessful) Navigator.pop(context);
-                  }
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-        child: ListView(
-          children: <Widget>[
-            ColumnBuilder(
-              itemBuilder: (context, index) {
-                return MyTextField(
-                  labelText: textFieldStrings[index],
-                  onChanged: (String value) {
-                    // not trimming password
-                    if (value != "") {
-                      if (textFieldStrings[index] == "Password")
-                        fields[textFieldStrings[index]] = value;
-                      else
-                        fields[textFieldStrings[index]] = value.trim();
-                    }
+    return Consumer<ProviderClass>(
+      builder: (context, data, child) {
+        return ModalProgressHUD(
+          inAsyncCall: data.showLoadingScreen,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text("Add Password"),
+              centerTitle: true,
+              backgroundColor: kSecondaryColor,
+              actions: <Widget>[
+                Builder(
+                  builder: (context) {
+                    return IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        // title is mandatory field
+                        if (fields['Title'] == null || fields['Title'] == "") {
+                          Functions.showSnackBar(context, 'Title is a mandatory field !');
+                        } else {
+                          bool addPasswordSuccessful;
+
+                          data.startLoadingScreen();
+
+                          fields['Title'] = Functions.capitalizeFirstLetter(fields['Title']);
+                          addPasswordSuccessful = await data.addPassword(fields);
+                          if (addPasswordSuccessful)
+                            Navigator.pop(context);
+                          else {
+                            Functions.showSnackBar(context, 'Error adding new password !');
+                          }
+                          data.stopLoadingScreen();
+                        }
+                      },
+                    );
                   },
-                  trailing: IconButton(
-                    color: Colors.lightBlueAccent,
-                    icon: Icon(Icons.delete, size: 30.0),
-                    onPressed: () {
-                      setState(() {
-                        textFieldStrings.removeAt(index);
-                      });
+                ),
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+              child: ListView(
+                children: <Widget>[
+                  ColumnBuilder(
+                    itemBuilder: (context, index) {
+                      return MyTextField(
+                          labelText: textFieldStrings[index],
+                          onChanged: (String value) {
+                            fields[textFieldStrings[index]] = value;
+                          },
+                          trailingFunction: () {
+                            setState(() {
+                              textFieldStrings.removeAt(index);
+                            });
+                          });
+                    },
+                    itemCount: textFieldStrings.length,
+                  ),
+                  ListTile(
+                    title: DropdownButton<String>(
+                      value: dropDownValue,
+                      elevation: 16,
+                      underline: Container(
+                        height: 2,
+                        color: Colors.blue,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          dropDownValue = newValue;
+                        });
+                      },
+                      items: dropDownFields.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add, size: 30.0),
+                      color: Colors.lightBlueAccent,
+                      onPressed: () {
+                        setState(() {
+                          if (!textFieldStrings.contains(dropDownValue))
+                            textFieldStrings.add(dropDownValue);
+                        });
+                      },
+                    ),
+                  ),
+                  MyTextField(
+                    labelText: "Custom Field Name",
+                    onChanged: (String value) {
+                      customFieldKey = value;
+                    },
+                    trailingFunction: () {
+                      if (!textFieldStrings.contains(customFieldKey) &&
+                          customFieldKey != "" &&
+                          customFieldKey != null) {
+                        customFieldKey = Functions.capitalizeFirstLetter(customFieldKey);
+                        setState(() {
+                          textFieldStrings.add(customFieldKey);
+                        });
+                      }
                     },
                   ),
-                );
-              },
-              itemCount: textFieldStrings.length,
-            ),
-            ListTile(
-              title: DropdownButton<String>(
-                value: dropDownValue,
-                elevation: 16,
-                underline: Container(
-                  height: 2,
-                  color: Colors.blue,
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    dropDownValue = newValue;
-                  });
-                },
-                items: dropDownFields
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              trailing: IconButton(
-                icon: Icon(Icons.add, size: 30.0),
-                color: Colors.lightBlueAccent,
-                onPressed: () {
-                  setState(() {
-                    if (!textFieldStrings.contains(dropDownValue))
-                      textFieldStrings.add(dropDownValue);
-                  });
-                },
+                ],
               ),
             ),
-            MyTextField(
-              labelText: "Custom Field Name",
-              onChanged: (String value) {
-                if (value != "") customFieldKey = value;
-              },
-              trailing: IconButton(
-                icon: Icon(Icons.add, size: 30.0),
-                color: Colors.lightBlueAccent,
-                onPressed: () {
-                  if (!textFieldStrings.contains(customFieldKey) &&
-                      customFieldKey != "" &&
-                      customFieldKey != null) {
-                    customFieldKey = convertToTitleCase(customFieldKey);
-                    setState(() {
-                      textFieldStrings.add(customFieldKey);
-                    });
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

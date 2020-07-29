@@ -3,16 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 
 class FirebaseUtils {
+  //preventing the class from being instantiated
+  FirebaseUtils._();
+
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final Firestore _firestore = Firestore.instance;
   static final PlatformStringCryptor _cryptor = new PlatformStringCryptor();
-  static final String _key =
-      "/i2bqsPdHXwjJLgZhW+exw==:TUto2rgeldflGQ7G8ot68RfjzxG5zqk/edZVbZ2VQ2U=";
   static const int LEVELS_OF_ENCRYPTION = 5;
 
   static Future<FirebaseUser> getCurrentUser() async {
     try {
-      final currentUser = await _auth.currentUser();
+      final FirebaseUser currentUser = await _auth.currentUser();
       return currentUser;
     } catch (e) {
       print("ERROR WHILE GETTING CURRENT USER : $e");
@@ -22,12 +23,10 @@ class FirebaseUtils {
 
   static Future<String> getCurrentUserName() async {
     try {
-      final currentUser = await getCurrentUser();
-      final documentSnapshot =
-          await _firestore.collection("data").document(currentUser.uid).get();
-      final String firstName = documentSnapshot.data['firstName'];
-      final String lastName = documentSnapshot.data['lastName'];
-      return "$firstName $lastName";
+      final FirebaseUser currentUser = await getCurrentUser();
+      final DocumentSnapshot documentSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
+      final String fullName = documentSnapshot.data['fullName'];
+      return fullName;
     } catch (e) {
       print("ERROR WHILE GETTING CURRENT USER NAME : $e");
       return null;
@@ -38,21 +37,20 @@ class FirebaseUtils {
     List<Map<String, dynamic>> passwords = [];
 
     try {
-      final currentUser = await getCurrentUser();
+      final FirebaseUser currentUser = await getCurrentUser();
       final documentSnapshot = await _firestore
           .collection("data")
           .document(currentUser.uid)
           .collection("passwords")
           .orderBy('Title')
           .getDocuments();
+
       for (var document in documentSnapshot.documents) {
         Map<String, dynamic> data = document.data;
         // decrypting password
-        data['Password'] = await decryptPassword(data['Password']);
+        data['Password'] = await _decryptPassword(data['Password']);
         passwords.add(data);
       }
-
-      print("PASSWORDS RECEIVED FROM FIREBASE : $passwords");
       return passwords;
     } catch (e) {
       print("ERROR WHILE FETCHING PASSWORDS FROM FIREBASE : $e");
@@ -60,17 +58,19 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> registerUser(String email, String password,
-      {String firstName, String lastName}) async {
+  static Future<bool> registerUser(String email, String password, {String fullName}) async {
     try {
-      final user = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      final user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+
       if (user != null) {
         // creating document for new user
-        final currentUser = await getCurrentUser();
+        final FirebaseUser currentUser = await getCurrentUser();
+        //creating a unique key for encrypting passwords for each user
+        final String _key = await _cryptor.generateRandomKey();
+
         _firestore.collection("data").document(currentUser.uid).setData({
-          "firstName": firstName,
-          "lastName": lastName,
+          "fullName": fullName,
+          "key": _key,
         });
         return true;
       } else
@@ -83,8 +83,7 @@ class FirebaseUtils {
 
   static Future<bool> loginUser(String email, String password) async {
     try {
-      final user = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
       if (user != null)
         return true;
       else
@@ -100,10 +99,9 @@ class FirebaseUtils {
       final FirebaseUser user = await getCurrentUser();
       if (user != null) {
         _auth.signOut();
-        print("LOGGED OUT USER");
         return true;
       }
-      return false;
+      else return false;
     } catch (e) {
       print("EXCEPTION WHILE LOGGING OUT USER : $e");
       return false;
@@ -111,14 +109,13 @@ class FirebaseUtils {
   }
 
   static Future<bool> addPassword(Map<String, dynamic> fields) async {
-    // empty map received
-    print("FIELDS RECEIVED $fields");
+    // check if empty map is not received
     if (fields.isNotEmpty)
       try {
         final FirebaseUser currentUser = await _auth.currentUser();
         final String userId = currentUser.uid;
 
-        //adding timestamp and documentId to fields
+        //adding documentId to fields
         fields.addAll({
           "documentId": _firestore
               .collection("data")
@@ -129,14 +126,16 @@ class FirebaseUtils {
         });
 
         //encrypting passwords before sending to firebase
-        fields['Password'] = await encryptPassword(fields['Password']);
+        fields['Password'] = await _encryptPassword(fields['Password']);
 
+        //setting the value of the new document with fields
         _firestore
             .collection("data")
             .document(userId)
             .collection("passwords")
             .document(fields['documentId'])
             .setData(fields);
+
         return true;
       } catch (e) {
         print("ERROR WHILE ADDING NEW PASSWORD : $e");
@@ -153,19 +152,8 @@ class FirebaseUtils {
       final String userId = currentUser.uid;
 
       //encrypting passwords before sending to firebase
-
-      // not updating newFields directly as it was affection show password details screen
-      String encryptedPassword = await encryptPassword(newFields['Password']);
-
-      print("NEW FIELDS UPDATE : $newFields");
-
-      // deleting existing data
-//      _firestore
-//          .collection("data")
-//          .document(userId)
-//          .collection("passwords")
-//          .document(newFields['documentId'])
-//          .delete();
+      // not updating newFields directly as it was affecting show password details screen
+      final String _encryptedPassword = await _encryptPassword(newFields['Password']);
 
       // adding new data
       _firestore
@@ -175,21 +163,13 @@ class FirebaseUtils {
           .document(newFields['documentId'])
           .setData(newFields, merge: false);
 
-      // adding password
+      // adding password separately
       _firestore
           .collection("data")
           .document(userId)
           .collection("passwords")
           .document(newFields['documentId'])
-          .setData({"Password": encryptedPassword}, merge: true);
-
-      // adding new password
-//      _firestore
-//          .collection("data")
-//          .document(userId)
-//          .collection("passwords")
-//          .document(newFields['documentId'])
-//          .setData({"Password": encryptedPassword});
+          .setData({"Password": _encryptedPassword}, merge: true);
 
       return true;
     } catch (e) {
@@ -209,6 +189,7 @@ class FirebaseUtils {
           .collection("passwords")
           .document(documentId)
           .delete();
+
       return true;
     } catch (e) {
       print("ERROR WHILE DELETING PASSWORD $e");
@@ -216,33 +197,23 @@ class FirebaseUtils {
     }
   }
 
-  static Future<Map<String, dynamic>> getFieldsFromDocumentId(
-      String documentId) async {
+  static Future<String> _getKey(String userId) async {
     try {
-      final currentUser = await getCurrentUser();
-      final documentSnapshot = await _firestore
-          .collection("data")
-          .document(currentUser.uid)
-          .collection("passwords")
-          .document(documentId)
-          .get();
-
-      final Map<String, dynamic> fields = documentSnapshot.data;
-
-      // decrypting password
-      fields['Password'] = await decryptPassword(fields['Password']);
-
-      print("FIELDS RECEIVED FROM FIREBASE : $fields");
-      return fields;
+      final DocumentSnapshot documentSnapshot = await _firestore.collection("data").document(userId).get();
+      final String _key = documentSnapshot.data['key'];
+      return _key;
     } catch (e) {
-      print("ERROR WHILE FETCHING FIELDS FROM FIREBASE : $e");
-      return {};
+      print("ERROR WHILE GETTING KEY : $e");
+      return null;
     }
   }
 
-  static Future<String> encryptPassword(String password) async {
-    if (password == null || password == "") return "";
+  static Future<String> _encryptPassword(String password) async {
+    if (password == null) password="";
     String encrypted;
+
+    final FirebaseUser user = await getCurrentUser();
+    final String _key = await _getKey(user.uid);
 
     try {
       for (int i = 0; i < LEVELS_OF_ENCRYPTION; i++) {
@@ -255,9 +226,12 @@ class FirebaseUtils {
     return password;
   }
 
-  static Future<String> decryptPassword(String password) async {
-    if (password == null || password == "") return "";
+  static Future<String> _decryptPassword(String password) async {
+    if (password == null) password="";
     String decrypted;
+
+    final FirebaseUser user = await getCurrentUser();
+    final String _key = await _getKey(user.uid);
 
     try {
       for (int i = 0; i < LEVELS_OF_ENCRYPTION; i++) {

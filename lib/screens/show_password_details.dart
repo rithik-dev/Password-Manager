@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:password_manager/constants.dart';
-import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
-import 'package:password_manager/widgets/password_card.dart';
+import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:provider/provider.dart';
 
 //TODO: re order text fields display order
 
 class ShowPasswordDetails extends StatelessWidget {
-
-  Map<String,dynamic> fields;
+  final Map<String,dynamic> fields;
 
   ShowPasswordDetails(this.fields);
 
@@ -39,14 +37,12 @@ class ShowPasswordDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text("  " + fields['Title'].toUpperCase(),
-                      style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                   Row(
                     children: <Widget>[
                       IconButton(
                         icon: Icon(Icons.edit, size: 30.0),
                         onPressed: () {
-                          //TODO: edit password here
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -61,48 +57,26 @@ class ShowPasswordDetails extends StatelessWidget {
                           return IconButton(
                             icon: Icon(Icons.delete, size: 30.0),
                             onPressed: () async {
-                              AlertDialog alert = AlertDialog(
-                                scrollable: false,
-                                title: Text(
-                                    "Delete ${fields['Title'].toUpperCase()} ?",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                content: Text(
-                                    "Are you sure you want to delete ${fields['Title'].toUpperCase()}.\n\nThis action is irreversible !"),
-                                actions: [
-                                  FlatButton(
-                                    child: Text("Cancel"),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text("Continue"),
-                                    onPressed: () async {
-                                      bool deletePasswordSuccessful;
-                                      deletePasswordSuccessful = await Provider
-                                              .of<ProviderClass>(context,
-                                                  listen: false)
-                                          .deletePassword(fields['documentId']);
-                                      if (deletePasswordSuccessful) {
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      } else {
-                                        Scaffold.of(context).showSnackBar(SnackBar(
-                                            content: Text(
-                                                'Error deleting password !')));
-                                      }
-                                    },
-                                  ),
-                                ],
-                              );
-
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return alert;
+                              Functions.showAlertDialog(context, MyAlertDialog(
+                                text: "Delete ${fields['Title'].toUpperCase()} ?",
+                                content: "Are you sure you want to delete ${fields['Title'].toUpperCase()} ?\n\nThis action is irreversible !",
+                                cancelButtonOnPressed: () {
+                                  Navigator.pop(context);
                                 },
-                              );
+                                continueButtonOnPressed:  () async {
+                                  bool deletePasswordSuccessful;
+
+                                  deletePasswordSuccessful = await Provider.of<ProviderClass>(context, listen: false)
+                                      .deletePassword(fields['documentId']);
+
+                                  if (deletePasswordSuccessful) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  } else {
+                                    Functions.showSnackBar(context, 'Error deleting password !');
+                                  }
+                                },
+                              ));
                             },
                           );
                         },
@@ -125,13 +99,8 @@ class ShowPasswordDetails extends StatelessWidget {
                             trailing: IconButton(
                               icon: Icon(Icons.content_copy),
                               onPressed: () {
-                                Clipboard.setData(
-                                    ClipboardData(text: fields[keys[index]]));
-
-                                final snackBar = SnackBar(
-                                    content: Text("Copied ${keys[index]} !"),
-                                    duration: Duration(seconds: 1));
-                                Scaffold.of(context).showSnackBar(snackBar);
+                                Functions.copyToClipboard(fields[keys[index]]);
+                                Functions.showSnackBar(context, "${keys[index]} Copied !");
                               },
                             ),
                           );

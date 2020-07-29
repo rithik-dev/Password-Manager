@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/widgets/password_card.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyVault());
 
 class MyVault extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
