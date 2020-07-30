@@ -7,13 +7,15 @@ class MyTextField extends StatefulWidget {
   final Function trailingFunction;
   final String defaultValue;
   final bool showTrailingWidget;
+  final bool autoFocus;
 
   MyTextField(
       {@required this.labelText,
       @required this.onChanged,
       this.trailingFunction,
       this.showTrailingWidget = true,
-      this.defaultValue = ""});
+      this.defaultValue = "",
+      this.autoFocus = false});
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
@@ -83,7 +85,7 @@ class _MyTextFieldState extends State<MyTextField> {
       title: TextField(
         controller: useDefaultValue ? _controller : null,
         textAlign: TextAlign.center,
-        autofocus: this.widget.labelText == "Title",
+        autofocus: this.widget.autoFocus,
         keyboardType: keyboardTypes[this.widget.labelText] ?? TextInputType.text,
         onChanged: this.widget.onChanged,
         obscureText: this.widget.labelText == "Password" ? !_showPassword : false,
@@ -92,7 +94,7 @@ class _MyTextFieldState extends State<MyTextField> {
             hintText: "Enter ${this.widget.labelText}",
             labelText: this.widget.labelText),
       ),
-      trailing: this.widget.showTrailingWidget?getTrailingWidget(this.widget.labelText):null,
+      trailing: this.widget.showTrailingWidget ? getTrailingWidget(this.widget.labelText) : null,
     );
   }
 }

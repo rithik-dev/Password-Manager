@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 
 class MyAlertDialog extends StatelessWidget {
   final String text, content;
-  final Function cancelButtonOnPressed, continueButtonOnPressed;
+  final Function continueButtonOnPressed;
 
   MyAlertDialog(
       {@required this.text,
       @required this.content,
-      @required this.cancelButtonOnPressed,
       @required this.continueButtonOnPressed});
 
   @override
@@ -15,11 +14,13 @@ class MyAlertDialog extends StatelessWidget {
     return AlertDialog(
       scrollable: false,
       title: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-      content: Text(content),
+      content: Text("$content\n\nThis action is irreversible !"),
       actions: [
         FlatButton(
           child: Text("Cancel"),
-          onPressed: cancelButtonOnPressed,
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         FlatButton(
           child: Text("Continue"),

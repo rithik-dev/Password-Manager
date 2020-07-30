@@ -3,6 +3,8 @@ import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/app_screens/app_screen.dart';
+import 'package:password_manager/screens/app_screens/change_name_screen.dart';
+import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,7 @@ class MyApp extends StatelessWidget {
       create: (context) => ProviderClass(),
       child: MaterialApp(
         theme: ThemeData.dark().copyWith(
+          appBarTheme: AppBarTheme(color: kSecondaryColor),
           scaffoldBackgroundColor: kScaffoldBackgroundColor,
           dialogBackgroundColor: kCardBackgroundColor,
           canvasColor: kCardBackgroundColor,
@@ -33,6 +36,8 @@ class MyApp extends StatelessWidget {
           RegisterScreen.id: (context) => RegisterScreen(),
           AppScreen.id: (context) => AppScreen(),
           AddPasswordScreen.id: (context) => AddPasswordScreen(),
+          EditPasswordScreen.id: (context) => EditPasswordScreen(),
+          ChangeNameScreen.id: (context) => ChangeNameScreen(),
         },
         home: LoginScreen(),
       ),

@@ -27,13 +27,12 @@ class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
-      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen  ,
+      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: Text(titles[_selectedIndexBottomNavBar]),
             centerTitle: true,
-            backgroundColor: kSecondaryColor,
             leading: Container(),
             // if user is on vault page , show + icon on app bar to add a new password
             actions: (_selectedIndexBottomNavBar==0)?<Widget>[
@@ -65,7 +64,7 @@ class _AppScreenState extends State<AppScreen> {
               ),
             ],
             currentIndex: _selectedIndexBottomNavBar,
-            selectedItemColor: Color(0xFF295A9E),
+            selectedItemColor: Colors.lightBlueAccent,
             onTap: (int index) {
               setState(() {
                 _selectedIndexBottomNavBar = index;

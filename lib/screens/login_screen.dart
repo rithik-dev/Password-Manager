@@ -16,8 +16,6 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-//TODO: error handling , show users snack bar if password wrong etc.
-
 class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
 
@@ -79,8 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () async {
                             data.startLoadingScreen();
 
-                            final loginSuccessful =
-                            await FirebaseUtils.loginUser(_email, _password);
+                            final loginSuccessful = await FirebaseUtils.loginUser(_email, _password);
 
                             if (loginSuccessful) {
                               data.getAppData();
@@ -89,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.pop(context);
                               Navigator.pushNamed(context, AppScreen.id);
                             } else {
-                              Functions.showSnackBar(context, 'Login Unsuccessful ! Email or password is wrong.');
+                              Functions.showSnackBar(context, 'Login Unsuccessful !');
                             }
 
                             data.stopLoadingScreen();
@@ -97,6 +94,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                     ),
+                    Builder(
+                      builder: (context) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            FlatButton(
+                              child: Text("Forgot Password ?"),
+                              onPressed: () async{
+                                if(_email=="" || _email==null)
+                                  Functions.showSnackBar(context, "Please Enter your Email Address !");
+                                else {
+                                  bool passwordResetEmailSent = await FirebaseUtils.sendPasswordResetEmail(_email);
+                                  if(passwordResetEmailSent)
+                                    Functions.showSnackBar(context, "Password Reset Email Sent !");
+                                  else
+                                    Functions.showSnackBar(context, "An Error Occurred While Sending Password Reset Email !");
+                                }
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(height: 1.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[

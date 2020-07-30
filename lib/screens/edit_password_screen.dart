@@ -12,10 +12,6 @@ Map<String, dynamic> newFields;
 class EditPasswordScreen extends StatefulWidget {
   static const id = 'edit_password_screen';
 
-  final Map<String, dynamic> fields;
-
-  EditPasswordScreen(this.fields);
-
   @override
   _EditPasswordScreenState createState() => _EditPasswordScreenState();
 }
@@ -29,24 +25,23 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   String customFieldKey = "";
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    newFields = widget.fields;
+    // this method is called just after initState and using this method because we cannot Provider in initState
+
+    newFields = Map<String,dynamic>.from(Provider.of<ProviderClass>(context).showPasswordFields);
 
     newFields.forEach((key, value) {
       if (key != "documentId") textFieldStrings.add(key.trim());
     });
 
     textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
+
   }
 
   @override
   Widget build(BuildContext context) {
-    //FIXME: keeping this here and adding new field , the new field by default has a default value which it should not have.
-    // this function is called every time a new field is added.
-    //    textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
-
     return Consumer<ProviderClass>(
       builder: (context,data,child) {
         return ModalProgressHUD(
@@ -69,12 +64,15 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                         } else {
                           bool editPasswordSuccessful;
 
+                          data.setShowPasswordFields(newFields);
+
                           data.startLoadingScreen();
 
                           newFields['Title'] = Functions.capitalizeFirstLetter(newFields['Title']);
 
-                          editPasswordSuccessful = await data.editPassword(newFields);
-                          if (editPasswordSuccessful) Navigator.pop(context);
+                          editPasswordSuccessful = await data.editPasswordFieldInDatabase(newFields);
+                          if (editPasswordSuccessful)
+                            Navigator.pop(context);
                           else {
                             Functions.showSnackBar(context, 'Error editing password !');
                           }

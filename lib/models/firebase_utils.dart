@@ -14,22 +14,62 @@ class FirebaseUtils {
   static Future<FirebaseUser> getCurrentUser() async {
     try {
       final FirebaseUser currentUser = await _auth.currentUser();
-      return currentUser;
+      if(currentUser!=null && currentUser.isEmailVerified)
+        return currentUser;
+      else
+        return null;
     } catch (e) {
       print("ERROR WHILE GETTING CURRENT USER : $e");
       return null;
     }
   }
 
-  static Future<String> getCurrentUserName() async {
-    try {
+  static Future<String> getCurrentUserEmail() async{
+    try{
+      final FirebaseUser user = await getCurrentUser();
+      if(user != null) {
+        return user.email;
+      }
+      else
+        return "";
+    }
+    catch(e) {
+      print("ERROR WHILE GETTING CURRENT USER EMAIL : $e");
+      return "";
+    }
+  }
+
+  static Future<Map<String,dynamic>> getAppData() async{
+    List<Map<String, dynamic>> passwords = [];
+
+    try{
       final FirebaseUser currentUser = await getCurrentUser();
-      final DocumentSnapshot documentSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
-      final String fullName = documentSnapshot.data['fullName'];
-      return fullName;
-    } catch (e) {
-      print("ERROR WHILE GETTING CURRENT USER NAME : $e");
-      return null;
+      final DocumentSnapshot fullNameSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
+      final String fullName = fullNameSnapshot.data['fullName'];
+
+      final documentSnapshot = await _firestore
+          .collection("data")
+          .document(currentUser.uid)
+          .collection("passwords")
+          .orderBy('Title')
+          .getDocuments();
+
+      for (var document in documentSnapshot.documents) {
+        Map<String, dynamic> data = document.data;
+        // decrypting password
+        data['Password'] = await _decryptPassword(data['Password']);
+        passwords.add(data);
+      }
+
+      final Map<String,dynamic> appData = {
+        'name' : fullName,
+        'passwords' : passwords,
+      };
+      return appData;
+    }
+    catch(e) {
+      print("ERROR WHILE GETTING APP DATA : $e");
+      return {};
     }
   }
 
@@ -58,17 +98,30 @@ class FirebaseUtils {
     }
   }
 
+  static Future<bool> sendPasswordResetEmail(String email) async{
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    }
+    catch(e) {
+      print("ERROR WHILE SENDING PASSWORD RESET EMAIL : $e");
+      return false;
+    }
+  }
+
   static Future<bool> registerUser(String email, String password, {String fullName}) async {
     try {
       final user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
 
+      await user.user.sendEmailVerification();
+
       if (user != null) {
-        // creating document for new user
-        final FirebaseUser currentUser = await getCurrentUser();
+
         //creating a unique key for encrypting passwords for each user
         final String _key = await _cryptor.generateRandomKey();
 
-        _firestore.collection("data").document(currentUser.uid).setData({
+        // creating document for new user
+        _firestore.collection("data").document(user.user.uid).setData({
           "fullName": fullName,
           "key": _key,
         });
@@ -84,7 +137,7 @@ class FirebaseUtils {
   static Future<bool> loginUser(String email, String password) async {
     try {
       final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      if (user != null)
+      if (user != null && user.user.isEmailVerified)
         return true;
       else
         return false;
@@ -96,19 +149,15 @@ class FirebaseUtils {
 
   static Future<bool> logoutUser() async {
     try {
-      final FirebaseUser user = await getCurrentUser();
-      if (user != null) {
-        _auth.signOut();
-        return true;
-      }
-      else return false;
+      _auth.signOut();
+      return true;
     } catch (e) {
       print("EXCEPTION WHILE LOGGING OUT USER : $e");
       return false;
     }
   }
 
-  static Future<bool> addPassword(Map<String, dynamic> fields) async {
+  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields) async {
     // check if empty map is not received
     if (fields.isNotEmpty)
       try {
@@ -146,7 +195,7 @@ class FirebaseUtils {
       return false;
   }
 
-  static Future<bool> editPassword(Map<String, dynamic> newFields) async {
+  static Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
     try {
       final FirebaseUser currentUser = await _auth.currentUser();
       final String userId = currentUser.uid;
@@ -178,7 +227,7 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deletePassword(String documentId) async {
+  static Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
     try {
       final FirebaseUser currentUser = await _auth.currentUser();
       final String userId = currentUser.uid;
@@ -193,6 +242,33 @@ class FirebaseUtils {
       return true;
     } catch (e) {
       print("ERROR WHILE DELETING PASSWORD $e");
+      return false;
+    }
+  }
+
+  static Future<bool> changeCurrentUserName(String name) async{
+    try{
+      final FirebaseUser user = await getCurrentUser();
+      await _firestore.collection("data").document(user.uid).setData({"fullName" : name},merge: true);
+      return true;
+    }
+    catch(e){
+      print("ERROR WHILE CHANGING CURRENT USER NAME : $e");
+      return false;
+    }
+  }
+
+  static Future<bool> deleteCurrentUser() async{
+    try{
+      final FirebaseUser user = await getCurrentUser();
+      if (user != null) {
+        await _firestore.collection("data").document(user.uid).delete();
+        await user.delete();
+      }
+      return true;
+    }
+    catch(e){
+      print("ERROR WHILE DELETING USER : $e");
       return false;
     }
   }

@@ -3,7 +3,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/provider_class.dart';
-import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
@@ -76,15 +75,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             final registerSuccessful =
                                 await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
 
-                            if (registerSuccessful) {
-                              data.getAppData();
-
-                              //removing register screen from the stack on successful register
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, AppScreen.id);
-                            } else {
-                              Functions.showSnackBar(context, 'Registering new user failed !');
-                            }
+                            if (registerSuccessful) Functions.showSnackBar(context, "Verification Email Sent !");
+                             else Functions.showSnackBar(context, 'Registering New User Failed !');
 
                             data.stopLoadingScreen();
                           },

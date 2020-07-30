@@ -3,7 +3,7 @@ import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/network_helper.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screens/show_generated_passwords.dart';
-import 'package:password_manager/widgets/my_card.dart';
+import 'package:password_manager/widgets/my_switch_card.dart';
 import 'package:password_manager/widgets/my_slider_card.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +33,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                   horizontal: 10.0, vertical: 20.0),
               child: ListView(
                 children: <Widget>[
-                  MyCard(
+                  MySwitchCard(
                     title: "Uppercase Letters",
                     currentValue: upper,
                     onChanged: (bool newValue) {
@@ -42,7 +42,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                       });
                     },
                   ),
-                  MyCard(
+                  MySwitchCard(
                     title: "Lowercase Letters",
                     currentValue: lower,
                     onChanged: (bool newValue) {
@@ -51,7 +51,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                       });
                     },
                   ),
-                  MyCard(
+                  MySwitchCard(
                     title: "Numbers",
                     currentValue: numbers,
                     onChanged: (bool newValue) {
@@ -60,7 +60,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                       });
                     },
                   ),
-                  MyCard(
+                  MySwitchCard(
                     title: "Special Characters",
                     currentValue: special,
                     subtitle: "( < > ` ! ? @ # \$ % ^ & * ( ) . , _ - )",
@@ -111,11 +111,9 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
 
                   data.startLoadingScreen();
 
-                  List<String> passwordsFromAPI = await NetworkHelper.getData(
-                      url);
+                  List<String> passwordsFromAPI = await NetworkHelper.getData(url);
                   showModalBottomSheet(context: context,
-                      builder: (context) =>
-                          ShowGeneratedPasswordsScreen(passwordsFromAPI));
+                      builder: (context) => ShowGeneratedPasswordsScreen(passwordsFromAPI));
 
                   data.stopLoadingScreen();
                 }

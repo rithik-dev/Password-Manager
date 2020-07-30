@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
 
-class MyCard extends StatelessWidget {
-  MyCard({this.title, this.onChanged, this.currentValue, this.subtitle});
+class MySwitchCard extends StatelessWidget {
+  MySwitchCard({this.title, this.onChanged, this.currentValue, this.subtitle});
 
   final String title;
   final Function onChanged;

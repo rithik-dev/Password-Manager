@@ -55,7 +55,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                           data.startLoadingScreen();
 
                           fields['Title'] = Functions.capitalizeFirstLetter(fields['Title']);
-                          addPasswordSuccessful = await data.addPassword(fields);
+                          addPasswordSuccessful = await data.addPasswordFieldToDatabase(fields);
                           if (addPasswordSuccessful)
                             Navigator.pop(context);
                           else {
@@ -77,6 +77,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                     itemBuilder: (context, index) {
                       return MyTextField(
                           labelText: textFieldStrings[index],
+                          autoFocus: textFieldStrings[index]=="Title",
                           onChanged: (String value) {
                             fields[textFieldStrings[index]] = value;
                           },

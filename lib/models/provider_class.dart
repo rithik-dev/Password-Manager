@@ -5,33 +5,44 @@ class ProviderClass extends ChangeNotifier {
   String _name;
   bool _showLoadingScreen = false; // used for inAsyncCall
   List<Map<String, dynamic>> _passwords;
+  Map<String,dynamic> _showPasswordFields;
 
   bool get showLoadingScreen => this._showLoadingScreen;
+  String get name => this._name;
+  Map<String,dynamic> get showPasswordFields => this._showPasswordFields;
+  List<Map<String, dynamic>> get passwords => this._passwords;
 
-  String get name {
-    return this._name;
+  void setShowPasswordFields(Map<String,dynamic> fields) {
+    this._showPasswordFields = fields;
+    notifyListeners();
   }
 
-  List<Map<String, dynamic>> get passwords {
-    return this._passwords;
+  Future<bool> changeCurrentUserName(String name) async{
+    final bool changeNameSuccessful = await FirebaseUtils.changeCurrentUserName(name);
+    if(changeNameSuccessful) {
+      this._name = name;
+      notifyListeners();
+      return true;
+    }
+    else return false;
   }
 
-  Future<bool> addPassword(Map<String, dynamic> fields) async {
-    bool addPasswordSuccessful = await FirebaseUtils.addPassword(fields);
+  Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields) async {
+    bool addPasswordSuccessful = await FirebaseUtils.addPasswordFieldToDatabase(fields);
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();
     return addPasswordSuccessful;
   }
 
-  Future<bool> editPassword(Map<String, dynamic> newFields) async {
-    bool editPasswordSuccessful = await FirebaseUtils.editPassword(newFields);
+  Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
+    bool editPasswordSuccessful = await FirebaseUtils.editPasswordFieldInDatabase(newFields);
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();
     return editPasswordSuccessful;
   }
 
-  Future<bool> deletePassword(String documentId) async {
-    bool deletePasswordSuccessful = await FirebaseUtils.deletePassword(documentId);
+  Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
+    bool deletePasswordSuccessful = await FirebaseUtils.deletePasswordFieldFromDatabase(documentId);
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();
     return deletePasswordSuccessful;
@@ -40,12 +51,14 @@ class ProviderClass extends ChangeNotifier {
   void setDataToNull() {
     this._name = null;
     this._passwords = null;
+    this._showPasswordFields = null;
     notifyListeners();
   }
 
   void getAppData() async {
-    this._name = await FirebaseUtils.getCurrentUserName();
-    this._passwords = await FirebaseUtils.getPasswords();
+    final Map<String,dynamic> appData = await FirebaseUtils.getAppData();
+    this._name = appData['name'];
+    this._passwords = appData['passwords'];
     notifyListeners();
   }
 
