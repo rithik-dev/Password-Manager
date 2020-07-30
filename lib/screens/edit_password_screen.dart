@@ -63,7 +63,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       icon: Icon(Icons.edit),
                       onPressed: () async {
                         // title is mandatory field
-                        if (newFields['Title'] == null || newFields['Title'] == "") {
+                        if (newFields['Title'] == null || newFields['Title'].trim() == "") {
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('Title is a mandatory field !')));
                         } else {

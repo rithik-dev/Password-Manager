@@ -24,6 +24,7 @@ class _MyTextFieldState extends State<MyTextField> {
 
   final Map<String, TextInputType> keyboardTypes = {
     'Email': TextInputType.emailAddress,
+    'Password': TextInputType.visiblePassword,
     'Phone': TextInputType.phone,
     'Link': TextInputType.url,
   };

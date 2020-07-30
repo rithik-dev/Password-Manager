@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 class Functions {
   Functions._();
 
-  static void showSnackBar(BuildContext context, String text) {
-    final snackBar = SnackBar(content: Text(text), duration: Duration(seconds: 1));
+  static void showSnackBar(BuildContext context, String text, {Duration duration}) {
+    final snackBar = SnackBar(content: Text(text), duration: duration ?? Duration(seconds: 1));
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
@@ -26,7 +26,7 @@ class Functions {
     return finalString.trim();
   }
 
-  static void showAlertDialog(BuildContext context,Widget alertDialog) {
+  static void showAlertDialog(BuildContext context, Widget alertDialog) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -37,7 +37,14 @@ class Functions {
 
   // function for show password screen and edit screen to reorder widgets accordingly
   static List<String> reorderTextFieldsDisplayOrder(List<String> keys) {
-    List<String> displayOrder = ['Title','Email','Username','Password','Phone','Link'];
+    List<String> displayOrder = [
+      'Title',
+      'Email',
+      'Username',
+      'Password',
+      'Phone',
+      'Link'
+    ];
 
     Set keysSet = Set.from(keys);
     Set displayOrderSet = Set.from(displayOrder);
@@ -46,8 +53,8 @@ class Functions {
 
     List<String> reorderedDisplayOrderList = [];
 
-    for(int index = 0; index < displayOrder.length; index++) {
-      if(keys.contains(displayOrder[index])) {
+    for (int index = 0; index < displayOrder.length; index++) {
+      if (keys.contains(displayOrder[index])) {
         reorderedDisplayOrderList.add(displayOrder[index]);
       }
     }

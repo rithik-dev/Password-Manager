@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
+import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/app_screens/password_generator.dart';
 import 'package:password_manager/screens/app_screens/vault.dart';
 import 'package:password_manager/screens/app_screens/settings.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(AppScreen());
 
@@ -23,49 +26,52 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(titles[_selectedIndexBottomNavBar]),
-          centerTitle: true,
-          backgroundColor: kSecondaryColor,
-          leading: Container(),
-          // if user is on vault page , show + icon on app bar to add a new password
-          actions: (_selectedIndexBottomNavBar==0)?<Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.pushNamed(context, AddPasswordScreen.id);
-              },
-            )
-          ]:null,
-        ),
-        body: tabs[_selectedIndexBottomNavBar],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          iconSize: 30.0,
-          backgroundColor: kSecondaryColor,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.lock),
-              title: Text('Vault'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.security),
-              title: Text('Password Generator'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ],
-          currentIndex: _selectedIndexBottomNavBar,
-          selectedItemColor: Color(0xFF295A9E),
-          onTap: (int index) {
-            setState(() {
-              _selectedIndexBottomNavBar = index;
-            });
-          },
+    return ModalProgressHUD(
+      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen  ,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(titles[_selectedIndexBottomNavBar]),
+            centerTitle: true,
+            backgroundColor: kSecondaryColor,
+            leading: Container(),
+            // if user is on vault page , show + icon on app bar to add a new password
+            actions: (_selectedIndexBottomNavBar==0)?<Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.pushNamed(context, AddPasswordScreen.id);
+                },
+              )
+            ]:null,
+          ),
+          body: tabs[_selectedIndexBottomNavBar],
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            iconSize: 30.0,
+            backgroundColor: kSecondaryColor,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.lock),
+                title: Text('Vault'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.security),
+                title: Text('Password Generator'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                title: Text('Settings'),
+              ),
+            ],
+            currentIndex: _selectedIndexBottomNavBar,
+            selectedItemColor: Color(0xFF295A9E),
+            onTap: (int index) {
+              setState(() {
+                _selectedIndexBottomNavBar = index;
+              });
+            },
+          ),
         ),
       ),
     );

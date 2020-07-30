@@ -47,7 +47,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                       icon: Icon(Icons.add),
                       onPressed: () async {
                         // title is mandatory field
-                        if (fields['Title'] == null || fields['Title'] == "") {
+                        if (fields['Title'] == null || fields['Title'].trim() == "") {
                           Functions.showSnackBar(context, 'Title is a mandatory field !');
                         } else {
                           bool addPasswordSuccessful;
