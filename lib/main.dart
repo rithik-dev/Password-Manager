@@ -4,6 +4,7 @@ import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/app_screens/change_name_screen.dart';
+import 'package:password_manager/screens/app_screens/change_password_screen.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
           AddPasswordScreen.id: (context) => AddPasswordScreen(),
           EditPasswordScreen.id: (context) => EditPasswordScreen(),
           ChangeNameScreen.id: (context) => ChangeNameScreen(),
+          ChangePasswordScreen.id: (context) => ChangePasswordScreen(),
         },
         home: LoginScreen(),
       ),

@@ -25,15 +25,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   String customFieldKey = "";
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    // this method is called just after initState and using this method because we cannot Provider in initState
-
-    newFields = Map<String,dynamic>.from(Provider.of<ProviderClass>(context).showPasswordFields);
+    // listen : false is necessary to access provider values in initState
+    newFields = Map<String,dynamic>.from(Provider.of<ProviderClass>(context,listen: false).showPasswordFields);
 
     newFields.forEach((key, value) {
-      if (key != "documentId") textFieldStrings.add(key.trim());
+      if (key != "documentId") textFieldStrings.add(key);
     });
 
     textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
@@ -93,6 +92,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     itemBuilder: (context, index) {
                       return MyTextField(
                           labelText: textFieldStrings[index],
+                          autofocus: textFieldStrings[index] == "Title",
                           defaultValue: newFields[textFieldStrings[index]]??"",
                           onChanged: (String value) {
                             newFields[textFieldStrings[index]] = value;

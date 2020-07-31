@@ -3,11 +3,14 @@ import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screens/change_name_screen.dart';
+import 'package:password_manager/screens/app_screens/change_password_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:password_manager/widgets/settings_card.dart';
 import 'package:provider/provider.dart';
+
+//TODO: show loading screen when pressed on delete account button ?
 
 void main() => runApp(Settings());
 
@@ -37,18 +40,7 @@ class _SettingsState extends State<Settings> {
                     SettingsCard(
                       text: "Change Password",
                       onPressed: () async{
-
-                        Provider.of<ProviderClass>(context,listen: false).startLoadingScreen();
-
-                        final String email = await FirebaseUtils.getCurrentUserEmail();
-                        bool passwordResetEmailSent = await FirebaseUtils.sendPasswordResetEmail(email);
-
-                        Provider.of<ProviderClass>(context,listen: false).stopLoadingScreen();
-
-                        if(passwordResetEmailSent)
-                          Functions.showSnackBar(context, "Password Reset Email Sent !");
-                        else
-                          Functions.showSnackBar(context, "An Error Occurred While Sending Password Reset Email Sent !");
+                        Navigator.pushNamed(context, ChangePasswordScreen.id);
                       },
                     ),
                     SettingsCard(

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:password_manager/models/firebase_utils.dart';
+import 'package:password_manager/models/functions.dart';
 
 class ProviderClass extends ChangeNotifier {
   String _name;
@@ -18,6 +19,7 @@ class ProviderClass extends ChangeNotifier {
   }
 
   Future<bool> changeCurrentUserName(String name) async{
+    if(name == null) return true;
     final bool changeNameSuccessful = await FirebaseUtils.changeCurrentUserName(name);
     if(changeNameSuccessful) {
       this._name = name;
@@ -28,6 +30,9 @@ class ProviderClass extends ChangeNotifier {
   }
 
   Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields) async {
+
+    fields = Functions.removeEmptyValuesFromMap(fields);
+
     bool addPasswordSuccessful = await FirebaseUtils.addPasswordFieldToDatabase(fields);
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();
@@ -35,6 +40,9 @@ class ProviderClass extends ChangeNotifier {
   }
 
   Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
+
+    newFields = Functions.removeEmptyValuesFromMap(newFields);
+
     bool editPasswordSuccessful = await FirebaseUtils.editPasswordFieldInDatabase(newFields);
     this._passwords = await FirebaseUtils.getPasswords();
     notifyListeners();

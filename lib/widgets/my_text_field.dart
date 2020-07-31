@@ -7,23 +7,21 @@ class MyTextField extends StatefulWidget {
   final Function trailingFunction;
   final String defaultValue;
   final bool showTrailingWidget;
-  final bool autoFocus;
+  final bool autofocus;
 
   MyTextField(
       {@required this.labelText,
       @required this.onChanged,
       this.trailingFunction,
       this.showTrailingWidget = true,
-      this.defaultValue = "",
-      this.autoFocus = false});
+      this.defaultValue,
+      this.autofocus = false});
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
 }
 
 class _MyTextFieldState extends State<MyTextField> {
-  final TextEditingController _controller = TextEditingController();
-
   final Map<String, TextInputType> keyboardTypes = {
     'Email': TextInputType.emailAddress,
     'Password': TextInputType.visiblePassword,
@@ -56,7 +54,7 @@ class _MyTextFieldState extends State<MyTextField> {
       return null;
     else if (labelText == "Custom Field Name")
       return addButton;
-    else if (labelText == "Password") {
+    else if (labelText == "Password" || labelText == "New Password") {
       return IconButton(
         color: Colors.lightBlueAccent,
         icon: _showPassword
@@ -71,30 +69,27 @@ class _MyTextFieldState extends State<MyTextField> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool useDefaultValue = (this.widget.defaultValue != "" || this.widget.defaultValue == null);
-    if (useDefaultValue) _controller.text = this.widget.defaultValue;
-
     return ListTile(
-      title: TextField(
-        controller: useDefaultValue ? _controller : null,
+      title: TextFormField(
+        initialValue: this.widget.defaultValue ?? "",
         textAlign: TextAlign.center,
-        autofocus: this.widget.autoFocus,
-        keyboardType: keyboardTypes[this.widget.labelText] ?? TextInputType.text,
+        autofocus: this.widget.autofocus,
+        keyboardType:
+            keyboardTypes[this.widget.labelText] ?? TextInputType.text,
         onChanged: this.widget.onChanged,
-        obscureText: this.widget.labelText == "Password" ? !_showPassword : false,
+        obscureText: (this.widget.labelText == "Password" ||
+                this.widget.labelText == "New Password")
+            ? !_showPassword
+            : false,
         decoration: kTextFieldDecoration.copyWith(
             border: InputBorder.none,
             hintText: "Enter ${this.widget.labelText}",
             labelText: this.widget.labelText),
       ),
-      trailing: this.widget.showTrailingWidget ? getTrailingWidget(this.widget.labelText) : null,
+      trailing: this.widget.showTrailingWidget
+          ? getTrailingWidget(this.widget.labelText)
+          : null,
     );
   }
 }

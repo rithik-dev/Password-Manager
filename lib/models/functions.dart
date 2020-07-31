@@ -5,6 +5,7 @@ class Functions {
   Functions._();
 
   static void showSnackBar(BuildContext context, String text, {Duration duration}) {
+    if(text == null) return;
     final snackBar = SnackBar(content: Text(text), duration: duration ?? Duration(seconds: 1));
     Scaffold.of(context).showSnackBar(snackBar);
   }
@@ -14,6 +15,7 @@ class Functions {
   }
 
   static String capitalizeFirstLetter(String str) {
+    if(str == null) return null;
     String _temp, finalString = "";
     str = str.trim().toLowerCase();
     List<String> strings = str.split(" ");
@@ -33,6 +35,23 @@ class Functions {
         return alertDialog;
       },
     );
+  }
+
+  static Map<String,dynamic> removeEmptyValuesFromMap(Map<String,dynamic> fields) {
+    List<String> itemsToRemove = [];
+
+    //removing any empty items from fields
+    fields.forEach((key, value) {
+      if(!(key == "Title" || key == "Password" || key == "documentId")) {
+        if(value == null || value.trim() == "")
+          itemsToRemove.add(key);
+      }
+    });
+
+    for(String itemToRemove in itemsToRemove)
+      fields.remove(itemToRemove);
+
+    return fields;
   }
 
   // function for show password screen and edit screen to reorder widgets accordingly

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
+import 'package:password_manager/models/exceptions.dart';
 
 class FirebaseUtils {
   //preventing the class from being instantiated
@@ -105,7 +106,7 @@ class FirebaseUtils {
     }
     catch(e) {
       print("ERROR WHILE SENDING PASSWORD RESET EMAIL : $e");
-      return false;
+      throw ForgotPasswordException(e.message);
     }
   }
 
@@ -130,20 +131,24 @@ class FirebaseUtils {
         return false;
     } catch (e) {
       print("EXCEPTION WHILE REGISTERING NEW USER : $e");
-      return false;
+      throw RegisterException(e.message);
     }
   }
 
   static Future<bool> loginUser(String email, String password) async {
     try {
       final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      if (user != null && user.user.isEmailVerified)
-        return true;
+      if (user != null) {
+        if(user.user.isEmailVerified)
+          return true;
+        else
+          throw LoginException("Please Verify Your Email Address !");
+      }
       else
         return false;
     } catch (e) {
       print("EXCEPTION WHILE LOGGING IN USER : $e");
-      return false;
+      throw LoginException(e.message);
     }
   }
 
@@ -200,9 +205,9 @@ class FirebaseUtils {
       final FirebaseUser currentUser = await _auth.currentUser();
       final String userId = currentUser.uid;
 
-      //encrypting passwords before sending to firebase
-      // not updating newFields directly as it was affecting show password details screen
-      final String _encryptedPassword = await _encryptPassword(newFields['Password']);
+      Map<String,dynamic> fields = Map<String,dynamic>.from(newFields);
+
+      fields['Password'] = await _encryptPassword(fields['Password']);
 
       // adding new data
       _firestore
@@ -210,15 +215,7 @@ class FirebaseUtils {
           .document(userId)
           .collection("passwords")
           .document(newFields['documentId'])
-          .setData(newFields, merge: false);
-
-      // adding password separately
-      _firestore
-          .collection("data")
-          .document(userId)
-          .collection("passwords")
-          .document(newFields['documentId'])
-          .setData({"Password": _encryptedPassword}, merge: true);
+          .setData(fields, merge: false);
 
       return true;
     } catch (e) {
@@ -255,6 +252,19 @@ class FirebaseUtils {
     catch(e){
       print("ERROR WHILE CHANGING CURRENT USER NAME : $e");
       return false;
+    }
+  }
+
+  static Future<bool> changeCurrentUserPassword(String password) async{
+    if(password == null) return true;
+    try{
+      final FirebaseUser user = await getCurrentUser();
+      await user.updatePassword(password);
+      return true;
+    }
+    catch(e){
+      print("ERROR WHILE CHANGING CURRENT USER PASSWORD : $e");
+      throw ChangePasswordException(e.message);
     }
   }
 

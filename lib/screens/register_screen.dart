@@ -7,6 +7,7 @@ import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
+import 'package:password_manager/models/exceptions.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const id = 'register_screen';
@@ -14,8 +15,6 @@ class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
-
-//TODO: error handling , show users snack bar if password wrong , email already in use etc.
 
 class _RegisterScreenState extends State<RegisterScreen> {
   String _email, _password, _firstName, _lastName;
@@ -70,15 +69,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return RoundedButton(
                           text: "Register",
                           onPressed: () async {
-                            data.startLoadingScreen();
+                            if(_firstName == null || _firstName.trim() == "") {
+                              Functions.showSnackBar(context, "Please Enter Your First Name !");
+                            }
+                            else if(_lastName == null || _lastName.trim() == "") {
+                              Functions.showSnackBar(context, "Please Enter Your Last Name !");
+                            }
+                            else if(_email == null || _firstName.trim() == "") {
+                              Functions.showSnackBar(context, "Please Enter Your Email Address !");
+                            }
+                            else if(_password == null)
+                              Functions.showSnackBar(context, "Please Enter Your Password !");
+                            else {
+                              data.startLoadingScreen();
 
-                            final registerSuccessful =
-                                await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
+                              bool registerSuccessful;
 
-                            if (registerSuccessful) Functions.showSnackBar(context, "Verification Email Sent !");
-                             else Functions.showSnackBar(context, 'Registering New User Failed !');
+                              try {
+                                registerSuccessful = await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
 
-                            data.stopLoadingScreen();
+                                if (registerSuccessful) {
+                                  Functions.showSnackBar(context, "Verification Email Sent !");
+                                } else {
+                                  Functions.showSnackBar(context, 'Registering New User Failed !');
+                                }
+                              } on RegisterException catch(e){
+                                Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
+                              }
+                              catch(e) {
+                                print("REGISTER EXCEPTION : ${e.message}");
+                              }
+
+                              data.stopLoadingScreen();
+                            }
+
                           },
                         );
                       },

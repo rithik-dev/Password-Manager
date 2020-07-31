@@ -8,6 +8,7 @@ import 'package:password_manager/screens/register_screen.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
+import 'package:password_manager/models/exceptions.dart';
 
 class LoginScreen extends StatefulWidget {
   static const id = 'login_screen';
@@ -75,21 +76,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         return RoundedButton(
                           text: "Login",
                           onPressed: () async {
-                            data.startLoadingScreen();
+                            if(_email==null)
+                              Functions.showSnackBar(context, "Please Enter your Email Address !");
+                            else if(_password==null)
+                              Functions.showSnackBar(context, "Please Enter your Password !");
+                            else {
+                              data.startLoadingScreen();
 
-                            final loginSuccessful = await FirebaseUtils.loginUser(_email, _password);
+                              bool loginSuccessful;
 
-                            if (loginSuccessful) {
-                              data.getAppData();
+                              try {
+                                loginSuccessful = await FirebaseUtils.loginUser(_email, _password);
 
-                              //removing login screen from the stack on successful login
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, AppScreen.id);
-                            } else {
-                              Functions.showSnackBar(context, 'Login Unsuccessful !');
+                                if (loginSuccessful) {
+                                  data.getAppData();
+
+                                  //removing login screen from the stack on successful login
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, AppScreen.id);
+                                } else {
+                                  Functions.showSnackBar(context, 'Login Unsuccessful !');
+                                }
+                              } on LoginException catch(e){
+                                if(e.message != null)
+                                  Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
+                              }
+                              catch(e) {
+                                print("LOGIN EXCEPTION : ${e.message}");
+                              }
+
+                              data.stopLoadingScreen();
                             }
 
-                            data.stopLoadingScreen();
                           },
                         );
                       },
@@ -102,14 +120,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             FlatButton(
                               child: Text("Forgot Password ?"),
                               onPressed: () async{
-                                if(_email=="" || _email==null)
+                                if(_email==null)
                                   Functions.showSnackBar(context, "Please Enter your Email Address !");
                                 else {
-                                  bool passwordResetEmailSent = await FirebaseUtils.sendPasswordResetEmail(_email);
-                                  if(passwordResetEmailSent)
-                                    Functions.showSnackBar(context, "Password Reset Email Sent !");
-                                  else
-                                    Functions.showSnackBar(context, "An Error Occurred While Sending Password Reset Email !");
+                                  data.startLoadingScreen();
+
+                                  try {
+                                    bool passwordResetEmailSent = await FirebaseUtils.sendPasswordResetEmail(_email);
+                                    if(passwordResetEmailSent)
+                                      Functions.showSnackBar(context, "Password Reset Email Sent !");
+                                    else
+                                      Functions.showSnackBar(context, "An Error Occurred While Sending Password Reset Email !");
+                                  } on ForgotPasswordException catch(e) {
+                                    Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
+                                  } catch(e) {
+                                    print("FORGOT PASSWORD EXCEPTION ${e.message}");
+                                  }
+
+                                  data.stopLoadingScreen();
                                 }
                               },
                             )

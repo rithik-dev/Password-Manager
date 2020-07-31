@@ -77,7 +77,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                     itemBuilder: (context, index) {
                       return MyTextField(
                           labelText: textFieldStrings[index],
-                          autoFocus: textFieldStrings[index]=="Title",
+                          autofocus: textFieldStrings[index] == "Title",
                           onChanged: (String value) {
                             fields[textFieldStrings[index]] = value;
                           },
