@@ -40,11 +40,10 @@ class FirebaseUtils {
     }
   }
 
-  static Future<Map<String,dynamic>> getAppData() async{
+  static Future<Map<String,dynamic>> getAppData(FirebaseUser currentUser) async{
     List<Map<String, dynamic>> passwords = [];
 
     try{
-      final FirebaseUser currentUser = await getCurrentUser();
       final DocumentSnapshot fullNameSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
       final String fullName = fullNameSnapshot.data['fullName'];
 
@@ -74,11 +73,10 @@ class FirebaseUtils {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getPasswords() async {
+  static Future<List<Map<String, dynamic>>> getPasswords(FirebaseUser currentUser) async {
     List<Map<String, dynamic>> passwords = [];
 
     try {
-      final FirebaseUser currentUser = await getCurrentUser();
       final documentSnapshot = await _firestore
           .collection("data")
           .document(currentUser.uid)
@@ -162,11 +160,10 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields) async {
+  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields,FirebaseUser currentUser) async {
     // check if empty map is not received
     if (fields.isNotEmpty)
       try {
-        final FirebaseUser currentUser = await _auth.currentUser();
         final String userId = currentUser.uid;
 
         //adding documentId to fields
@@ -200,9 +197,8 @@ class FirebaseUtils {
       return false;
   }
 
-  static Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
+  static Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields,FirebaseUser currentUser) async {
     try {
-      final FirebaseUser currentUser = await _auth.currentUser();
       final String userId = currentUser.uid;
 
       Map<String,dynamic> fields = Map<String,dynamic>.from(newFields);
@@ -224,9 +220,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
+  static Future<bool> deletePasswordFieldFromDatabase(String documentId,FirebaseUser currentUser) async {
     try {
-      final FirebaseUser currentUser = await _auth.currentUser();
       final String userId = currentUser.uid;
 
       _firestore
@@ -243,10 +238,9 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> changeCurrentUserName(String name) async{
+  static Future<bool> changeCurrentUserName(String name,FirebaseUser currentUser) async{
     try{
-      final FirebaseUser user = await getCurrentUser();
-      await _firestore.collection("data").document(user.uid).setData({"fullName" : name},merge: true);
+      await _firestore.collection("data").document(currentUser.uid).setData({"fullName" : name},merge: true);
       return true;
     }
     catch(e){

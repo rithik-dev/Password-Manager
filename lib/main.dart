@@ -6,13 +6,12 @@ import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/app_screens/change_name_screen.dart';
 import 'package:password_manager/screens/app_screens/change_password_screen.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
+import 'package:password_manager/screens/initial_screen_handler.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
-
-//TODO: call a function and use it to navigate user directly to app screen if already logged in ..
 
 class MyApp extends StatelessWidget {
   @override
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
           ChangeNameScreen.id: (context) => ChangeNameScreen(),
           ChangePasswordScreen.id: (context) => ChangePasswordScreen(),
         },
-        home: LoginScreen(),
+        home: InitialScreenHandler(),
       ),
     );
   }

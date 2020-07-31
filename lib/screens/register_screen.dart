@@ -9,14 +9,8 @@ import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:password_manager/models/exceptions.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
   static const id = 'register_screen';
-
-  @override
-  _RegisterScreenState createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
   String _email, _password, _firstName, _lastName;
 
   @override

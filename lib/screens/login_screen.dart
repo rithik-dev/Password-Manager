@@ -10,36 +10,9 @@ import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:password_manager/models/exceptions.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   static const id = 'login_screen';
-
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
-
-  void getCurrentUser() async {
-    try {
-      final user = await FirebaseUtils.getCurrentUser();
-      if (user != null) {
-        Provider.of<ProviderClass>(context, listen: false).getAppData();
-        //removing login screen from the stack if user is already logged in
-        Navigator.pop(context);
-        Navigator.pushNamed(context, AppScreen.id);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    getCurrentUser();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 loginSuccessful = await FirebaseUtils.loginUser(_email, _password);
 
                                 if (loginSuccessful) {
-                                  data.getAppData();
+                                  await data.setLoggedInUser();
+                                  await data.getAppData();
 
                                   //removing login screen from the stack on successful login
                                   Navigator.pop(context);

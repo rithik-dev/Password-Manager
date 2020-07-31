@@ -46,10 +46,13 @@ class ChangeNameScreen extends StatelessWidget {
 
                           name = Functions.capitalizeFirstLetter(name);
 
-                          final bool changeSuccessful = await data.changeCurrentUserName(name);
+                          if(name == null || name == "")
+                            Functions.showSnackBar(context, "Please Enter New Name !");
+                          else {
+                            final bool changeSuccessful = await data.changeCurrentUserName(name);
 
-                          if (changeSuccessful) Navigator.pop(context);
-
+                            if (changeSuccessful) Navigator.pop(context);
+                          }
                           data.stopLoadingScreen();
                         },
                       );
