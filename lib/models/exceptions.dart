@@ -1,23 +1,29 @@
 class LoginException implements Exception {
-  String text;
-  LoginException(this.text);
-  String get message => this.text;
+  String message;
+
+  LoginException(this.message);
 }
 
 class RegisterException implements Exception {
-  String text;
-  RegisterException(this.text);
-  String get message => this.text;
+  String message;
+
+  RegisterException(this.message);
 }
 
 class ForgotPasswordException implements Exception {
-  String text;
-  ForgotPasswordException(this.text);
-  String get message => this.text;
+  String message;
+
+  ForgotPasswordException(this.message);
 }
 
 class ChangePasswordException implements Exception {
-  String text;
-  ChangePasswordException(this.text);
-  String get message => this.text;
+  String message;
+
+  ChangePasswordException(this.message);
+}
+
+class AppDataReceiveException implements Exception {
+  String message;
+
+  AppDataReceiveException(this.message);
 }

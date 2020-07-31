@@ -45,16 +45,21 @@ class Settings extends StatelessWidget {
                         text: "Delete Account ?",
                         content: "Are you sure you want to delete this account ?",
                         continueButtonOnPressed: () async{
-                          bool deleteUserSuccessful = await FirebaseUtils.deleteCurrentUser();
-                          if(deleteUserSuccessful) {
-                            await FirebaseUtils.logoutUser();
-                            data.setDataToNull();
-                            Navigator.pop(context);
-                            Navigator.pushNamed(context, RegisterScreen.id);
+                          try{
+                            bool deleteUserSuccessful = await FirebaseUtils.deleteCurrentUser();
+                            if(deleteUserSuccessful) {
+                              await FirebaseUtils.logoutUser();
+                              data.setDataToNull();
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, RegisterScreen.id);
+                            }
+                            else {
+                              Functions.showSnackBar(context, "Failed to Delete Account. Please Login Again and Try Again !",
+                                  duration: Duration(seconds: 2));
+                            }
                           }
-                          else {
-                            Functions.showSnackBar(context, "Failed to Delete Account. Please Login Again and Try Again !",
-                                duration: Duration(seconds: 2));
+                          catch(e) {
+                            Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
                           }
                         },
                       ));

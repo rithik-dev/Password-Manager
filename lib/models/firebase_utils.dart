@@ -42,10 +42,14 @@ class FirebaseUtils {
 
   static Future<Map<String,dynamic>> getAppData(FirebaseUser currentUser) async{
     List<Map<String, dynamic>> passwords = [];
+    String fullName;
 
     try{
       final DocumentSnapshot fullNameSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
-      final String fullName = fullNameSnapshot.data['fullName'];
+      if(fullNameSnapshot.data==null)
+        fullName = "";
+      else
+        fullName = fullNameSnapshot.data['fullName'];
 
       final documentSnapshot = await _firestore
           .collection("data")
@@ -69,7 +73,7 @@ class FirebaseUtils {
     }
     catch(e) {
       print("ERROR WHILE GETTING APP DATA : $e");
-      return {};
+      throw AppDataReceiveException("An error occurred while fetching data. Please restart the app or try deleting the account and creating a new one !");
     }
   }
 
@@ -105,6 +109,20 @@ class FirebaseUtils {
     catch(e) {
       print("ERROR WHILE SENDING PASSWORD RESET EMAIL : $e");
       throw ForgotPasswordException(e.message);
+    }
+  }
+
+  static Future<bool> resendEmailVerificationLink(String email,String password) async{
+    try {
+      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      if (user != null) {
+        await user.user.sendEmailVerification();
+        return true;
+      }
+      else return false;
+    } catch(e) {
+      print("ERROR WHILE RE SENDING EMAIL VERIFICATION LINK : $e");
+      return false;
     }
   }
 
@@ -266,7 +284,16 @@ class FirebaseUtils {
     try{
       final FirebaseUser user = await getCurrentUser();
       if (user != null) {
+        // first deleting passwords
+        final passwordsSnapshot =
+          await _firestore.collection("data").document(user.uid).collection("passwords").getDocuments();
+
+        for(var passwordField in passwordsSnapshot.documents)
+          await _firestore.collection("data").document(user.uid).collection("passwords").document(passwordField.data['documentId']).delete();
+
+          // deleting users collection
         await _firestore.collection("data").document(user.uid).delete();
+        // deleting user
         await user.delete();
       }
       return true;

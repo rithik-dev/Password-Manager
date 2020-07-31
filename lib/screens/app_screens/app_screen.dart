@@ -22,12 +22,11 @@ class _AppScreenState extends State<AppScreen> {
 
   final List<Widget> tabs = [MyVault(), PasswordGenerator(), Settings()];
   final List<String> titles = ["Vault","Password Generator","Settings"];
-  String name;
 
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
-      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
+      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreenOnMainAppScreen,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(

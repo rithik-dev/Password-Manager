@@ -6,12 +6,14 @@ import 'package:password_manager/models/functions.dart';
 class ProviderClass extends ChangeNotifier {
   String _name;
   bool _showLoadingScreen = false; // used for inAsyncCall
+  bool _showLoadingScreenOnMainAppScreen = false; // used for inAsyncCall
   List<Map<String, dynamic>> _passwords;
   Map<String,dynamic> _showPasswordFields;
   bool _userLoggedIn;
   FirebaseUser _loggedInUser;
 
   bool get showLoadingScreen => this._showLoadingScreen;
+  bool get showLoadingScreenOnMainAppScreen => this._showLoadingScreenOnMainAppScreen;
   String get name => this._name;
   Map<String,dynamic> get showPasswordFields => this._showPasswordFields;
   List<Map<String, dynamic>> get passwords => this._passwords;
@@ -98,12 +100,22 @@ class ProviderClass extends ChangeNotifier {
   }
 
   void startLoadingScreen() {
-    _showLoadingScreen = true;
+    this._showLoadingScreen = true;
     notifyListeners();
   }
 
   void stopLoadingScreen() {
-    _showLoadingScreen = false;
+    this._showLoadingScreen = false;
+    notifyListeners();
+  }
+
+  void startLoadingScreenOnMainAppScreen() {
+    this._showLoadingScreenOnMainAppScreen = true;
+    notifyListeners();
+  }
+
+  void stopLoadingScreenOnMainAppScreen() {
+    this._showLoadingScreenOnMainAppScreen = false;
     notifyListeners();
   }
 }

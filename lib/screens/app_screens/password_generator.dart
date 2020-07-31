@@ -109,13 +109,13 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                   url += "length=$length&";
                   url += "repeat=$repeat";
 
-                  data.startLoadingScreen();
+                  data.startLoadingScreenOnMainAppScreen();
 
                   List<String> passwordsFromAPI = await NetworkHelper.getData(url);
                   showModalBottomSheet(context: context,
                       builder: (context) => ShowGeneratedPasswordsScreen(passwordsFromAPI));
 
-                  data.stopLoadingScreen();
+                  data.stopLoadingScreenOnMainAppScreen();
                 }
               },
             ),
