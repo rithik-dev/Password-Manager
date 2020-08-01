@@ -27,3 +27,9 @@ class AppDataReceiveException implements Exception {
 
   AppDataReceiveException(this.message);
 }
+
+class DeleteUserException implements Exception {
+  String message;
+
+  DeleteUserException(this.message);
+}

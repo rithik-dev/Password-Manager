@@ -96,9 +96,9 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
               onPressed: () async {
                 // if all values are false
                 if (!upper && !lower && !numbers && !special) {
-                  Functions.showSnackBar(
-                      context, "No Content is chosen for the Password !",
-                      duration: Duration(seconds: 2));
+                  Functions.showSnackBar(context,
+                      "No Content Is Chosen for the Password !",
+                        duration: Duration(seconds: 2));
                 }
                 else {
                   url = "https://passwordwolf.com/api/?";

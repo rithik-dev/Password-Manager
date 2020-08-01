@@ -22,7 +22,8 @@ class RegisterScreen extends StatelessWidget {
           child: SafeArea(
             child: Scaffold(
               body: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 30.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -63,40 +64,45 @@ class RegisterScreen extends StatelessWidget {
                         return RoundedButton(
                           text: "Register",
                           onPressed: () async {
-                            if(_firstName == null || _firstName.trim() == "") {
-                              Functions.showSnackBar(context, "Please Enter Your First Name !");
-                            }
-                            else if(_lastName == null || _lastName.trim() == "") {
-                              Functions.showSnackBar(context, "Please Enter Your Last Name !");
-                            }
-                            else if(_email == null || _firstName.trim() == "") {
-                              Functions.showSnackBar(context, "Please Enter Your Email Address !");
-                            }
-                            else if(_password == null)
-                              Functions.showSnackBar(context, "Please Enter Your Password !");
+                            if (_firstName == null || _firstName.trim() == "") {
+                              Functions.showSnackBar(
+                                  context, "Please Enter Your First Name !");
+                            } else if (_lastName == null ||
+                                _lastName.trim() == "") {
+                              Functions.showSnackBar(
+                                  context, "Please Enter Your Last Name !");
+                            } else if (_email == null ||
+                                _firstName.trim() == "") {
+                              Functions.showSnackBar(
+                                  context, "Please Enter Your Email Address !");
+                            } else if (_password == null)
+                              Functions.showSnackBar(
+                                  context, "Please Enter Your Password !");
                             else {
                               data.startLoadingScreen();
 
                               bool registerSuccessful;
 
                               try {
-                                registerSuccessful = await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
+                                registerSuccessful =
+                                    await FirebaseUtils.registerUser(_email, _password, fullName: "$_firstName $_lastName");
 
                                 if (registerSuccessful) {
-                                  Functions.showSnackBar(context, "Verification Email Sent !");
+                                  Functions.showSnackBar(
+                                      context, "Verification Email Sent !");
                                 } else {
-                                  Functions.showSnackBar(context, 'Registering New User Failed !');
+                                  Functions.showSnackBar(
+                                      context, 'Registering New User Failed !');
                                 }
-                              } on RegisterException catch(e){
-                                Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
-                              }
-                              catch(e) {
+                              } on RegisterException catch (e) {
+                                Functions.showSnackBar(context, e.message,
+                                    duration: Duration(seconds: 3));
+                              } catch (e) {
                                 print("REGISTER EXCEPTION : ${e.message}");
                               }
 
                               data.stopLoadingScreen();
                             }
-
                           },
                         );
                       },
@@ -107,8 +113,8 @@ class RegisterScreen extends StatelessWidget {
                         FlatButton(
                           child: Text("Login?"),
                           onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamed(context, LoginScreen.id);
+                            Navigator.pushReplacementNamed(
+                                context, LoginScreen.id);
                           },
                         )
                       ],

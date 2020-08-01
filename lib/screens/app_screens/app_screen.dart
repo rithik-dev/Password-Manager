@@ -21,27 +21,35 @@ class _AppScreenState extends State<AppScreen> {
   int _selectedIndexBottomNavBar = 0;
 
   final List<Widget> tabs = [MyVault(), PasswordGenerator(), Settings()];
-  final List<String> titles = ["Vault","Password Generator","Settings"];
+  final List<String> titles = ["Vault", "Password Generator", "Settings"];
 
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
-      inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreenOnMainAppScreen,
+      inAsyncCall:
+          Provider.of<ProviderClass>(context).showLoadingScreenOnMainAppScreen,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: Text(titles[_selectedIndexBottomNavBar]),
+            title: (_selectedIndexBottomNavBar == 0)
+                ? (Provider.of<ProviderClass>(context).name == null)
+                    ? Text("Vault")
+                    : Text(
+                        "${Provider.of<ProviderClass>(context).name}'s Vault")
+                : Text(titles[_selectedIndexBottomNavBar]),
             centerTitle: true,
             leading: Container(),
             // if user is on vault page , show + icon on app bar to add a new password
-            actions: (_selectedIndexBottomNavBar==0)?<Widget>[
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.pushNamed(context, AddPasswordScreen.id);
-                },
-              )
-            ]:null,
+            actions: (_selectedIndexBottomNavBar == 0)
+                ? <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AddPasswordScreen.id);
+                      },
+                    )
+                  ]
+                : null,
           ),
           body: tabs[_selectedIndexBottomNavBar],
           bottomNavigationBar: BottomNavigationBar(

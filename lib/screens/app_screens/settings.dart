@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
@@ -50,15 +51,16 @@ class Settings extends StatelessWidget {
                             if(deleteUserSuccessful) {
                               await FirebaseUtils.logoutUser();
                               data.setDataToNull();
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, RegisterScreen.id);
+                              Navigator.pushReplacementNamed(context, RegisterScreen.id);
                             }
                             else {
+                              Navigator.pop(context);
                               Functions.showSnackBar(context, "Failed to Delete Account. Please Login Again and Try Again !",
                                   duration: Duration(seconds: 2));
                             }
                           }
-                          catch(e) {
+                          on DeleteUserException catch(e) {
+                            Navigator.pop(context);
                             Functions.showSnackBar(context, e.message,duration: Duration(seconds: 3));
                           }
                         },
@@ -71,8 +73,7 @@ class Settings extends StatelessWidget {
                     onPressed: () async {
                       await FirebaseUtils.logoutUser();
                       data.setDataToNull();
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, LoginScreen.id);
+                      Navigator.pushReplacementNamed(context, LoginScreen.id);
                     },
                   ),
                 ],

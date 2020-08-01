@@ -49,7 +49,7 @@ class LoginScreen extends StatelessWidget {
                         return RoundedButton(
                           text: "Login",
                           onPressed: () async {
-                            if(_email==null)
+                            if(_email==null || _email.trim()=="")
                               Functions.showSnackBar(context, "Please Enter your Email Address !");
                             else if(_password==null)
                               Functions.showSnackBar(context, "Please Enter your Password !");
@@ -64,17 +64,14 @@ class LoginScreen extends StatelessWidget {
                                 if (loginSuccessful) {
                                   await data.setLoggedInUser();
                                   await data.getAppData();
-
-                                  //removing login screen from the stack on successful login
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(context, AppScreen.id);
+                                Navigator.pushReplacementNamed(context, AppScreen.id);
                                 } else {
                                   Functions.showSnackBar(context, 'Login Unsuccessful !');
                                 }
                               } on LoginException catch(e){
                                 if(e.message != null) {
-                                  if(e.message == "Please Verify Your Email Address !")
-                                    Functions.showSnackBar(context, e.message,duration:Duration(seconds: 3),
+                                  if(e.message == "EMAIL_NOT_VERIFIED")
+                                    Functions.showSnackBar(context, "Please Verify Your Email Address !",duration:Duration(seconds: 3),
                                         action: SnackBarAction(
                                       label: "RESEND LINK !",
                                       textColor: Colors.white,
@@ -152,8 +149,7 @@ class LoginScreen extends StatelessWidget {
                             FlatButton(
                               child: Text("Register?"),
                               onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pushNamed(context, RegisterScreen.id);
+                                Navigator.pushReplacementNamed(context, RegisterScreen.id);
                               },
                             )
                           ],

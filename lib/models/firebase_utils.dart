@@ -158,7 +158,7 @@ class FirebaseUtils {
         if(user.user.isEmailVerified)
           return true;
         else
-          throw LoginException("Please Verify Your Email Address !");
+          throw LoginException("EMAIL_NOT_VERIFIED");
       }
       else
         return false;
@@ -300,7 +300,7 @@ class FirebaseUtils {
     }
     catch(e){
       print("ERROR WHILE DELETING USER : $e");
-      return false;
+      throw DeleteUserException(e.message);
     }
   }
 

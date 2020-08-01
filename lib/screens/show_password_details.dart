@@ -23,95 +23,92 @@ class ShowPasswordDetails extends StatelessWidget {
       builder: (context,data,child) {
         return Scaffold(
           body: Container(
-            color: Color(0xFF000014),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-              decoration: BoxDecoration(
-                color: kSecondaryColor,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30.0),
-                    topLeft: Radius.circular(30.0)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text("  " + data.showPasswordFields['Title'].toUpperCase(),
-                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.edit, size: 30.0),
-                            onPressed: () {
-                              data.setShowPasswordFields(data.showPasswordFields);
-                              Navigator.pushNamed(context, EditPasswordScreen.id);
-                            },
-                          ),
-                          SizedBox(width: 10.0),
-                          Builder(
-                            builder: (context) {
-                              return IconButton(
-                                icon: Icon(Icons.delete, size: 30.0),
-                                onPressed: () async {
-                                  Functions.showAlertDialog(context, MyAlertDialog(
-                                    text: "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                    content: "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                    continueButtonOnPressed:  () async {
-                                      bool deletePasswordSuccessful;
-
-                                      // not using provider as document id is never changed
-                                      deletePasswordSuccessful = await data.deletePasswordFieldFromDatabase(_fields['documentId']);
-
-                                      if (deletePasswordSuccessful) {
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      } else {
-                                        Functions.showSnackBar(context, 'Error deleting password !');
-                                      }
-                                    },
-                                  ));
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 15.0),
-                  Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Card(
-                          color: kCardBackgroundColor,
-                          child: Builder(
-                            builder: (context) {
-                              return ListTile(
-                                title: Text(keys[index]),
-                                subtitle: Text(data.showPasswordFields[keys[index]]),
-                                isThreeLine: data.showPasswordFields[keys[index]].length > 30,
-                                trailing: IconButton(
-                                  icon: Icon(Icons.content_copy),
-                                  onPressed: () {
-                                    Functions.copyToClipboard(data.showPasswordFields[keys[index]]);
-                                    Functions.showSnackBar(context, "${keys[index]} Copied !");
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      itemCount: data.showPasswordFields.length - 1,
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+            decoration: BoxDecoration(
+              color: kSecondaryColor,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(30.0),
+                  topLeft: Radius.circular(30.0)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text("  " + data.showPasswordFields['Title'].toUpperCase(),
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                     ),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.edit, size: 30.0),
+                          onPressed: () {
+                            data.setShowPasswordFields(data.showPasswordFields);
+                            Navigator.pushNamed(context, EditPasswordScreen.id);
+                          },
+                        ),
+                        SizedBox(width: 10.0),
+                        Builder(
+                          builder: (context) {
+                            return IconButton(
+                              icon: Icon(Icons.delete, size: 30.0),
+                              onPressed: () async {
+                                Functions.showAlertDialog(context, MyAlertDialog(
+                                  text: "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
+                                  content: "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
+                                  continueButtonOnPressed:  () async {
+                                    bool deletePasswordSuccessful;
+
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+
+                                    // not using provider as document id is never changed
+                                    deletePasswordSuccessful = await data.deletePasswordFieldFromDatabase(_fields['documentId']);
+
+                                    if (!deletePasswordSuccessful)
+                                      Functions.showSnackBar(context, 'Error Deleting Password !');
+                                    
+                                  },
+                                ));
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 15.0),
+                Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: kCardBackgroundColor,
+                        child: Builder(
+                          builder: (context) {
+                            return ListTile(
+                              title: Text(keys[index]),
+                              subtitle: Text(data.showPasswordFields[keys[index]]),
+                              isThreeLine: data.showPasswordFields[keys[index]].length > 30,
+                              trailing: IconButton(
+                                icon: Icon(Icons.content_copy),
+                                onPressed: () {
+                                  Functions.copyToClipboard(data.showPasswordFields[keys[index]]);
+                                  Functions.showSnackBar(context, "${keys[index]} Copied : ${data.showPasswordFields['Title']}");
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    itemCount: data.showPasswordFields.length - 1,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );

@@ -15,15 +15,28 @@ class MyVault extends StatelessWidget {
             builder: (context, data, child) {
               return (data.passwords == null)
                   ? CircularProgressIndicator()
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return PasswordCard(data.passwords[index]);
-                        },
-                        itemCount: data.passwords.length,
-                      ),
-                    );
+                  : (data.passwords.length == 0)
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              "No passwords added yet. Start by adding a new password by clicking the + icon on the top right.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 17.0,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              return PasswordCard(data.passwords[index]);
+                            },
+                            itemCount: data.passwords.length,
+                          ),
+                        );
             },
           ),
         ),
