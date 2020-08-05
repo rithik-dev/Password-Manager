@@ -16,7 +16,8 @@ class MySwitchCard extends StatelessWidget {
       child: ListTile(
         title: Text(this.title),
         subtitle: this.subtitle == null ? null : Text(this.subtitle),
-        trailing: Switch(
+        // switch.adaptive shows ios type switch on ios devices and android type on android devices
+        trailing: Switch.adaptive(
           value: this.currentValue,
           onChanged: this.onChanged,
         ),
