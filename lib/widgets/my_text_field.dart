@@ -8,6 +8,7 @@ class MyTextField extends StatefulWidget {
   final String defaultValue;
   final bool showTrailingWidget;
   final bool autofocus;
+  final TextEditingController controller;
 
   MyTextField(
       {@required this.labelText,
@@ -15,7 +16,8 @@ class MyTextField extends StatefulWidget {
       this.trailingFunction,
       this.showTrailingWidget = true,
       this.defaultValue,
-      this.autofocus = false});
+      this.autofocus = false,
+      this.controller});
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
@@ -72,7 +74,8 @@ class _MyTextFieldState extends State<MyTextField> {
   Widget build(BuildContext context) {
     return ListTile(
       title: TextFormField(
-        initialValue: this.widget.defaultValue ?? "",
+        controller: this.widget.controller,
+        initialValue: this.widget.defaultValue,
         textAlign: TextAlign.center,
         autofocus: this.widget.autofocus,
         keyboardType:

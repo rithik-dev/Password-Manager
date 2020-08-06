@@ -20,6 +20,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
   List<String> textFieldStrings = ['Title', 'Password'];
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
+  final TextEditingController _controller = TextEditingController();
 
   String customFieldKey = "";
 
@@ -27,6 +28,13 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
   void initState() {
     super.initState();
     fields = {};
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -122,6 +130,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                   ),
                   MyTextField(
                     labelText: "Custom Field Name",
+                    controller: _controller,
                     onChanged: (String value) {
                       customFieldKey = value;
                     },
@@ -131,6 +140,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                       if (!textFieldStrings.contains(customFieldKey) &&
                           customFieldKey != "" &&
                           customFieldKey != null) {
+                        _controller.clear();
                         setState(() {
                           textFieldStrings.add(customFieldKey);
                         });

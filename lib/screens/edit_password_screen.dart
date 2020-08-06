@@ -21,6 +21,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
+  final TextEditingController _controller = TextEditingController();
 
   String customFieldKey = "";
 
@@ -40,6 +41,13 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
     textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
 
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -104,7 +112,6 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                             newFields[textFieldStrings[index]] = value;
                           },
                           trailingFunction: () {
-                            print(newFields[textFieldStrings[index]]);
                             newFields.remove(textFieldStrings[index]);
                             setState(() {
                               textFieldStrings.removeAt(index);
@@ -146,6 +153,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                   ),
                   MyTextField(
                     labelText: "Custom Field Name",
+                    controller: _controller,
                     onChanged: (String value) {
                       customFieldKey = value;
                     },
@@ -155,7 +163,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       if (!textFieldStrings.contains(customFieldKey) &&
                           customFieldKey != "" &&
                           customFieldKey != null) {
-
+                        _controller.clear();
                         setState(() {
                           textFieldStrings.add(customFieldKey);
                         });
