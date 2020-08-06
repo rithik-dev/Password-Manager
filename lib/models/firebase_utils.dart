@@ -162,11 +162,13 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields,FirebaseUser currentUser,String key) async {
+  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> _fields,FirebaseUser currentUser,String key) async {
     // check if empty map is not received
-    if (fields.isNotEmpty)
+    if (_fields.isNotEmpty)
       try {
         final String userId = currentUser.uid;
+
+        Map<String,dynamic> fields = Map<String,dynamic>.from(_fields);
 
         //adding documentId to fields
         fields.addAll({
