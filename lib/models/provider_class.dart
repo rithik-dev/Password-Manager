@@ -4,13 +4,13 @@ import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
 
 class ProviderClass extends ChangeNotifier {
-  String _name;
+  String _name,_key;
   bool _showLoadingScreen = false; // used for inAsyncCall
   bool _showLoadingScreenOnMainAppScreen = false; // used for inAsyncCall
   List<Map<String, dynamic>> _passwords;
   Map<String,dynamic> _showPasswordFields;
-  bool _userLoggedIn;
-  FirebaseUser _loggedInUser;
+  bool _userLoggedIn; // bool holding true if user is already logged in
+  FirebaseUser _loggedInUser;  // currently logged in user object
 
   bool get showLoadingScreen => this._showLoadingScreen;
   bool get showLoadingScreenOnMainAppScreen => this._showLoadingScreenOnMainAppScreen;
@@ -19,11 +19,6 @@ class ProviderClass extends ChangeNotifier {
   List<Map<String, dynamic>> get passwords => this._passwords;
   bool get userLoggedIn => this._userLoggedIn;
   FirebaseUser get loggedInUser => this._loggedInUser;
-
-  Future<void> setLoggedInUser() async{
-    final FirebaseUser user = await FirebaseUtils.getCurrentUser();
-    this._loggedInUser = user;
-  }
 
   Future<void> setUserLoggedIn() async {
     try {
@@ -60,8 +55,13 @@ class ProviderClass extends ChangeNotifier {
 
     fields = Functions.removeEmptyValuesFromMap(fields);
 
-    bool addPasswordSuccessful = await FirebaseUtils.addPasswordFieldToDatabase(fields,_loggedInUser);
-    this._passwords = await FirebaseUtils.getPasswords(_loggedInUser);
+    bool addPasswordSuccessful = await FirebaseUtils.addPasswordFieldToDatabase(fields,_loggedInUser,_key);
+
+    this._passwords.add(fields);
+    this._passwords.sort((a,b) {
+      return a['Title'].compareTo(b['Title']);
+    });
+
     notifyListeners();
     return addPasswordSuccessful;
   }
@@ -70,15 +70,24 @@ class ProviderClass extends ChangeNotifier {
 
     newFields = Functions.removeEmptyValuesFromMap(newFields);
 
-    bool editPasswordSuccessful = await FirebaseUtils.editPasswordFieldInDatabase(newFields,_loggedInUser);
-    this._passwords = await FirebaseUtils.getPasswords(_loggedInUser);
+    bool editPasswordSuccessful = await FirebaseUtils.editPasswordFieldInDatabase(newFields,_loggedInUser,_key);
+
+    for(int index = 0;index<this._passwords.length;index++) {
+      if(this._passwords[index]['documentId'] == newFields['documentId']) {
+        this._passwords[index] = newFields;
+      }
+    }
+
     notifyListeners();
     return editPasswordSuccessful;
   }
 
   Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
     bool deletePasswordSuccessful = await FirebaseUtils.deletePasswordFieldFromDatabase(documentId,_loggedInUser);
-    this._passwords = await FirebaseUtils.getPasswords(_loggedInUser);
+
+    Map<String,dynamic> passwordToDelete = this._passwords.where((element) => element['documentId']==documentId).first;
+    this._passwords.remove(passwordToDelete);
+
     notifyListeners();
     return deletePasswordSuccessful;
   }
@@ -89,6 +98,7 @@ class ProviderClass extends ChangeNotifier {
     this._showPasswordFields = null;
     this._userLoggedIn = false;
     this._loggedInUser = null;
+    this._key = null;
     notifyListeners();
   }
 
@@ -96,6 +106,7 @@ class ProviderClass extends ChangeNotifier {
     final Map<String,dynamic> appData = await FirebaseUtils.getAppData(_loggedInUser);
     this._name = appData['name'];
     this._passwords = appData['passwords'];
+    this._key = appData['key'];
     notifyListeners();
   }
 

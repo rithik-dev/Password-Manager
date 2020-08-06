@@ -46,6 +46,20 @@ class Settings extends StatelessWidget {
                               },
                             ),
                             SettingsCard(
+                              text: "2 Step Verification",
+                              onPressed: () {
+                                Functions.showSnackBar(context, "This Feature is not yet available ...");
+                                // use flutter_otp package to send otp to phone number and verify
+                              },
+                            ),
+                            SettingsCard(
+                              text: "Export Passwords",
+                              onPressed: () {
+                                Functions.showSnackBar(context, "This Feature is not yet available ...");
+                                // export passwords to csv file?
+                              },
+                            ),
+                            SettingsCard(
                               text: "Delete Account",
                               onPressed: () async {
                                 Functions.showAlertDialog(

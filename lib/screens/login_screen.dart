@@ -62,8 +62,8 @@ class LoginScreen extends StatelessWidget {
                                 loginSuccessful = await FirebaseUtils.loginUser(_email, _password);
 
                                 if (loginSuccessful) {
-                                  await data.setLoggedInUser();
-                                  await data.getAppData();
+                                  await data.setUserLoggedIn();
+                                  data.getAppData();
                                 Navigator.pushReplacementNamed(context, AppScreen.id);
                                 } else {
                                   Functions.showSnackBar(context, 'Login Unsuccessful !');

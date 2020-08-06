@@ -17,7 +17,7 @@ class EditPasswordScreen extends StatefulWidget {
 }
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
-  List<String> textFieldStrings = [];
+  List<String> textFieldStrings = ['Title','Password'];
 
   String dropDownValue = 'Email';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
@@ -32,7 +32,10 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     newFields = Map<String,dynamic>.from(Provider.of<ProviderClass>(context,listen: false).showPasswordFields);
 
     newFields.forEach((key, value) {
-      if (key != "documentId") textFieldStrings.add(key);
+      if (key != "documentId") {
+        if(!textFieldStrings.contains(key))
+          textFieldStrings.add(key);
+      }
     });
 
     textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
@@ -62,6 +65,9 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                               content: Text('Title is a mandatory field !')));
                         } else {
                           bool editPasswordSuccessful;
+
+                          if(newFields['Password']==null || newFields['Password']=="")
+                            newFields.remove('Password');
 
                           data.setShowPasswordFields(newFields);
 
