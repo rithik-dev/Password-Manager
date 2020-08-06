@@ -96,7 +96,7 @@ class ProviderClass extends ChangeNotifier {
     this._name = null;
     this._passwords = null;
     this._showPasswordFields = null;
-    this._userLoggedIn = false;
+    this._userLoggedIn = null;
     this._loggedInUser = null;
     this._key = null;
     notifyListeners();
