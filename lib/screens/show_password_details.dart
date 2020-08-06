@@ -105,7 +105,7 @@ class ShowPasswordDetails extends StatelessWidget {
                         ),
                       );
                     },
-                    itemCount: data.showPasswordFields.length - 1,
+                    itemCount: tempKeys.length,
                   ),
                 ),
               ],
