@@ -162,7 +162,7 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> _fields,FirebaseUser currentUser,String key) async {
+  static Future<String> addPasswordFieldToDatabase(Map<String, dynamic> _fields,FirebaseUser currentUser,String key) async {
     // check if empty map is not received
     if (_fields.isNotEmpty)
       try {
@@ -170,14 +170,16 @@ class FirebaseUtils {
 
         Map<String,dynamic> fields = Map<String,dynamic>.from(_fields);
 
+        String docID = _firestore
+            .collection("data")
+            .document(userId)
+            .collection("passwords")
+            .document()
+            .documentID;
+
         //adding documentId to fields
         fields.addAll({
-          "documentId": _firestore
-              .collection("data")
-              .document(userId)
-              .collection("passwords")
-              .document()
-              .documentID,
+          "documentId": docID,
         });
 
         //encrypting passwords before sending to firebase
@@ -194,14 +196,14 @@ class FirebaseUtils {
             .document(fields['documentId'])
             .setData(fields);
 
-        return true;
+        return docID;
       } catch (e) {
         print("ERROR WHILE ADDING NEW PASSWORD : $e");
-        return false;
+        return null;
       }
     else
       //fields is empty
-      return false;
+      return null;
   }
 
   static Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields,FirebaseUser currentUser,String key) async {

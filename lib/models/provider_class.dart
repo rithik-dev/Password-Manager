@@ -55,7 +55,9 @@ class ProviderClass extends ChangeNotifier {
 
     fields = Functions.removeEmptyValuesFromMap(fields);
 
-    bool addPasswordSuccessful = await FirebaseUtils.addPasswordFieldToDatabase(fields,_loggedInUser,_key);
+    String docID = await FirebaseUtils.addPasswordFieldToDatabase(fields,_loggedInUser,_key);
+
+    fields['documentId'] = docID;
 
     this._passwords.add(fields);
     this._passwords.sort((a,b) {
@@ -63,7 +65,8 @@ class ProviderClass extends ChangeNotifier {
     });
 
     notifyListeners();
-    return addPasswordSuccessful;
+    if(docID != null) return true;
+    else return false;
   }
 
   Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
