@@ -189,7 +189,7 @@ class FirebaseUtils {
           fields.remove('Password');
 
         //setting the value of the new document with fields
-        _firestore
+        await _firestore
             .collection("data")
             .document(userId)
             .collection("passwords")
@@ -217,7 +217,7 @@ class FirebaseUtils {
         fields['Password'] = await _encryptPassword(fields['Password'],key);
 
       // adding new data
-      _firestore
+      await _firestore
           .collection("data")
           .document(userId)
           .collection("passwords")
@@ -235,7 +235,7 @@ class FirebaseUtils {
     try {
       final String userId = currentUser.uid;
 
-      _firestore
+      await _firestore
           .collection("data")
           .document(userId)
           .collection("passwords")

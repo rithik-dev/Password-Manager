@@ -86,8 +86,8 @@ Tap on the card for more information ...
                                         ));
                                   }
                                 },
-                                background: slideRightBackground(),
-                                secondaryBackground: slideLeftBackground(),
+                                background: _slideRightBackground(),
+                                secondaryBackground: _slideLeftBackground(),
                                 child: PasswordCard(
                                   data.passwords[index],
                                 ),
@@ -104,7 +104,7 @@ Tap on the card for more information ...
   }
 }
 
-Widget slideLeftBackground() {
+Widget _slideLeftBackground() {
   return Container(
     color: Colors.red,
     child: Align(
@@ -137,7 +137,7 @@ Widget slideLeftBackground() {
   );
 }
 
-Widget slideRightBackground() {
+Widget _slideRightBackground() {
   return Container(
     color: Colors.green,
     child: Align(
