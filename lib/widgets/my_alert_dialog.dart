@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class MyAlertDialog extends StatelessWidget {
   final String text, content;
   final Function continueButtonOnPressed;
+  final Widget passwordTextField;
 
   MyAlertDialog(
       {@required this.text,
       @required this.content,
+      this.passwordTextField,
       @required this.continueButtonOnPressed});
 
   @override
@@ -14,7 +16,21 @@ class MyAlertDialog extends StatelessWidget {
     return AlertDialog(
       scrollable: false,
       title: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-      content: Text("$content\n\nThis action is irreversible !"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text("$content\n\nThis action is irreversible !"),
+          this.passwordTextField != null
+              ? Column(
+            children: <Widget>[
+              SizedBox(height: 20),
+              this.passwordTextField
+            ],
+          )
+              : SizedBox.shrink(),
+        ],
+      ),
       actions: [
         FlatButton(
           child: Text("Cancel"),

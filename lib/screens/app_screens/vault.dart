@@ -81,11 +81,14 @@ Tap on the card for more information ...
 
                                               Navigator.pop(context);
 
+                                              data.startLoadingScreenOnMainAppScreen();
                                               // not using provider as document id is never changed
                                               deletePasswordSuccessful = await data
                                                   .deletePasswordFieldFromDatabase(
                                                       data.passwords[index]
                                                           ['documentId']);
+
+                                              data.stopLoadingScreenOnMainAppScreen();
 
                                               if (!deletePasswordSuccessful)
                                                 Functions.showSnackBar(context,

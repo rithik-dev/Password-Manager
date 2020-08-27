@@ -8,11 +8,10 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ShowPasswordDetails extends StatelessWidget {
-  Map<String,dynamic> _fields;
+  Map<String, dynamic> _fields;
 
   @override
   Widget build(BuildContext context) {
-
     _fields = Provider.of<ProviderClass>(context).showPasswordFields;
 
     List<String> tempKeys = _fields.keys.toList();
@@ -21,16 +20,11 @@ class ShowPasswordDetails extends StatelessWidget {
     final List<String> keys = Functions.reorderTextFieldsDisplayOrder(tempKeys);
 
     return Consumer<ProviderClass>(
-      builder: (context,data,child) {
+      builder: (context, data, child) {
         return Scaffold(
           body: Container(
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-            decoration: BoxDecoration(
-              color: kSecondaryColor,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(30.0),
-                  topLeft: Radius.circular(30.0)),
-            ),
+            color: kSecondaryColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,8 +33,10 @@ class ShowPasswordDetails extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Expanded(
-                      child: Text("  " + data.showPasswordFields['Title'].toUpperCase(),
-                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      child: Text(
+                          "  " + data.showPasswordFields['Title'].toUpperCase(),
+                          style: TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.bold)),
                     ),
                     Row(
                       children: <Widget>[
@@ -57,23 +53,36 @@ class ShowPasswordDetails extends StatelessWidget {
                             return IconButton(
                               icon: Icon(Icons.delete, size: 30.0),
                               onPressed: () async {
-                                Functions.showAlertDialog(context, MyAlertDialog(
-                                  text: "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                  content: "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                  continueButtonOnPressed:  () async {
-                                    bool deletePasswordSuccessful;
+                                Functions.showAlertDialog(
+                                    context,
+                                    MyAlertDialog(
+                                      text:
+                                      "Delete ${data.showPasswordFields['Title']
+                                          .toUpperCase()} ?",
+                                      content:
+                                      "Are you sure you want to delete ${data
+                                          .showPasswordFields['Title']
+                                          .toUpperCase()} ?",
+                                      continueButtonOnPressed: () async {
+                                        bool deletePasswordSuccessful;
 
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
 
-                                    // not using provider as document id is never changed
-                                    deletePasswordSuccessful = await data.deletePasswordFieldFromDatabase(_fields['documentId']);
+                                        data
+                                            .startLoadingScreenOnMainAppScreen();
 
-                                    if (!deletePasswordSuccessful)
-                                      Functions.showSnackBar(context, 'Error Deleting Password !');
-                                    
-                                  },
-                                ));
+                                        // not using provider as document id is never changed
+                                        deletePasswordSuccessful = await data
+                                            .deletePasswordFieldFromDatabase(
+                                            _fields['documentId']);
+
+                                        data.stopLoadingScreenOnMainAppScreen();
+                                        if (deletePasswordSuccessful)
+                                          Functions.showSnackBar(context,
+                                              'Error Deleting Password !');
+                                      },
+                                    ));
                               },
                             );
                           },
@@ -92,13 +101,19 @@ class ShowPasswordDetails extends StatelessWidget {
                           builder: (context) {
                             return ListTile(
                               title: Text(keys[index]),
-                              subtitle: Text(data.showPasswordFields[keys[index]]),
-                              isThreeLine: data.showPasswordFields[keys[index]].length > 30,
+                              subtitle:
+                              Text(data.showPasswordFields[keys[index]]),
+                              isThreeLine:
+                              data.showPasswordFields[keys[index]].length >
+                                  30,
                               trailing: IconButton(
                                 icon: Icon(Icons.content_copy),
                                 onPressed: () {
-                                  Functions.copyToClipboard(data.showPasswordFields[keys[index]]);
-                                  Functions.showSnackBar(context, "${keys[index]} Copied : ${data.showPasswordFields['Title']}");
+                                  Functions.copyToClipboard(
+                                      data.showPasswordFields[keys[index]]);
+                                  Functions.showSnackBar(context,
+                                      "${keys[index]} Copied : ${data
+                                          .showPasswordFields['Title']}");
                                 },
                               ),
                             );

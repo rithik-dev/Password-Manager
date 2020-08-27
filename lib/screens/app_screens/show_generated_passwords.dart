@@ -12,11 +12,7 @@ class ShowGeneratedPasswordsScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-        decoration: BoxDecoration(
-          color: kSecondaryColor,
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(30.0), topLeft: Radius.circular(30.0)),
-        ),
+        color: kSecondaryColor,
         child: ListView.builder(
           itemBuilder: (context, index) {
             return Builder(

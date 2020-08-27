@@ -273,18 +273,31 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deleteCurrentUser() async{
-    try{
+  static Future<bool> deleteCurrentUser(String password) async {
+    try {
       final FirebaseUser user = await getCurrentUser();
+
+      AuthCredential credential = EmailAuthProvider.getCredential(
+          email: user.email, password: password);
+      await user.reauthenticateWithCredential(credential);
+
       if (user != null) {
         // first deleting passwords
-        final passwordsSnapshot =
-          await _firestore.collection("data").document(user.uid).collection("passwords").getDocuments();
+        final passwordsSnapshot = await _firestore
+            .collection("data")
+            .document(user.uid)
+            .collection("passwords")
+            .getDocuments();
 
-        for(var passwordField in passwordsSnapshot.documents)
-          await _firestore.collection("data").document(user.uid).collection("passwords").document(passwordField.data['documentId']).delete();
+        for (var passwordField in passwordsSnapshot.documents)
+          await _firestore
+              .collection("data")
+              .document(user.uid)
+              .collection("passwords")
+              .document(passwordField.data['documentId'])
+              .delete();
 
-          // deleting users collection
+        // deleting users document
         await _firestore.collection("data").document(user.uid).delete();
         // deleting user
         await user.delete();
