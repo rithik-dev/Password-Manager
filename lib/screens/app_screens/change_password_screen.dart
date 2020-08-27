@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
@@ -17,8 +18,11 @@ class ChangePasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
+      progressIndicator: SpinKitChasingDots(
+        color: Theme.of(context).accentColor,
+      ),
       child: Consumer<ProviderClass>(
-        builder: (context,data,child) {
+        builder: (context, data, child) {
           return Scaffold(
             appBar: AppBar(
               title: Text("Change Password"),

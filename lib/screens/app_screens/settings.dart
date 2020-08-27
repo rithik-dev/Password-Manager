@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
@@ -23,7 +24,11 @@ class Settings extends StatelessWidget {
           child: Scaffold(
             // waiting to load the name of the user
             body: (data.name == null)
-                ? Center(child: CircularProgressIndicator())
+                ? Center(
+                    child: SpinKitChasingDots(
+                      color: Theme.of(context).accentColor,
+                    ),
+                  )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

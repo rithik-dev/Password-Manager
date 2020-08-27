@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
@@ -34,7 +35,9 @@ class _InitialScreenHandlerState extends State<InitialScreenHandler> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: SpinKitChasingDots(
+          color: Theme.of(context).accentColor,
+        ),
       ),
     );
   }

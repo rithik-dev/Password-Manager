@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
@@ -42,6 +43,9 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
     return Consumer<ProviderClass>(
       builder: (context, data, child) {
         return ModalProgressHUD(
+          progressIndicator: SpinKitChasingDots(
+            color: Theme.of(context).accentColor,
+          ),
           inAsyncCall: data.showLoadingScreen,
           child: Scaffold(
             appBar: AppBar(

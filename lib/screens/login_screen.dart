@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
@@ -21,6 +22,9 @@ class LoginScreen extends StatelessWidget {
     return Consumer<ProviderClass>(
       builder: (context, data, child) {
         return ModalProgressHUD(
+          progressIndicator: SpinKitChasingDots(
+            color: Theme.of(context).accentColor,
+          ),
           inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
           child: SafeArea(
             child: Scaffold(
@@ -74,8 +78,8 @@ class LoginScreen extends StatelessWidget {
 
                                   try {
                                     loginSuccessful =
-                                        await FirebaseUtils.loginUser(
-                                            _email, _password);
+                                    await FirebaseUtils.loginUser(
+                                        _email, _password);
 
                                     if (loginSuccessful) {
                                       await data.setUserLoggedIn();
@@ -99,9 +103,9 @@ class LoginScreen extends StatelessWidget {
                                                 data.startLoadingScreen();
 
                                                 final bool success =
-                                                    await FirebaseUtils
-                                                        .resendEmailVerificationLink(
-                                                            _email, _password);
+                                                await FirebaseUtils
+                                                    .resendEmailVerificationLink(
+                                                    _email, _password);
                                                 if (success)
                                                   Functions.showSnackBar(
                                                       context,
@@ -153,9 +157,9 @@ class LoginScreen extends StatelessWidget {
 
                                         try {
                                           bool passwordResetEmailSent =
-                                              await FirebaseUtils
-                                                  .sendPasswordResetEmail(
-                                                      _email);
+                                          await FirebaseUtils
+                                              .sendPasswordResetEmail(
+                                              _email);
                                           if (passwordResetEmailSent)
                                             Functions.showSnackBar(context,
                                                 "Password Reset Email Sent !");

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
@@ -17,7 +18,9 @@ class MyVault extends StatelessWidget {
           child: Consumer<ProviderClass>(
             builder: (context, data, child) {
               return (data.passwords == null)
-                  ? CircularProgressIndicator()
+                  ? SpinKitChasingDots(
+                      color: Theme.of(context).accentColor,
+                    )
                   : (data.passwords.length == 0)
                       ? Center(
                           child: Padding(

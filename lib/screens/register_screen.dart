@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
@@ -20,6 +21,9 @@ class RegisterScreen extends StatelessWidget {
     return Consumer<ProviderClass>(
       builder: (context, data, child) {
         return ModalProgressHUD(
+          progressIndicator: SpinKitChasingDots(
+            color: Theme.of(context).accentColor,
+          ),
           inAsyncCall: data.showLoadingScreen,
           child: SafeArea(
             child: Scaffold(
@@ -101,9 +105,9 @@ class RegisterScreen extends StatelessWidget {
 
                                 try {
                                   registerSuccessful =
-                                      await FirebaseUtils.registerUser(
-                                          _email, _password,
-                                          fullName: "$_firstName $_lastName");
+                                  await FirebaseUtils.registerUser(
+                                      _email, _password,
+                                      fullName: "$_firstName $_lastName");
 
                                   if (registerSuccessful) {
                                     Functions.showSnackBar(

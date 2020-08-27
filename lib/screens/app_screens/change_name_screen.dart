@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
@@ -13,14 +14,14 @@ class ChangeNameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
+      progressIndicator: SpinKitChasingDots(
+        color: Theme.of(context).accentColor,
+      ),
       inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
       child: Consumer<ProviderClass>(
-        builder: (context,data,child) {
+        builder: (context, data, child) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text("Change Name"),
-              centerTitle: true
-            ),
+            appBar: AppBar(title: Text("Change Name"), centerTitle: true),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
               child: ListView(
@@ -41,7 +42,6 @@ class ChangeNameScreen extends StatelessWidget {
                       return RoundedButton(
                         text: "Change Name",
                         onPressed: () async {
-
                           data.startLoadingScreen();
 
                           name = Functions.capitalizeFirstLetter(name);
