@@ -20,7 +20,7 @@ class ProviderClass extends ChangeNotifier {
   bool get userLoggedIn => this._userLoggedIn;
   FirebaseUser get loggedInUser => this._loggedInUser;
 
-  Future<void> setUserLoggedIn() async {
+  Future<bool> setUserLoggedIn() async {
     try {
       final FirebaseUser user = await FirebaseUtils.getCurrentUser();
       this._loggedInUser = user;
@@ -33,6 +33,7 @@ class ProviderClass extends ChangeNotifier {
       this._userLoggedIn = false;
     }
     notifyListeners();
+    return this._userLoggedIn;
   }
 
   void setShowPasswordFields(Map<String,dynamic> fields) {

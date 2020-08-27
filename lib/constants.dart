@@ -16,7 +16,7 @@ const TextStyle kCardContentTextStyle = TextStyle(
 );
 
 const kTextFieldDecoration = InputDecoration(
-  hintText: 'Enter a value',
+  hintText: 'Enter Value',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(22.0)),

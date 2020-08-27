@@ -6,6 +6,7 @@ import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ShowPasswordDetails extends StatelessWidget {
   Map<String,dynamic> _fields;
 

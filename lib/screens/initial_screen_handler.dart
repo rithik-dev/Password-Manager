@@ -5,34 +5,37 @@ import 'package:password_manager/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class InitialScreenHandler extends StatefulWidget {
+  static const id = 'initial_screen_handler';
+
   @override
   _InitialScreenHandlerState createState() => _InitialScreenHandlerState();
 }
 
 class _InitialScreenHandlerState extends State<InitialScreenHandler> {
-  Widget getInitialScreen(){
-    if (Provider.of<ProviderClass>(context).userLoggedIn == null)
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
-    else if (Provider.of<ProviderClass>(context).userLoggedIn == true) {
+  void setInitialScreen() async {
+    bool loggedIn = await Provider.of<ProviderClass>(context, listen: false)
+        .setUserLoggedIn();
+
+    if (loggedIn) {
       Provider.of<ProviderClass>(context, listen: false).getAppData();
-      return AppScreen();
+      Navigator.pushReplacementNamed(context, AppScreen.id);
     } else
-      return LoginScreen();
+      Navigator.pushReplacementNamed(context, LoginScreen.id);
   }
 
   @override
   void initState() {
     super.initState();
 
-    setUserLoggedIn();
-  }
-
-  void setUserLoggedIn() async {
-    await Provider.of<ProviderClass>(context, listen: false).setUserLoggedIn();
+    setInitialScreen();
   }
 
   @override
   Widget build(BuildContext context) {
-    return getInitialScreen();
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

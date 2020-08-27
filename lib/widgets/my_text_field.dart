@@ -9,6 +9,7 @@ class MyTextField extends StatefulWidget {
   final bool showTrailingWidget;
   final bool autofocus;
   final TextEditingController controller;
+  final Function validator;
 
   MyTextField(
       {@required this.labelText,
@@ -17,7 +18,8 @@ class MyTextField extends StatefulWidget {
       this.showTrailingWidget = true,
       this.defaultValue,
       this.autofocus = false,
-      this.controller});
+      this.controller,
+      this.validator});
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
@@ -75,18 +77,18 @@ class _MyTextFieldState extends State<MyTextField> {
     return ListTile(
       title: TextFormField(
         controller: this.widget.controller,
+        validator: this.widget.validator,
         initialValue: this.widget.defaultValue,
         textAlign: TextAlign.center,
         autofocus: this.widget.autofocus,
         keyboardType:
-            keyboardTypes[this.widget.labelText] ?? TextInputType.text,
+        keyboardTypes[this.widget.labelText] ?? TextInputType.text,
         onChanged: this.widget.onChanged,
         obscureText: (this.widget.labelText == "Password" ||
-                this.widget.labelText == "New Password")
+            this.widget.labelText == "New Password")
             ? !_showPassword
             : false,
         decoration: kTextFieldDecoration.copyWith(
-            border: InputBorder.none,
             hintText: "Enter ${this.widget.labelText}",
             labelText: this.widget.labelText),
       ),
