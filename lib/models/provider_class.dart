@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
 
@@ -87,13 +88,28 @@ class ProviderClass extends ChangeNotifier {
   }
 
   Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
-    bool deletePasswordSuccessful = await FirebaseUtils.deletePasswordFieldFromDatabase(documentId,_loggedInUser);
+    bool deletePasswordSuccessful =
+        await FirebaseUtils.deletePasswordFieldFromDatabase(
+            documentId, _loggedInUser);
 
-    Map<String,dynamic> passwordToDelete = this._passwords.where((element) => element['documentId']==documentId).first;
+    Map<String, dynamic> passwordToDelete = this
+        ._passwords
+        .where((element) => element['documentId'] == documentId)
+        .first;
     this._passwords.remove(passwordToDelete);
 
     notifyListeners();
     return deletePasswordSuccessful;
+  }
+
+  Future<bool> sendPasswordResetEmailForLoggedInUser() async {
+    try {
+      return await FirebaseUtils.sendPasswordResetEmail(
+          this._loggedInUser.email);
+    } catch (e) {
+      print("ERROR WHILE SENDING PASSWORD RESET EMAIL : $e");
+      throw ForgotPasswordException(e.message);
+    }
   }
 
   void setDataToNull() {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
@@ -28,116 +27,134 @@ class Settings extends StatelessWidget {
       builder: (context, data, child) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-          child: RefreshIndicator(
-            backgroundColor: kScaffoldBackgroundColor,
-            onRefresh: () =>
-                Provider.of<ProviderClass>(context, listen: false).getAppData(),
-            child: Scaffold(
-              // waiting to load the name of the user
-              body: (data.name == null)
-                  ? Center(
-                child: SpinKitChasingDots(
-                  color: Theme.of(context).accentColor,
-                ),
-              )
-                  : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: ListView(
-                      children: <Widget>[
-                        SettingsCard(
-                          text: "Change Name",
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, ChangeNameScreen.id);
-                          },
-                        ),
-                        SettingsCard(
-                          text: "Change Password",
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, ChangePasswordScreen.id);
-                          },
-                        ),
-                        SettingsCard(
-                          text: "Delete Account",
-                          onPressed: () async {
-                            Functions.showAlertDialog(
-                                context,
-                                MyAlertDialog(
-                                  text: "Delete Account ?",
-                                        content:
-                                            "Are you sure you want to delete this account ?",
-                                        passwordTextField: Form(
-                                          key: _formKey,
-                                          child: MyTextField(
-                                            labelText: "Password",
-                                            onChanged: (String _password) {
-                                              this.password = _password;
-                                            },
-                                            validator: (String _password) {
-                                              if (_password == null ||
-                                                  _password.trim() == "")
-                                                return "Please Enter Password";
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        continueButtonOnPressed: () async {
-                                          if (_formKey.currentState
-                                              .validate()) {
-                                            try {
-                                              Navigator.pop(context);
-
-                                              data.startLoadingScreenOnMainAppScreen();
-
-                                              bool deleteUserSuccessful =
-                                                  await FirebaseUtils
-                                                      .deleteCurrentUser(
-                                                          password);
-
-                                              if (deleteUserSuccessful) {
-                                                await FirebaseUtils
-                                                    .logoutUser();
-                                                data.setDataToNull();
-                                                Navigator.pushReplacementNamed(
-                                                    context, RegisterScreen.id);
-                                              } else {
-                                                Functions.showSnackBar(context,
-                                                    "Failed to Delete Account. Please Login Again and Try Again !",
-                                                    duration:
-                                                        Duration(seconds: 2));
-                                              }
-                                            } on DeleteUserException catch (e) {
-                                              Functions.showSnackBar(
-                                                  context, e.message,
-                                                  duration:
-                                                      Duration(seconds: 3));
-                                            } finally {
-                                              data.stopLoadingScreenOnMainAppScreen();
-                                            }
-                                          }
-                                  },
-                                ));
-                          },
-                        ),
-                      ],
+          child: Scaffold(
+            // waiting to load the name of the user
+            body: (data.name == null)
+                ? Center(
+                    child: SpinKitChasingDots(
+                      color: Theme.of(context).accentColor,
                     ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView(
+                          children: <Widget>[
+                            SettingsCard(
+                              text: "Change Name",
+                              onPressed: () async {
+                                Navigator.pushNamed(
+                                    context, ChangeNameScreen.id);
+                              },
+                            ),
+                            SettingsCard(
+                              text: "Change Password",
+                              onPressed: () async {
+                                Navigator.pushNamed(
+                                    context, ChangePasswordScreen.id);
+                              },
+                            ),
+                            SettingsCard(
+                              text: "Forgot Password",
+                              onPressed: () async {
+                                data.startLoadingScreenOnMainAppScreen();
+
+                                try {
+                                  bool passwordResetEmailSent = await data
+                                      .sendPasswordResetEmailForLoggedInUser();
+                                  if (passwordResetEmailSent)
+                                    Functions.showSnackBar(
+                                        context, "Password Reset Email Sent !");
+                                  else
+                                    Functions.showSnackBar(context,
+                                        "An Error Occurred While Sending Password Reset Email !");
+                                } on ForgotPasswordException catch (e) {
+                                  Functions.showSnackBar(context, e.message,
+                                      duration: Duration(seconds: 3));
+                                } catch (e) {
+                                  print(
+                                      "FORGOT PASSWORD EXCEPTION ${e.message}");
+                                }
+
+                                data.stopLoadingScreenOnMainAppScreen();
+                              },
+                            ),
+                            SettingsCard(
+                              text: "Delete Account",
+                              onPressed: () async {
+                                Functions.showAlertDialog(
+                                    context,
+                                    MyAlertDialog(
+                                      text: "Delete Account ?",
+                                      content:
+                                          "Are you sure you want to delete this account ?",
+                                      passwordTextField: Form(
+                                        key: _formKey,
+                                        child: MyTextField(
+                                          labelText: "Password",
+                                          autofocus: true,
+                                          onChanged: (String _password) {
+                                            this.password = _password;
+                                          },
+                                          validator: (String _password) {
+                                            if (_password == null ||
+                                                _password.trim() == "")
+                                              return "Please Enter Password";
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      continueButtonOnPressed: () async {
+                                        if (_formKey.currentState.validate()) {
+                                          try {
+                                            Navigator.pop(context);
+
+                                            data.startLoadingScreenOnMainAppScreen();
+
+                                            bool deleteUserSuccessful =
+                                                await FirebaseUtils
+                                                    .deleteCurrentUser(
+                                                        password);
+
+                                            if (deleteUserSuccessful) {
+                                              await FirebaseUtils.logoutUser();
+                                              data.setDataToNull();
+                                              Navigator.pushReplacementNamed(
+                                                  context, RegisterScreen.id);
+                                            } else {
+                                              Functions.showSnackBar(context,
+                                                  "Failed to Delete Account. Please Login Again and Try Again !",
+                                                  duration:
+                                                      Duration(seconds: 2));
+                                            }
+                                          } on DeleteUserException catch (e) {
+                                            Functions.showSnackBar(
+                                                context, e.message,
+                                                duration: Duration(seconds: 3));
+                                          } finally {
+                                            data.stopLoadingScreenOnMainAppScreen();
+                                          }
+                                        }
+                                      },
+                                    ));
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SettingsCard(
+                        text: "Logout  :  ${data.name}",
+                        onPressed: () async {
+                          await FirebaseUtils.logoutUser();
+                          data.setDataToNull();
+                          Navigator.pushReplacementNamed(
+                              context, LoginScreen.id);
+                        },
+                      ),
+                    ],
                   ),
-                  SettingsCard(
-                    text: "Logout  :  ${data.name}",
-                    onPressed: () async {
-                      await FirebaseUtils.logoutUser();
-                      data.setDataToNull();
-                      Navigator.pushReplacementNamed(
-                          context, LoginScreen.id);
-                    },
-                  ),
-                ],
-              ),
-            ),
           ),
         );
       },

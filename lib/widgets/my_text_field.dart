@@ -58,7 +58,7 @@ class _MyTextFieldState extends State<MyTextField> {
       return null;
     else if (labelText == "Custom Field Name")
       return addButton;
-    else if (labelText == "Password" || labelText == "New Password") {
+    else if (labelText.contains("Password")) {
       return IconButton(
         color: Colors.lightBlueAccent,
         icon: _showPassword
@@ -84,10 +84,8 @@ class _MyTextFieldState extends State<MyTextField> {
         keyboardType:
         keyboardTypes[this.widget.labelText] ?? TextInputType.text,
         onChanged: this.widget.onChanged,
-        obscureText: (this.widget.labelText == "Password" ||
-            this.widget.labelText == "New Password")
-            ? !_showPassword
-            : false,
+        obscureText:
+            this.widget.labelText.contains("Password") ? !_showPassword : false,
         decoration: kTextFieldDecoration.copyWith(
             hintText: "Enter ${this.widget.labelText}",
             labelText: this.widget.labelText),

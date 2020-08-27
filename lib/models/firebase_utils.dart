@@ -85,12 +85,11 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> sendPasswordResetEmail(String email) async{
-    try{
+  static Future<bool> sendPasswordResetEmail(String email) async {
+    try {
       await _auth.sendPasswordResetEmail(email: email);
       return true;
-    }
-    catch(e) {
+    } catch (e) {
       print("ERROR WHILE SENDING PASSWORD RESET EMAIL : $e");
       throw ForgotPasswordException(e.message);
     }
@@ -260,11 +259,16 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> changeCurrentUserPassword(String password) async{
-    if(password == null) return true;
-    try{
+  static Future<bool> changeCurrentUserPassword(String oldPassword,
+      String newPassword) async {
+    try {
       final FirebaseUser user = await getCurrentUser();
-      await user.updatePassword(password);
+
+      AuthCredential credential = EmailAuthProvider.getCredential(
+          email: user.email, password: oldPassword);
+      await user.reauthenticateWithCredential(credential);
+
+      await user.updatePassword(newPassword);
       return true;
     }
     catch(e){
