@@ -4,9 +4,13 @@ import 'package:flutter/services.dart';
 class Functions {
   Functions._();
 
-  static void showSnackBar(BuildContext context, String text, {Duration duration,SnackBarAction action}) {
-    if(text == null) return;
-    final snackBar = SnackBar(content: Text(text), duration: duration ?? Duration(seconds: 1),action: action);
+  static void showSnackBar(BuildContext context, String text,
+      {Duration duration, SnackBarAction action}) {
+    if (text == null) return;
+    final snackBar = SnackBar(
+        content: Text(text),
+        duration: duration ?? Duration(seconds: 1),
+        action: action);
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
@@ -14,8 +18,12 @@ class Functions {
     Clipboard.setData(ClipboardData(text: data));
   }
 
+  static void popKeyboard(BuildContext context) {
+    FocusScope.of(context).unfocus();
+  }
+
   static String capitalizeFirstLetter(String str) {
-    if(str == null) return null;
+    if (str == null) return null;
     String _temp, finalString = "";
     str = str.trim().toLowerCase();
     List<String> strings = str.split(" ");

@@ -78,20 +78,25 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                         } else {
                           bool editPasswordSuccessful;
 
-                          if(newFields['Password']==null || newFields['Password']=="")
+                          if (newFields['Password'] == null ||
+                              newFields['Password'] == "")
                             newFields.remove('Password');
 
                           data.setShowPasswordFields(newFields);
+                          Functions.popKeyboard(context);
 
                           data.startLoadingScreen();
 
-                          newFields['Title'] = Functions.capitalizeFirstLetter(newFields['Title']);
+                          newFields['Title'] = Functions.capitalizeFirstLetter(
+                              newFields['Title']);
 
-                          editPasswordSuccessful = await data.editPasswordFieldInDatabase(newFields);
+                          editPasswordSuccessful =
+                              await data.editPasswordFieldInDatabase(newFields);
                           if (editPasswordSuccessful)
                             Navigator.pop(context);
                           else {
-                            Functions.showSnackBar(context, 'Error editing password !');
+                            Functions.showSnackBar(
+                                context, 'Error editing password !');
                           }
 
                           data.stopLoadingScreen();

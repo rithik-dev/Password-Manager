@@ -22,9 +22,9 @@ class ShowPasswordDetails extends StatelessWidget {
     return Consumer<ProviderClass>(
       builder: (context, data, child) {
         return Scaffold(
-          body: Container(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-            color: kSecondaryColor,
+          backgroundColor: kSecondaryColor,
+          body: Padding(
+            padding: const EdgeInsets.all(15.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,10 +34,14 @@ class ShowPasswordDetails extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                          "  " + data.showPasswordFields['Title'].toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold)),
+                        data.showPasswordFields['Title'].toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
+                    SizedBox(width: 10.0),
                     Row(
                       children: <Widget>[
                         IconButton(
@@ -57,28 +61,24 @@ class ShowPasswordDetails extends StatelessWidget {
                                     context,
                                     MyAlertDialog(
                                       text:
-                                      "Delete ${data.showPasswordFields['Title']
-                                          .toUpperCase()} ?",
+                                          "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
                                       content:
-                                      "Are you sure you want to delete ${data
-                                          .showPasswordFields['Title']
-                                          .toUpperCase()} ?",
+                                          "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
                                       continueButtonOnPressed: () async {
                                         bool deletePasswordSuccessful;
 
                                         Navigator.pop(context);
                                         Navigator.pop(context);
 
-                                        data
-                                            .startLoadingScreenOnMainAppScreen();
+                                        data.startLoadingScreenOnMainAppScreen();
 
                                         // not using provider as document id is never changed
                                         deletePasswordSuccessful = await data
                                             .deletePasswordFieldFromDatabase(
-                                            _fields['documentId']);
+                                                _fields['documentId']);
 
                                         data.stopLoadingScreenOnMainAppScreen();
-                                        if (deletePasswordSuccessful)
+                                        if (!deletePasswordSuccessful)
                                           Functions.showSnackBar(context,
                                               'Error Deleting Password !');
                                       },

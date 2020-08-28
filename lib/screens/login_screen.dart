@@ -72,14 +72,15 @@ class LoginScreen extends StatelessWidget {
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
                                 {
+                                  Functions.popKeyboard(context);
                                   data.startLoadingScreen();
 
                                   bool loginSuccessful;
 
                                   try {
                                     loginSuccessful =
-                                    await FirebaseUtils.loginUser(
-                                        _email, _password);
+                                        await FirebaseUtils.loginUser(
+                                            _email, _password);
 
                                     if (loginSuccessful) {
                                       await data.setUserLoggedIn();

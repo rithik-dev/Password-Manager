@@ -42,17 +42,17 @@ class _AppScreenState extends State<AppScreen> {
                         "${Provider.of<ProviderClass>(context).name}'s Vault")
                 : Text(titles[_selectedIndexBottomNavBar]),
             centerTitle: true,
-            leading: Container(),
+            automaticallyImplyLeading: false,
             // if user is on vault page , show + icon on app bar to add a new password
             actions: (_selectedIndexBottomNavBar == 0)
                 ? <Widget>[
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.pushNamed(context, AddPasswordScreen.id);
-                },
-              )
-            ]
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AddPasswordScreen.id);
+                      },
+                    )
+                  ]
                 : null,
           ),
           body: tabs[_selectedIndexBottomNavBar],

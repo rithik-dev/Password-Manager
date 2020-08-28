@@ -99,15 +99,16 @@ class RegisterScreen extends StatelessWidget {
                             text: "Register",
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
+                                Functions.popKeyboard(context);
                                 data.startLoadingScreen();
 
                                 bool registerSuccessful;
 
                                 try {
                                   registerSuccessful =
-                                  await FirebaseUtils.registerUser(
-                                      _email, _password,
-                                      fullName: "$_firstName $_lastName");
+                                      await FirebaseUtils.registerUser(
+                                          _email, _password,
+                                          fullName: "$_firstName $_lastName");
 
                                   if (registerSuccessful) {
                                     Functions.showSnackBar(

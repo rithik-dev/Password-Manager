@@ -7,6 +7,7 @@ import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ChangeNameScreen extends StatelessWidget {
   static const id = 'change_name_screen';
   String name;
@@ -49,7 +50,9 @@ class ChangeNameScreen extends StatelessWidget {
                           if(name == null || name == "")
                             Functions.showSnackBar(context, "Please Enter New Name !");
                           else {
-                            final bool changeSuccessful = await data.changeCurrentUserName(name);
+                            Functions.popKeyboard(context);
+                            final bool changeSuccessful =
+                                await data.changeCurrentUserName(name);
 
                             if (changeSuccessful) Navigator.pop(context);
                           }

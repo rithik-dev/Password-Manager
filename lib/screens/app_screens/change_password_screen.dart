@@ -50,6 +50,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         oldPassword = value;
                       },
                     ),
+                    SizedBox(height: 10.0),
                     MyTextField(
                       labelText: "New Password",
                       validator: (String _newPass) {
@@ -68,19 +69,21 @@ class ChangePasswordScreen extends StatelessWidget {
                           text: "Change Password",
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
+                              Functions.popKeyboard(context);
                               data.startLoadingScreen();
 
                               try {
                                 final bool changeSuccessful =
-                                await FirebaseUtils
-                                    .changeCurrentUserPassword(
-                                    oldPassword, newPassword);
+                                    await FirebaseUtils
+                                        .changeCurrentUserPassword(
+                                            oldPassword, newPassword);
 
                                 if (changeSuccessful) {
                                   Navigator.pop(context);
-                                  FirebaseUtils.logoutUser();
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(context, LoginScreen.id);
+                                  await FirebaseUtils.logoutUser();
+                                  data.setDataToNull();
+                                  Navigator.pushReplacementNamed(
+                                      context, LoginScreen.id);
                                 } else
                                   Functions.showSnackBar(context,
                                       "An Error Occurred While Changing Password");
@@ -88,7 +91,6 @@ class ChangePasswordScreen extends StatelessWidget {
                                 Functions.showSnackBar(context, e.message,
                                     duration: Duration(seconds: 3));
                               }
-
                               data.stopLoadingScreen();
                             }
                           },

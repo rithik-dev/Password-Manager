@@ -18,8 +18,8 @@ class AddPasswordScreen extends StatefulWidget {
 }
 
 class _AddPasswordScreenState extends State<AddPasswordScreen> {
-  List<String> textFieldStrings = ['Title', 'Password'];
-  String dropDownValue = 'Email';
+  List<String> textFieldStrings = ['Title', 'Email', 'Password', 'Username'];
+  String dropDownValue = 'Phone';
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
   final TextEditingController _controller = TextEditingController();
 
@@ -59,19 +59,25 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                       icon: Icon(Icons.add),
                       onPressed: () async {
                         // title is mandatory field
-                        if (fields['Title'] == null || fields['Title'].trim() == "") {
-                          Functions.showSnackBar(context, 'Title is a mandatory field !');
+                        if (fields['Title'] == null ||
+                            fields['Title'].trim() == "") {
+                          Functions.showSnackBar(
+                              context, 'Title is a mandatory field !');
                         } else {
                           bool addPasswordSuccessful;
+                          Functions.popKeyboard(context);
 
                           data.startLoadingScreen();
 
-                          fields['Title'] = Functions.capitalizeFirstLetter(fields['Title']);
-                          addPasswordSuccessful = await data.addPasswordFieldToDatabase(fields);
+                          fields['Title'] =
+                              Functions.capitalizeFirstLetter(fields['Title']);
+                          addPasswordSuccessful =
+                              await data.addPasswordFieldToDatabase(fields);
                           if (addPasswordSuccessful)
                             Navigator.pop(context);
                           else {
-                            Functions.showSnackBar(context, 'Error adding new password !');
+                            Functions.showSnackBar(
+                                context, 'Error adding new password !');
                           }
                           data.stopLoadingScreen();
                         }
@@ -82,7 +88,8 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
               ],
             ),
             body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+              padding:
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
                 children: <Widget>[
                   ColumnBuilder(
@@ -114,7 +121,8 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                           dropDownValue = newValue;
                         });
                       },
-                      items: dropDownFields.map<DropdownMenuItem<String>>((String value) {
+                      items: dropDownFields
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -139,7 +147,8 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                       customFieldKey = value;
                     },
                     trailingFunction: () {
-                      customFieldKey = Functions.capitalizeFirstLetter(customFieldKey);
+                      customFieldKey =
+                          Functions.capitalizeFirstLetter(customFieldKey);
 
                       if (!textFieldStrings.contains(customFieldKey) &&
                           customFieldKey != "" &&

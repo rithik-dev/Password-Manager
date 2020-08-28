@@ -10,9 +10,8 @@ class ShowGeneratedPasswordsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-        color: kSecondaryColor,
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: ListView.builder(
           itemBuilder: (context, index) {
             return Builder(
