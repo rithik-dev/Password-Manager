@@ -161,8 +161,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> resendEmailVerificationLink(String email,
-      String password) async {
+  static Future<bool> resendEmailVerificationLink(
+      String email, String password) async {
     try {
       final user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -374,10 +374,11 @@ class FirebaseUtils {
 
       if (user != null) {
         // deleting image from storage
-        StorageReference photoRef =
-        await _storage.getReferenceFromUrl(oldImageURL);
-        await photoRef.delete();
-
+        if (oldImageURL != kDefaultProfilePictureURL) {
+          StorageReference photoRef =
+          await _storage.getReferenceFromUrl(oldImageURL);
+          await photoRef.delete();
+        }
 
         // deleting passwords
         final passwordsSnapshot = await _firestore
