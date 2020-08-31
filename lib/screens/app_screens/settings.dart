@@ -6,6 +6,7 @@ import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/app_screens/change_name_screen.dart';
 import 'package:password_manager/screens/app_screens/change_password_screen.dart';
+import 'package:password_manager/screens/app_screens/edit_profile_picture_screen.dart';
 import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
@@ -40,7 +41,29 @@ class Settings extends StatelessWidget {
 //                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      ProfilePicture(data.profilePicURL, radius: 50),
+                      Stack(
+                        children: [
+                          ProfilePicture(data.profilePicURL, radius: 50),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.black,
+                              child: IconButton(
+                                iconSize: 15,
+                                color: Colors.white,
+                                icon: Icon(Icons.edit),
+                                onPressed: () => showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) =>
+                                      EditProfilePictureScreen(),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                       SizedBox(height: 20),
                       Expanded(
                         child: ListView(

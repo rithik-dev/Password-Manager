@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:password_manager/models/exceptions.dart';
@@ -23,8 +25,11 @@ class ProviderClass extends ChangeNotifier {
   String get profilePicURL => this._profilePicURL;
 
   Map<String, dynamic> get showPasswordFields => this._showPasswordFields;
+
   List<Map<String, dynamic>> get passwords => this._passwords;
+
   bool get userLoggedIn => this._userLoggedIn;
+
   FirebaseUser get loggedInUser => this._loggedInUser;
 
   Future<bool> setUserLoggedIn() async {
@@ -43,48 +48,53 @@ class ProviderClass extends ChangeNotifier {
     return this._userLoggedIn;
   }
 
-  void setShowPasswordFields(Map<String,dynamic> fields) {
+  void setShowPasswordFields(Map<String, dynamic> fields) {
     this._showPasswordFields = fields;
     notifyListeners();
   }
 
-  Future<bool> changeCurrentUserName(String name) async{
-    if(name == null) return true;
-    final bool changeNameSuccessful = await FirebaseUtils.changeCurrentUserName(name,_loggedInUser);
-    if(changeNameSuccessful) {
+  Future<bool> changeCurrentUserName(String name) async {
+    if (name == null) return true;
+    final bool changeNameSuccessful =
+        await FirebaseUtils.changeCurrentUserName(name, _loggedInUser);
+    if (changeNameSuccessful) {
       this._name = name;
       notifyListeners();
       return true;
-    }
-    else return false;
+    } else
+      return false;
   }
 
   Future<bool> addPasswordFieldToDatabase(Map<String, dynamic> fields) async {
-
     fields = Functions.removeEmptyValuesFromMap(fields);
 
-    String docID = await FirebaseUtils.addPasswordFieldToDatabase(fields,_loggedInUser,_key);
+    String docID = await FirebaseUtils.addPasswordFieldToDatabase(
+        fields, _loggedInUser, _key);
 
     fields['documentId'] = docID;
 
     this._passwords.add(fields);
-    this._passwords.sort((a,b) {
+    this._passwords.sort((a, b) {
       return a['Title'].compareTo(b['Title']);
     });
 
     notifyListeners();
-    if(docID != null) return true;
-    else return false;
+    if (docID != null)
+      return true;
+    else
+      return false;
   }
 
-  Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields) async {
-
+  Future<bool> editPasswordFieldInDatabase(
+      Map<String, dynamic> newFields) async {
     newFields = Functions.removeEmptyValuesFromMap(newFields);
 
-    bool editPasswordSuccessful = await FirebaseUtils.editPasswordFieldInDatabase(newFields,_loggedInUser,_key);
+    bool editPasswordSuccessful =
+        await FirebaseUtils.editPasswordFieldInDatabase(
+            newFields, _loggedInUser, _key);
 
-    for(int index = 0;index<this._passwords.length;index++) {
-      if(this._passwords[index]['documentId'] == newFields['documentId']) {
+    for (int index = 0; index < this._passwords.length; index++) {
+      if (this._passwords[index]['documentId'] == newFields['documentId']) {
         this._passwords[index] = newFields;
       }
     }
@@ -95,8 +105,8 @@ class ProviderClass extends ChangeNotifier {
 
   Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
     bool deletePasswordSuccessful =
-        await FirebaseUtils.deletePasswordFieldFromDatabase(
-            documentId, _loggedInUser);
+    await FirebaseUtils.deletePasswordFieldFromDatabase(
+        documentId, _loggedInUser);
 
     Map<String, dynamic> passwordToDelete = this
         ._passwords
@@ -118,6 +128,16 @@ class ProviderClass extends ChangeNotifier {
     }
   }
 
+  Future<void> updateProfilePicture({File newImage}) async {
+    String newProfilePictureURL = await FirebaseUtils.updateProfilePicture(
+      userId: this._loggedInUser.uid,
+      oldImageURL: this._profilePicURL,
+      newImage: newImage,
+    );
+    this._profilePicURL = newProfilePictureURL;
+    notifyListeners();
+  }
+
   void setDataToNull() {
     this._name = null;
     this._passwords = null;
@@ -131,7 +151,7 @@ class ProviderClass extends ChangeNotifier {
 
   Future<void> getAppData() async {
     final Map<String, dynamic> appData =
-        await FirebaseUtils.getAppData(_loggedInUser);
+    await FirebaseUtils.getAppData(_loggedInUser);
     this._name = appData['name'];
     this._passwords = appData['passwords'];
     this._key = appData['key'];

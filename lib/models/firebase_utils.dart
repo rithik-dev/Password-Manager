@@ -22,14 +22,38 @@ class FirebaseUtils {
       FirebaseStorage(storageBucket: 'gs://password-manager-2083b.appspot.com');
 
   static Future<String> uploadFile(String userId, File image) async {
-    StorageUploadTask uploadTask =
-        _storage.ref().child('Profile Pictures/$userId.png').putFile(image);
-    await uploadTask.onComplete;
-    String fileURL = await _storage
-        .ref()
-        .child('Profile Pictures/$userId.png')
-        .getDownloadURL();
-    return fileURL;
+    try {
+      StorageUploadTask uploadTask =
+          _storage.ref().child('Profile Pictures/$userId.png').putFile(image);
+      await uploadTask.onComplete;
+      String fileURL = await _storage
+          .ref()
+          .child('Profile Pictures/$userId.png')
+          .getDownloadURL();
+      return fileURL;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  static Future<String> updateProfilePicture(
+      {String userId, String oldImageURL, File newImage}) async {
+    try {
+      StorageReference photoRef =
+          await _storage.getReferenceFromUrl(oldImageURL);
+      await photoRef.delete();
+
+      String newFileURL = await uploadFile(userId, newImage);
+      await _firestore.collection("data").document(userId).updateData({
+        'profilePicURL': newFileURL,
+      });
+
+      return newFileURL;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
   }
 
   static Future<FirebaseUser> getCurrentUser() async {
@@ -155,6 +179,7 @@ class FirebaseUtils {
           "key": _key,
           "profilePicURL": profilePicURL,
         });
+        await image.delete();
         return true;
       } else
         return false;
