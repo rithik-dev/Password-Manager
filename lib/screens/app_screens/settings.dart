@@ -142,7 +142,9 @@ class Settings extends StatelessWidget {
                                             bool deleteUserSuccessful =
                                                 await FirebaseUtils
                                                     .deleteCurrentUser(
-                                                        password);
+                                              oldImageURL: data.profilePicURL,
+                                              password: password,
+                                            );
 
                                             if (deleteUserSuccessful) {
                                               await FirebaseUtils.logoutUser();

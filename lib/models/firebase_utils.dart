@@ -61,7 +61,7 @@ class FirebaseUtils {
     try {
       if (oldImageURL != kDefaultProfilePictureURL) {
         StorageReference photoRef =
-        await _storage.getReferenceFromUrl(oldImageURL);
+            await _storage.getReferenceFromUrl(oldImageURL);
         await photoRef.delete();
 
         await _firestore.collection("data").document(userId).updateData({
@@ -193,12 +193,17 @@ class FirebaseUtils {
         final String _key = await _cryptor.generateRandomKey();
 
         // creating document for new user
-        _firestore.collection("data").document(user.user.uid).setData({
-          "fullName": fullName,
-          "key": _key,
-          "profilePicURL": profilePicURL,
-        });
-        await image.delete();
+        if (profilePicURL == kDefaultProfilePictureURL)
+          await _firestore.collection("data").document(user.user.uid).setData({
+            "fullName": fullName,
+            "key": _key,
+          });
+        else
+          await _firestore.collection("data").document(user.user.uid).setData({
+            "fullName": fullName,
+            "key": _key,
+            "profilePicURL": profilePicURL,
+          });
         return true;
       } else
         return false;
@@ -358,7 +363,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deleteCurrentUser(String password) async {
+  static Future<bool> deleteCurrentUser(
+      {String oldImageURL, String password}) async {
     try {
       final FirebaseUser user = await getCurrentUser();
 
@@ -367,7 +373,13 @@ class FirebaseUtils {
       await user.reauthenticateWithCredential(credential);
 
       if (user != null) {
-        // first deleting passwords
+        // deleting image from storage
+        StorageReference photoRef =
+        await _storage.getReferenceFromUrl(oldImageURL);
+        await photoRef.delete();
+
+
+        // deleting passwords
         final passwordsSnapshot = await _firestore
             .collection("data")
             .document(user.uid)
