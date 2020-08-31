@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/widgets/profile_picture.dart';
@@ -118,13 +119,22 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
                     },
                   ),
                   SizedBox(height: 10.0),
-                  RoundedButton(
-                    text: "Remove Picture",
-                    onPressed: () async {
-                      data.startLoadingScreen();
-                      await data.removeProfilePicture();
-                      Navigator.pop(context);
-                      data.stopLoadingScreen();
+                  Builder(
+                    builder: (context) {
+                      return RoundedButton(
+                        text: "Remove Picture",
+                        onPressed: () async {
+                          if (data.profilePicURL != kDefaultProfilePictureURL) {
+                            data.startLoadingScreen();
+                            await data.removeProfilePicture();
+                            Navigator.pop(context);
+                            data.stopLoadingScreen();
+                          } else {
+                            Functions.showSnackBar(context,
+                                "Profile picture is already removed !");
+                          }
+                        },
+                      );
                     },
                   ),
                   SizedBox(height: 30.0),

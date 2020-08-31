@@ -38,9 +38,11 @@ class FirebaseUtils {
   static Future<String> updateProfilePicture(
       {String userId, String oldImageURL, File newImage}) async {
     try {
-      StorageReference photoRef =
-          await _storage.getReferenceFromUrl(oldImageURL);
-      await photoRef.delete();
+      if (oldImageURL != kDefaultProfilePictureURL) {
+        StorageReference photoRef =
+            await _storage.getReferenceFromUrl(oldImageURL);
+        await photoRef.delete();
+      }
 
       String newFileURL = await uploadFile(userId, newImage);
       await _firestore.collection("data").document(userId).updateData({
@@ -57,13 +59,15 @@ class FirebaseUtils {
   static Future<void> removeProfilePicture(
       {String userId, String oldImageURL}) async {
     try {
-      StorageReference photoRef =
-          await _storage.getReferenceFromUrl(oldImageURL);
-      await photoRef.delete();
+      if (oldImageURL != kDefaultProfilePictureURL) {
+        StorageReference photoRef =
+        await _storage.getReferenceFromUrl(oldImageURL);
+        await photoRef.delete();
 
-      await _firestore.collection("data").document(userId).updateData({
-        'profilePicURL': kDefaultProfilePictureURL,
-      });
+        await _firestore.collection("data").document(userId).updateData({
+          'profilePicURL': FieldValue.delete(),
+        });
+      }
     } catch (e) {
       print(e.toString());
       return;
@@ -113,7 +117,8 @@ class FirebaseUtils {
       } else {
         fullName = dataSnapshot.data['fullName'];
         key = dataSnapshot.data['key'];
-        profilePicURL = dataSnapshot.data['profilePicURL'];
+        profilePicURL =
+            dataSnapshot.data['profilePicURL'] ?? kDefaultProfilePictureURL;
       }
 
       final documentSnapshot = await _firestore
