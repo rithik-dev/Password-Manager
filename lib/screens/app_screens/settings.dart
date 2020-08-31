@@ -10,6 +10,7 @@ import 'package:password_manager/screens/login_screen.dart';
 import 'package:password_manager/screens/register_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
+import 'package:password_manager/widgets/profile_picture.dart';
 import 'package:password_manager/widgets/settings_card.dart';
 import 'package:provider/provider.dart';
 
@@ -36,9 +37,11 @@ class Settings extends StatelessWidget {
                     ),
                   )
                 : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+//                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      ProfilePicture(data.profilePicURL, radius: 50),
+                      SizedBox(height: 20),
                       Expanded(
                         child: ListView(
                           children: <Widget>[

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 import 'package:password_manager/models/exceptions.dart';
 
@@ -12,10 +15,27 @@ class FirebaseUtils {
   static final PlatformStringCryptor _cryptor = new PlatformStringCryptor();
   static const int LEVELS_OF_ENCRYPTION = 5;
 
+  static final String defaultProfilePicURL =
+      "https://firebasestorage.googleapis.com/v0/b/password-manager-2083b.appspot.com/o/Profile%20Pictures%2FuserDefaultProfilePicture.png?alt=media&token=ee3d17ce-b1e2-4a53-bb86-13dac6d3af09";
+
+  static final FirebaseStorage _storage =
+      FirebaseStorage(storageBucket: 'gs://password-manager-2083b.appspot.com');
+
+  static Future<String> uploadFile(String userId, File image) async {
+    StorageUploadTask uploadTask =
+        _storage.ref().child('Profile Pictures/$userId.png').putFile(image);
+    await uploadTask.onComplete;
+    String fileURL = await _storage
+        .ref()
+        .child('Profile Pictures/$userId.png')
+        .getDownloadURL();
+    return fileURL;
+  }
+
   static Future<FirebaseUser> getCurrentUser() async {
     try {
       final FirebaseUser currentUser = await _auth.currentUser();
-      if(currentUser!=null && currentUser.isEmailVerified)
+      if (currentUser != null && currentUser.isEmailVerified)
         return currentUser;
       else
         return null;
@@ -25,35 +45,37 @@ class FirebaseUtils {
     }
   }
 
-  static Future<String> getCurrentUserEmail() async{
-    try{
+  static Future<String> getCurrentUserEmail() async {
+    try {
       final FirebaseUser user = await getCurrentUser();
-      if(user != null) {
+      if (user != null) {
         return user.email;
-      }
-      else
+      } else
         return "";
-    }
-    catch(e) {
+    } catch (e) {
       print("ERROR WHILE GETTING CURRENT USER EMAIL : $e");
       return "";
     }
   }
 
-  static Future<Map<String,dynamic>> getAppData(FirebaseUser currentUser) async{
+  static Future<Map<String, dynamic>> getAppData(
+      FirebaseUser currentUser) async {
     List<Map<String, dynamic>> passwords = [];
     String fullName;
     String key;
+    String profilePicURL;
 
-    try{
-      final DocumentSnapshot dataSnapshot = await _firestore.collection("data").document(currentUser.uid).get();
-      if(dataSnapshot.data==null) {
+    try {
+      final DocumentSnapshot dataSnapshot =
+          await _firestore.collection("data").document(currentUser.uid).get();
+      if (dataSnapshot.data == null) {
         fullName = "";
         key = "";
-      }
-      else {
+        profilePicURL = defaultProfilePicURL;
+      } else {
         fullName = dataSnapshot.data['fullName'];
         key = dataSnapshot.data['key'];
+        profilePicURL = dataSnapshot.data['profilePicURL'];
       }
 
       final documentSnapshot = await _firestore
@@ -66,22 +88,23 @@ class FirebaseUtils {
       for (var document in documentSnapshot.documents) {
         Map<String, dynamic> data = document.data;
         // decrypting password
-        if(data.containsKey('Password'))
-          data['Password'] = await _decryptPassword(data['Password'],key);
+        if (data.containsKey('Password'))
+          data['Password'] = await _decryptPassword(data['Password'], key);
         passwords.add(data);
       }
 
-      final Map<String,dynamic> appData = {
-        'name' : fullName,
-        'passwords' : passwords,
-        'key' : key,
+      final Map<String, dynamic> appData = {
+        'name': fullName,
+        'passwords': passwords,
+        'key': key,
+        'profilePicURL': profilePicURL,
       };
 
       return appData;
-    }
-    catch(e) {
+    } catch (e) {
       print("ERROR WHILE GETTING APP DATA : $e");
-      throw AppDataReceiveException("An error occurred while fetching data. Please restart the app or try deleting the account and creating a new one !");
+      throw AppDataReceiveException(
+          "An error occurred while fetching data. Please restart the app or try deleting the account and creating a new one !");
     }
   }
 
@@ -95,28 +118,34 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> resendEmailVerificationLink(String email,String password) async{
+  static Future<bool> resendEmailVerificationLink(String email,
+      String password) async {
     try {
-      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final user = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       if (user != null) {
         await user.user.sendEmailVerification();
         return true;
-      }
-      else return false;
-    } catch(e) {
+      } else
+        return false;
+    } catch (e) {
       print("ERROR WHILE RE SENDING EMAIL VERIFICATION LINK : $e");
       return false;
     }
   }
 
-  static Future<bool> registerUser(String email, String password, {String fullName}) async {
+  static Future<bool> registerUser(String email, String password,
+      {String fullName, File image}) async {
     try {
-      final user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      final AuthResult user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
+      String profilePicURL = defaultProfilePicURL;
+      if (image != null) profilePicURL = await uploadFile(user.user.uid, image);
 
       await user.user.sendEmailVerification();
 
       if (user != null) {
-
         //creating a unique key for encrypting passwords for each user
         final String _key = await _cryptor.generateRandomKey();
 
@@ -124,6 +153,7 @@ class FirebaseUtils {
         _firestore.collection("data").document(user.user.uid).setData({
           "fullName": fullName,
           "key": _key,
+          "profilePicURL": profilePicURL,
         });
         return true;
       } else
@@ -136,14 +166,14 @@ class FirebaseUtils {
 
   static Future<bool> loginUser(String email, String password) async {
     try {
-      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final user = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       if (user != null) {
-        if(user.user.isEmailVerified)
+        if (user.user.isEmailVerified)
           return true;
         else
           throw LoginException("EMAIL_NOT_VERIFIED");
-      }
-      else
+      } else
         return false;
     } catch (e) {
       print("EXCEPTION WHILE LOGGING IN USER : $e");
@@ -161,13 +191,14 @@ class FirebaseUtils {
     }
   }
 
-  static Future<String> addPasswordFieldToDatabase(Map<String, dynamic> _fields,FirebaseUser currentUser,String key) async {
+  static Future<String> addPasswordFieldToDatabase(Map<String, dynamic> _fields,
+      FirebaseUser currentUser, String key) async {
     // check if empty map is not received
     if (_fields.isNotEmpty)
       try {
         final String userId = currentUser.uid;
 
-        Map<String,dynamic> fields = Map<String,dynamic>.from(_fields);
+        Map<String, dynamic> fields = Map<String, dynamic>.from(_fields);
 
         String docID = _firestore
             .collection("data")
@@ -182,8 +213,8 @@ class FirebaseUtils {
         });
 
         //encrypting passwords before sending to firebase
-        if(fields['Password']!=null && fields['Password']!="")
-          fields['Password'] = await _encryptPassword(fields['Password'],key);
+        if (fields['Password'] != null && fields['Password'] != "")
+          fields['Password'] = await _encryptPassword(fields['Password'], key);
         else
           fields.remove('Password');
 
@@ -205,15 +236,18 @@ class FirebaseUtils {
       return null;
   }
 
-  static Future<bool> editPasswordFieldInDatabase(Map<String, dynamic> newFields,FirebaseUser currentUser,String key) async {
+  static Future<bool> editPasswordFieldInDatabase(
+      Map<String, dynamic> newFields,
+      FirebaseUser currentUser,
+      String key) async {
     try {
       final String userId = currentUser.uid;
 
-      Map<String,dynamic> fields = Map<String,dynamic>.from(newFields);
+      Map<String, dynamic> fields = Map<String, dynamic>.from(newFields);
 
       //encrypting passwords before sending to firebase
-      if(fields.containsKey('Password'))
-        fields['Password'] = await _encryptPassword(fields['Password'],key);
+      if (fields.containsKey('Password'))
+        fields['Password'] = await _encryptPassword(fields['Password'], key);
 
       // adding new data
       await _firestore
@@ -230,7 +264,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deletePasswordFieldFromDatabase(String documentId,FirebaseUser currentUser) async {
+  static Future<bool> deletePasswordFieldFromDatabase(String documentId,
+      FirebaseUser currentUser) async {
     try {
       final String userId = currentUser.uid;
 
@@ -248,12 +283,15 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> changeCurrentUserName(String name,FirebaseUser currentUser) async{
-    try{
-      await _firestore.collection("data").document(currentUser.uid).setData({"fullName" : name},merge: true);
+  static Future<bool> changeCurrentUserName(String name,
+      FirebaseUser currentUser) async {
+    try {
+      await _firestore
+          .collection("data")
+          .document(currentUser.uid)
+          .setData({"fullName": name}, merge: true);
       return true;
-    }
-    catch(e){
+    } catch (e) {
       print("ERROR WHILE CHANGING CURRENT USER NAME : $e");
       return false;
     }
@@ -270,8 +308,7 @@ class FirebaseUtils {
 
       await user.updatePassword(newPassword);
       return true;
-    }
-    catch(e){
+    } catch (e) {
       print("ERROR WHILE CHANGING CURRENT USER PASSWORD : $e");
       throw ChangePasswordException(e.message);
     }
@@ -307,14 +344,13 @@ class FirebaseUtils {
         await user.delete();
       }
       return true;
-    }
-    catch(e){
+    } catch (e) {
       print("ERROR WHILE DELETING USER : $e");
       throw DeleteUserException(e.message);
     }
   }
 
-  static Future<String> _encryptPassword(String password,String _key) async {
+  static Future<String> _encryptPassword(String password, String _key) async {
     String encrypted;
 
     try {
@@ -328,7 +364,7 @@ class FirebaseUtils {
     return password;
   }
 
-  static Future<String> _decryptPassword(String password,String _key) async {
+  static Future<String> _decryptPassword(String password, String _key) async {
     String decrypted;
 
     try {

@@ -38,9 +38,7 @@ class MyVault extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              ProfilePicture(
-                                "https://firebasestorage.googleapis.com/v0/b/eleventhhour-eb2e0.appspot.com/o/Courses%2F%20qgmB50hOxXJjIOOEBVUM%2Fthumbnail.jpg?alt=media&token=4be71194-d0e9-4769-b9ef-05e24f4d7bff",
-                              )
+                              ProfilePicture(data.profilePicURL),
                             ],
                           ),
                         ),

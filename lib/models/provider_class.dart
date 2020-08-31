@@ -5,18 +5,24 @@ import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
 
 class ProviderClass extends ChangeNotifier {
-  String _name,_key;
+  String _name, _key, _profilePicURL;
   bool _showLoadingScreen = false; // used for inAsyncCall
   bool _showLoadingScreenOnMainAppScreen = false; // used for inAsyncCall
   List<Map<String, dynamic>> _passwords;
-  Map<String,dynamic> _showPasswordFields;
+  Map<String, dynamic> _showPasswordFields;
   bool _userLoggedIn; // bool holding true if user is already logged in
-  FirebaseUser _loggedInUser;  // currently logged in user object
+  FirebaseUser _loggedInUser; // currently logged in user object
 
   bool get showLoadingScreen => this._showLoadingScreen;
-  bool get showLoadingScreenOnMainAppScreen => this._showLoadingScreenOnMainAppScreen;
+
+  bool get showLoadingScreenOnMainAppScreen =>
+      this._showLoadingScreenOnMainAppScreen;
+
   String get name => this._name;
-  Map<String,dynamic> get showPasswordFields => this._showPasswordFields;
+
+  String get profilePicURL => this._profilePicURL;
+
+  Map<String, dynamic> get showPasswordFields => this._showPasswordFields;
   List<Map<String, dynamic>> get passwords => this._passwords;
   bool get userLoggedIn => this._userLoggedIn;
   FirebaseUser get loggedInUser => this._loggedInUser;
@@ -119,14 +125,17 @@ class ProviderClass extends ChangeNotifier {
     this._userLoggedIn = null;
     this._loggedInUser = null;
     this._key = null;
+    this._profilePicURL = null;
     notifyListeners();
   }
 
   Future<void> getAppData() async {
-    final Map<String,dynamic> appData = await FirebaseUtils.getAppData(_loggedInUser);
+    final Map<String, dynamic> appData =
+        await FirebaseUtils.getAppData(_loggedInUser);
     this._name = appData['name'];
     this._passwords = appData['passwords'];
     this._key = appData['key'];
+    this._profilePicURL = appData['profilePicURL'];
     notifyListeners();
   }
 
