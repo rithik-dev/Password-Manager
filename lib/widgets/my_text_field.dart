@@ -50,7 +50,7 @@ class _MyTextFieldState extends State<MyTextField> {
 
     IconButton deleteButton = IconButton(
       color: Colors.lightBlueAccent,
-      icon: Icon(Icons.delete, size: 30.0),
+      icon: Icon(Icons.delete, size: 25.0),
       onPressed: this.widget.trailingFunction,
     );
 
@@ -62,8 +62,8 @@ class _MyTextFieldState extends State<MyTextField> {
       return IconButton(
         color: Colors.lightBlueAccent,
         icon: _showPassword
-            ? Icon(Icons.visibility, size: 30.0)
-            : Icon(Icons.visibility_off, size: 30.0),
+            ? Icon(Icons.visibility, size: 25.0)
+            : Icon(Icons.visibility_off, size: 25.0),
         onPressed: () {
           toggleShowPassword();
         },
@@ -74,25 +74,27 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: TextFormField(
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextFormField(
         controller: this.widget.controller,
         validator: this.widget.validator,
         initialValue: this.widget.defaultValue,
         textAlign: TextAlign.center,
         autofocus: this.widget.autofocus,
         keyboardType:
-        keyboardTypes[this.widget.labelText] ?? TextInputType.text,
+            keyboardTypes[this.widget.labelText] ?? TextInputType.text,
         onChanged: this.widget.onChanged,
         obscureText:
             this.widget.labelText.contains("Password") ? !_showPassword : false,
         decoration: kTextFieldDecoration.copyWith(
-            hintText: "Enter ${this.widget.labelText}",
-            labelText: this.widget.labelText),
+          hintText: "Enter ${this.widget.labelText}",
+          labelText: this.widget.labelText,
+          suffixIcon: this.widget.showTrailingWidget
+              ? getTrailingWidget(this.widget.labelText)
+              : null,
+        ),
       ),
-      trailing: this.widget.showTrailingWidget
-          ? getTrailingWidget(this.widget.labelText)
-          : null,
     );
   }
 }

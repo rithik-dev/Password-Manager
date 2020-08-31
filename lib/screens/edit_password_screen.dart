@@ -5,6 +5,7 @@ import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/widgets/column_builder.dart';
+import 'package:password_manager/widgets/my_drop_down_button.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -18,9 +19,9 @@ class EditPasswordScreen extends StatefulWidget {
 }
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
-  List<String> textFieldStrings = ['Title','Password'];
+  List<String> textFieldStrings = ['Title', 'Password'];
 
-  String dropDownValue = 'Email';
+  String dropDownValue;
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
   final TextEditingController _controller = TextEditingController();
 
@@ -31,17 +32,17 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     super.initState();
 
     // listen : false is necessary to access provider values in initState
-    newFields = Map<String,dynamic>.from(Provider.of<ProviderClass>(context,listen: false).showPasswordFields);
+    newFields = Map<String, dynamic>.from(
+        Provider.of<ProviderClass>(context, listen: false).showPasswordFields);
 
     newFields.forEach((key, value) {
       if (key != "documentId") {
-        if(!textFieldStrings.contains(key))
-          textFieldStrings.add(key);
+        if (!textFieldStrings.contains(key)) textFieldStrings.add(key);
       }
     });
 
-    textFieldStrings = Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
-
+    textFieldStrings =
+        Functions.reorderTextFieldsDisplayOrder(textFieldStrings);
   }
 
   @override
@@ -54,10 +55,12 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProviderClass>(
-      builder: (context,data,child) {
+      builder: (context, data, child) {
         return ModalProgressHUD(
           progressIndicator: SpinKitChasingDots(
-            color: Theme.of(context).accentColor,
+            color: Theme
+                .of(context)
+                .accentColor,
           ),
           inAsyncCall: data.showLoadingScreen,
           child: Scaffold(
@@ -72,7 +75,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       icon: Icon(Icons.edit),
                       onPressed: () async {
                         // title is mandatory field
-                        if (newFields['Title'] == null || newFields['Title'].trim() == "") {
+                        if (newFields['Title'] == null ||
+                            newFields['Title'].trim() == "") {
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('Title is a mandatory field !')));
                         } else {
@@ -108,7 +112,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               ],
             ),
             body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+              padding:
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
                 children: <Widget>[
                   ColumnBuilder(
@@ -116,7 +121,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       return MyTextField(
                           labelText: textFieldStrings[index],
                           autofocus: textFieldStrings[index] == "Title",
-                          defaultValue: newFields[textFieldStrings[index]]??"",
+                          defaultValue:
+                          newFields[textFieldStrings[index]] ?? "",
                           onChanged: (String value) {
                             newFields[textFieldStrings[index]] = value;
                           },
@@ -129,36 +135,15 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     },
                     itemCount: textFieldStrings.length,
                   ),
-                  ListTile(
-                    title: DropdownButton<String>(
-                      value: dropDownValue,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                        color: Colors.blue,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropDownValue = newValue;
-                        });
-                      },
-                      items: dropDownFields.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.add, size: 30.0),
-                      color: Colors.lightBlueAccent,
-                      onPressed: () {
-                        setState(() {
-                          if (!textFieldStrings.contains(dropDownValue))
-                            textFieldStrings.add(dropDownValue);
-                        });
-                      },
-                    ),
+                  MyDropDownButton(
+                    dropDownOnChanged: (String newValue) {
+                      setState(() {
+                        dropDownValue = newValue;
+                        if (!textFieldStrings.contains(dropDownValue))
+                          textFieldStrings.add(dropDownValue);
+                      });
+                    },
+                    dropDownFields: this.dropDownFields,
                   ),
                   MyTextField(
                     labelText: "Custom Field Name",
@@ -167,7 +152,8 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                       customFieldKey = value;
                     },
                     trailingFunction: () {
-                      customFieldKey = Functions.capitalizeFirstLetter(customFieldKey);
+                      customFieldKey =
+                          Functions.capitalizeFirstLetter(customFieldKey);
 
                       if (!textFieldStrings.contains(customFieldKey) &&
                           customFieldKey != "" &&

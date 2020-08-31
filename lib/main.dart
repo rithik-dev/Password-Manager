@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider<ProviderClass>(
       create: (context) => ProviderClass(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
           appBarTheme: AppBarTheme(color: kSecondaryColor),
           scaffoldBackgroundColor: kScaffoldBackgroundColor,

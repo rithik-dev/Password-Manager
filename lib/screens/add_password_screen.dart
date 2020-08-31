@@ -5,6 +5,7 @@ import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/widgets/column_builder.dart';
+import 'package:password_manager/widgets/my_drop_down_button.dart';
 import 'package:password_manager/widgets/my_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class AddPasswordScreen extends StatefulWidget {
 
 class _AddPasswordScreenState extends State<AddPasswordScreen> {
   List<String> textFieldStrings = ['Title', 'Email', 'Password', 'Username'];
-  String dropDownValue = 'Phone';
+  String dropDownValue;
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
   final TextEditingController _controller = TextEditingController();
 
@@ -89,7 +90,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
             ),
             body: Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
                 children: <Widget>[
                   ColumnBuilder(
@@ -108,37 +109,16 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                     },
                     itemCount: textFieldStrings.length,
                   ),
-                  ListTile(
-                    title: DropdownButton<String>(
-                      value: dropDownValue,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                        color: Colors.blue,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropDownValue = newValue;
-                        });
-                      },
-                      items: dropDownFields
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.add, size: 30.0),
-                      color: Colors.lightBlueAccent,
-                      onPressed: () {
-                        setState(() {
-                          if (!textFieldStrings.contains(dropDownValue))
-                            textFieldStrings.add(dropDownValue);
-                        });
-                      },
-                    ),
+                  MyDropDownButton(
+                    dropDownOnChanged: (String newValue) {
+                      setState(() {
+                        dropDownValue = newValue;
+
+                        if (!textFieldStrings.contains(dropDownValue))
+                          textFieldStrings.add(dropDownValue);
+                      });
+                    },
+                    dropDownFields: this.dropDownFields,
                   ),
                   MyTextField(
                     labelText: "Custom Field Name",

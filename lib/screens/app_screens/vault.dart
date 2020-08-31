@@ -6,6 +6,7 @@ import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
 import 'package:password_manager/widgets/my_alert_dialog.dart';
 import 'package:password_manager/widgets/password_card.dart';
+import 'package:password_manager/widgets/profile_picture.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyVault());
@@ -52,59 +53,91 @@ Tap on the card for more information ...
                             ),
                           )
                         : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListView.builder(
-                              itemBuilder: (context, index) {
-                                return Dismissible(
-                                  key: UniqueKey(),
-                                  onDismissed:
-                                      (DismissDirection direction) async {
-                                    if (direction ==
-                                        DismissDirection.startToEnd) {
-                                      data.setShowPasswordFields(
-                                          data.passwords[index]);
-                                      Navigator.pushNamed(
-                                          context, EditPasswordScreen.id);
-                                    } else if (direction ==
-                                        DismissDirection.endToStart) {
-                                      data.setShowPasswordFields(
-                                          data.passwords[index]);
-                                      Functions.showAlertDialog(
-                                          context,
-                                          MyAlertDialog(
-                                            text:
-                                                "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                            content:
-                                                "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                            continueButtonOnPressed: () async {
-                                              bool deletePasswordSuccessful;
-
-                                              Navigator.pop(context);
-
-                                              data.startLoadingScreenOnMainAppScreen();
-                                              // not using provider as document id is never changed
-                                              deletePasswordSuccessful = await data
-                                                  .deletePasswordFieldFromDatabase(
-                                                      data.passwords[index]
-                                                          ['documentId']);
-
-                                              data.stopLoadingScreenOnMainAppScreen();
-
-                                              if (!deletePasswordSuccessful)
-                                                Functions.showSnackBar(context,
-                                                    'Error Deleting Password !');
-                                            },
-                                          ));
-                                    }
-                                  },
-                                  background: _slideRightBackground(),
-                                  secondaryBackground: _slideLeftBackground(),
-                                  child: PasswordCard(
-                                    data.passwords[index],
+                  padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 15, 20, 15),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "Passwords",
+                                        style: TextStyle(
+                                          fontSize: 40.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      ProfilePicture(
+                                        "https://firebasestorage.googleapis.com/v0/b/eleventhhour-eb2e0.appspot.com/o/Courses%2F%20qgmB50hOxXJjIOOEBVUM%2Fthumbnail.jpg?alt=media&token=4be71194-d0e9-4769-b9ef-05e24f4d7bff",
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
-                              itemCount: data.passwords.length,
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemBuilder: (context, index) {
+                                      return Dismissible(
+                                        key: UniqueKey(),
+                                        onDismissed:
+                                            (DismissDirection direction) async {
+                                          if (direction ==
+                                              DismissDirection.startToEnd) {
+                                            data.setShowPasswordFields(
+                                                data.passwords[index]);
+                                            Navigator.pushNamed(
+                                                context, EditPasswordScreen.id);
+                                          } else if (direction ==
+                                              DismissDirection.endToStart) {
+                                            data.setShowPasswordFields(
+                                                data.passwords[index]);
+                                            Functions.showAlertDialog(
+                                                context,
+                                                MyAlertDialog(
+                                                  text:
+                                                      "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
+                                                  content:
+                                                      "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
+                                                  continueButtonOnPressed:
+                                                      () async {
+                                                    bool
+                                                        deletePasswordSuccessful;
+
+                                                    Navigator.pop(context);
+
+                                                    data.startLoadingScreenOnMainAppScreen();
+                                                    // not using provider as document id is never changed
+                                                    deletePasswordSuccessful =
+                                                        await data
+                                                            .deletePasswordFieldFromDatabase(
+                                                                data.passwords[
+                                                                        index][
+                                                                    'documentId']);
+
+                                                    data.stopLoadingScreenOnMainAppScreen();
+
+                                                    if (!deletePasswordSuccessful)
+                                                      Functions.showSnackBar(
+                                                          context,
+                                                          'Error Deleting Password !');
+                                                  },
+                                                ));
+                                          }
+                                        },
+                                        background: _slideRightBackground(),
+                                        secondaryBackground:
+                                            _slideLeftBackground(),
+                                        child: PasswordCard(
+                                          data.passwords[index],
+                                        ),
+                                      );
+                                    },
+                                    itemCount: data.passwords.length,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
               },
