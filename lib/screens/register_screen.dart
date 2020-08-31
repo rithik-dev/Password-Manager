@@ -31,6 +31,7 @@ class RegisterScreen extends StatelessWidget {
                 child: Form(
                   key: _formKey,
                   child: ListView(
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding:
                         EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -106,9 +107,9 @@ class RegisterScreen extends StatelessWidget {
 
                                 try {
                                   registerSuccessful =
-                                      await FirebaseUtils.registerUser(
-                                          _email, _password,
-                                          fullName: "$_firstName $_lastName");
+                                  await FirebaseUtils.registerUser(
+                                      _email, _password,
+                                      fullName: "$_firstName $_lastName");
 
                                   if (registerSuccessful) {
                                     Functions.showSnackBar(

@@ -94,6 +94,7 @@ class ShowPasswordDetails extends StatelessWidget {
                 SizedBox(height: 15.0),
                 Expanded(
                   child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Card(
                         color: kCardBackgroundColor,
@@ -102,9 +103,9 @@ class ShowPasswordDetails extends StatelessWidget {
                             return ListTile(
                               title: Text(keys[index]),
                               subtitle:
-                              Text(data.showPasswordFields[keys[index]]),
+                                  Text(data.showPasswordFields[keys[index]]),
                               isThreeLine:
-                              data.showPasswordFields[keys[index]].length >
+                                  data.showPasswordFields[keys[index]].length >
                                   30,
                               trailing: IconButton(
                                 icon: Icon(Icons.content_copy),

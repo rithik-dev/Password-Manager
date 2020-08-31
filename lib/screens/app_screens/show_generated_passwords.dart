@@ -13,12 +13,18 @@ class ShowGeneratedPasswordsScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             return Builder(
               builder: (context) {
                 return Card(
+                  elevation: 10,
                   color: kCardBackgroundColor,
                   child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: (this.passwords[index].length > 50) ? 10 : 5,
+                      horizontal: (this.passwords[index].length > 50) ? 20 : 10,
+                    ),
                     title: Text(this.passwords[index]),
                     trailing: IconButton(
                       icon: Icon(Icons.content_copy),

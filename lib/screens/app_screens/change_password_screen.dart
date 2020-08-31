@@ -50,7 +50,6 @@ class ChangePasswordScreen extends StatelessWidget {
                         oldPassword = value;
                       },
                     ),
-                    SizedBox(height: 10.0),
                     MyTextField(
                       labelText: "New Password",
                       validator: (String _newPass) {
@@ -62,7 +61,6 @@ class ChangePasswordScreen extends StatelessWidget {
                         newPassword = value;
                       },
                     ),
-                    SizedBox(height: 10.0),
                     Builder(
                       builder: (context) {
                         return RoundedButton(

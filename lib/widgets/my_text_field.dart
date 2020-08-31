@@ -91,7 +91,10 @@ class _MyTextFieldState extends State<MyTextField> {
           hintText: "Enter ${this.widget.labelText}",
           labelText: this.widget.labelText,
           suffixIcon: this.widget.showTrailingWidget
-              ? getTrailingWidget(this.widget.labelText)
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: getTrailingWidget(this.widget.labelText),
+                )
               : null,
         ),
       ),

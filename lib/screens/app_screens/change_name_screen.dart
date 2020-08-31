@@ -37,7 +37,6 @@ class ChangeNameScreen extends StatelessWidget {
                       name = value;
                     },
                   ),
-                  SizedBox(height: 10.0),
                   Builder(
                     builder: (context) {
                       return RoundedButton(

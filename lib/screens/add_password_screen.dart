@@ -20,7 +20,6 @@ class AddPasswordScreen extends StatefulWidget {
 
 class _AddPasswordScreenState extends State<AddPasswordScreen> {
   List<String> textFieldStrings = ['Title', 'Email', 'Password', 'Username'];
-  String dropDownValue;
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
   final TextEditingController _controller = TextEditingController();
 
@@ -92,6 +91,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
               padding:
                   const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
+                physics: const BouncingScrollPhysics(),
                 children: <Widget>[
                   ColumnBuilder(
                     itemBuilder: (context, index) {
@@ -109,37 +109,49 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                     },
                     itemCount: textFieldStrings.length,
                   ),
-                  MyDropDownButton(
-                    dropDownOnChanged: (String newValue) {
-                      setState(() {
-                        dropDownValue = newValue;
-
-                        if (!textFieldStrings.contains(dropDownValue))
-                          textFieldStrings.add(dropDownValue);
-                      });
-                    },
-                    dropDownFields: this.dropDownFields,
-                  ),
-                  MyTextField(
-                    labelText: "Custom Field Name",
-                    controller: _controller,
-                    onChanged: (String value) {
-                      customFieldKey = value;
-                    },
-                    trailingFunction: () {
-                      customFieldKey =
-                          Functions.capitalizeFirstLetter(customFieldKey);
-
-                      if (!textFieldStrings.contains(customFieldKey) &&
-                          customFieldKey != "" &&
-                          customFieldKey != null) {
-                        _controller.clear();
-                        setState(() {
-                          textFieldStrings.add(customFieldKey);
-                        });
-                      }
+                  Builder(
+                    builder: (context) {
+                      return MyDropDownButton(
+                        dropDownOnChanged: (String newValue) {
+                          setState(() {
+                            if (!textFieldStrings.contains(newValue))
+                              textFieldStrings.add(newValue);
+                            else
+                              Functions.showSnackBar(
+                                  context, "$newValue already exists !!");
+                          });
+                        },
+                        dropDownFields: this.dropDownFields,
+                      );
                     },
                   ),
+                  Builder(
+                    builder: (context) {
+                      return MyTextField(
+                        labelText: "Custom Field Name",
+                        controller: _controller,
+                        onChanged: (String value) {
+                          customFieldKey = value;
+                        },
+                        trailingFunction: () {
+                          customFieldKey =
+                              Functions.capitalizeFirstLetter(customFieldKey);
+
+                          if (!textFieldStrings.contains(customFieldKey) &&
+                              customFieldKey != "" &&
+                              customFieldKey != null) {
+                            _controller.clear();
+                            setState(() {
+                              textFieldStrings.add(customFieldKey);
+                            });
+                          } else if (customFieldKey != "" &&
+                              customFieldKey != null)
+                            Functions.showSnackBar(
+                                context, "$customFieldKey already exists !!");
+                        },
+                      );
+                    },
+                  )
                 ],
               ),
             ),

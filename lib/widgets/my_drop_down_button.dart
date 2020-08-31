@@ -26,7 +26,10 @@ class MyDropDownButton extends StatelessWidget {
           ),
           child: DropdownButton<String>(
             hint: Text("Select a field to add"),
-            icon: Icon(Icons.keyboard_arrow_down),
+            icon: Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Icon(Icons.keyboard_arrow_down),
+            ),
             iconSize: 30.0,
             iconEnabledColor: Colors.lightBlueAccent,
             elevation: 16,

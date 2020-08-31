@@ -18,9 +18,13 @@ dependencies:
   page_transition: ^1.1.6
   flutter_spinkit: ^4.1.2+1
   cached_network_image: ^2.3.1
+  animated_button: ^0.1.2
   shimmer: ^1.1.1
+  lottie: ^0.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
 flutter:
   uses-material-design: true
+  assets:
+    - assets/lottie/

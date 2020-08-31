@@ -32,6 +32,7 @@ class LoginScreen extends StatelessWidget {
                 child: Form(
                   key: _formKey,
                   child: ListView(
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
@@ -79,8 +80,8 @@ class LoginScreen extends StatelessWidget {
 
                                   try {
                                     loginSuccessful =
-                                        await FirebaseUtils.loginUser(
-                                            _email, _password);
+                                    await FirebaseUtils.loginUser(
+                                        _email, _password);
 
                                     if (loginSuccessful) {
                                       await data.setUserLoggedIn();

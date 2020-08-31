@@ -145,6 +145,8 @@ class Settings extends StatelessWidget {
                         ),
                       ),
                       SettingsCard(
+                        showTrailing: false,
+                        centerText: true,
                         text: "Logout  :  ${data.name}",
                         onPressed: () async {
                           await FirebaseUtils.logoutUser();

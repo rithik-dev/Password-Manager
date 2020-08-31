@@ -55,7 +55,12 @@ class _AppScreenState extends State<AppScreen> {
                   ]
                 : null,
           ),
-          body: tabs[_selectedIndexBottomNavBar],
+          body: RefreshIndicator(
+            backgroundColor: kScaffoldBackgroundColor,
+            onRefresh: () =>
+                Provider.of<ProviderClass>(context, listen: false).getAppData(),
+            child: tabs[_selectedIndexBottomNavBar],
+          ),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             iconSize: 30.0,

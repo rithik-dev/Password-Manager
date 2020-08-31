@@ -20,8 +20,6 @@ class EditPasswordScreen extends StatefulWidget {
 
 class _EditPasswordScreenState extends State<EditPasswordScreen> {
   List<String> textFieldStrings = ['Title', 'Password'];
-
-  String dropDownValue;
   List<String> dropDownFields = ['Email', 'Username', 'Phone', 'Link'];
   final TextEditingController _controller = TextEditingController();
 
@@ -58,9 +56,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
       builder: (context, data, child) {
         return ModalProgressHUD(
           progressIndicator: SpinKitChasingDots(
-            color: Theme
-                .of(context)
-                .accentColor,
+            color: Theme.of(context).accentColor,
           ),
           inAsyncCall: data.showLoadingScreen,
           child: Scaffold(
@@ -115,6 +111,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
               padding:
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
+                physics: const BouncingScrollPhysics(),
                 children: <Widget>[
                   ColumnBuilder(
                     itemBuilder: (context, index) {
@@ -135,36 +132,49 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     },
                     itemCount: textFieldStrings.length,
                   ),
-                  MyDropDownButton(
-                    dropDownOnChanged: (String newValue) {
-                      setState(() {
-                        dropDownValue = newValue;
-                        if (!textFieldStrings.contains(dropDownValue))
-                          textFieldStrings.add(dropDownValue);
-                      });
+                  Builder(
+                    builder: (context) {
+                      return MyDropDownButton(
+                        dropDownOnChanged: (String newValue) {
+                          setState(() {
+                            if (!textFieldStrings.contains(newValue))
+                              textFieldStrings.add(newValue);
+                            else
+                              Functions.showSnackBar(
+                                  context, "$newValue already exists !!");
+                          });
+                        },
+                        dropDownFields: this.dropDownFields,
+                      );
                     },
-                    dropDownFields: this.dropDownFields,
                   ),
-                  MyTextField(
-                    labelText: "Custom Field Name",
-                    controller: _controller,
-                    onChanged: (String value) {
-                      customFieldKey = value;
-                    },
-                    trailingFunction: () {
-                      customFieldKey =
-                          Functions.capitalizeFirstLetter(customFieldKey);
+                  Builder(
+                    builder: (context) {
+                      return MyTextField(
+                        labelText: "Custom Field Name",
+                        controller: _controller,
+                        onChanged: (String value) {
+                          customFieldKey = value;
+                        },
+                        trailingFunction: () {
+                          customFieldKey =
+                              Functions.capitalizeFirstLetter(customFieldKey);
 
-                      if (!textFieldStrings.contains(customFieldKey) &&
-                          customFieldKey != "" &&
-                          customFieldKey != null) {
-                        _controller.clear();
-                        setState(() {
-                          textFieldStrings.add(customFieldKey);
-                        });
-                      }
+                          if (!textFieldStrings.contains(customFieldKey) &&
+                              customFieldKey != "" &&
+                              customFieldKey != null) {
+                            _controller.clear();
+                            setState(() {
+                              textFieldStrings.add(customFieldKey);
+                            });
+                          } else if (customFieldKey != "" &&
+                              customFieldKey != null)
+                            Functions.showSnackBar(
+                                context, "$customFieldKey already exists !!");
+                        },
+                      );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

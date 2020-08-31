@@ -1,3 +1,4 @@
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
 
@@ -9,23 +10,22 @@ class RoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
-        elevation: 10.0,
-        color: kCardBackgroundColor, //this.color
-        borderRadius: BorderRadius.circular(20.0),
-        child: MaterialButton(
-          onPressed: this.onPressed,
-          minWidth: 150.0,
-          height: 42.0,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: AnimatedButton(
+          color: kCardBackgroundColor,
+          shadowDegree: ShadowDegree.dark,
+          duration: 50,
           child: Text(
             this.text,
             style: TextStyle(
+              fontSize: 20,
               color: Colors.white,
-              fontSize: 20.0,
+              fontWeight: FontWeight.w500,
             ),
           ),
+          onPressed: this.onPressed,
         ),
       ),
     );

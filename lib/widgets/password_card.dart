@@ -12,24 +12,30 @@ class PasswordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: kCardBackgroundColor,
-      child: ListTile(
-        title: Text(fields['Title']),
-        // if email is null , then show username as subtitle , or blank if both null
-        subtitle: Text(fields['Email'] ?? fields['Username'] ?? ""),
-        onTap: () {
-          Provider.of<ProviderClass>(context,listen: false).setShowPasswordFields(fields);
-          showModalBottomSheet(
-              context: context,
-              builder: (context) => ShowPasswordDetails());
-        },
-        trailing: IconButton(
-          icon: Icon(Icons.content_copy),
-          onPressed: () {
-            Functions.copyToClipboard(fields['Password']);
-            Functions.showSnackBar(context, "Password Copied : ${fields['Title']}");
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8.0,
+      ),
+      child: Card(
+        color: kCardBackgroundColor,
+        child: ListTile(
+          title: Text(fields['Title']),
+          // if email is null , then show username as subtitle , or blank if both null
+          subtitle: Text(fields['Email'] ?? fields['Username'] ?? ""),
+          onTap: () {
+            Provider.of<ProviderClass>(context, listen: false)
+                .setShowPasswordFields(fields);
+            showModalBottomSheet(
+                context: context, builder: (context) => ShowPasswordDetails());
           },
+          trailing: IconButton(
+            icon: Icon(Icons.content_copy),
+            onPressed: () {
+              Functions.copyToClipboard(fields['Password']);
+              Functions.showSnackBar(
+                  context, "Password Copied : ${fields['Title']}");
+            },
+          ),
         ),
       ),
     );
