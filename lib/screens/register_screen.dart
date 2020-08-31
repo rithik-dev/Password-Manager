@@ -69,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     children: <Widget>[
                       SizedBox(height: 50.0),
                       Row(
@@ -79,8 +79,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             backgroundImage: imageSelected
                                 ? FileImage(_image)
                                 : AssetImage(
-                              'assets/images/userDefaultProfilePicture.png',
-                            ),
+                                    'assets/images/userDefaultProfilePicture.png',
+                                  ),
                             radius: 60,
                           ),
                           Row(
@@ -191,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     setState(() {
                                       imageSelected = false;
                                     });
-                                    await _image.delete();
+                                    if (_image != null) await _image.delete();
                                     Functions.showSnackBar(
                                         context, "Verification Email Sent !");
                                   } else {
@@ -202,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   Functions.showSnackBar(context, e.message,
                                       duration: Duration(seconds: 3));
                                 } catch (e) {
-                                  print("REGISTER EXCEPTION : ${e.message}");
+                                  print("REGISTER EXCEPTION : ${e.toString()}");
                                 }
 
                                 data.stopLoadingScreen();
