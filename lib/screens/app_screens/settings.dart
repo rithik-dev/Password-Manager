@@ -43,7 +43,7 @@ class Settings extends StatelessWidget {
                     children: <Widget>[
                       Stack(
                         children: [
-                          ProfilePicture(data.profilePicURL, radius: 50),
+                          ProfilePicture(data.profilePicURL, radius: 60),
                           Positioned(
                             bottom: 0,
                             right: 0,

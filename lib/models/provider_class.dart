@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
@@ -105,8 +106,8 @@ class ProviderClass extends ChangeNotifier {
 
   Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
     bool deletePasswordSuccessful =
-    await FirebaseUtils.deletePasswordFieldFromDatabase(
-        documentId, _loggedInUser);
+        await FirebaseUtils.deletePasswordFieldFromDatabase(
+            documentId, _loggedInUser);
 
     Map<String, dynamic> passwordToDelete = this
         ._passwords
@@ -135,6 +136,15 @@ class ProviderClass extends ChangeNotifier {
       newImage: newImage,
     );
     this._profilePicURL = newProfilePictureURL;
+    notifyListeners();
+  }
+
+  Future<void> removeProfilePicture() async {
+    await FirebaseUtils.removeProfilePicture(
+      userId: this._loggedInUser.uid,
+      oldImageURL: this._profilePicURL,
+    );
+    this._profilePicURL = kDefaultProfilePictureURL;
     notifyListeners();
   }
 

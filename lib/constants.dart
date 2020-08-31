@@ -15,6 +15,9 @@ const TextStyle kCardContentTextStyle = TextStyle(
   fontSize: 20.0,
 );
 
+const String kDefaultProfilePictureURL =
+    "https://firebasestorage.googleapis.com/v0/b/password-manager-2083b.appspot.com/o/Profile%20Pictures%2FuserDefaultProfilePicture.png?alt=media&token=7e734c34-911b-4090-a217-a2fb89c0c287";
+
 const kTextFieldDecoration = InputDecoration(
   hintText: 'Enter Value',
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),

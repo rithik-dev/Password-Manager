@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/widgets/profile_picture.dart';
 import 'package:password_manager/widgets/rounded_button.dart';
@@ -15,10 +16,12 @@ class EditProfilePictureScreen extends StatefulWidget {
       _EditProfilePictureScreenState();
 }
 
+enum ImageSelected { currentImage, defaultImage, newImage }
+
 class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
   final ImagePicker imagePicker = ImagePicker();
   double imageRadius = 60;
-  bool imageSelected = false;
+  ImageSelected imageSelected = ImageSelected.currentImage;
 
   File _image;
 
@@ -26,9 +29,36 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
     final pickedFile = await imagePicker.getImage(source: source);
     if (pickedFile == null) return;
     setState(() {
-      imageSelected = true;
+      imageSelected = ImageSelected.newImage;
       _image = File(pickedFile.path);
     });
+  }
+
+  CircleAvatar _getAvatar(String profilePicURL) {
+    switch (imageSelected) {
+      case ImageSelected.newImage:
+        return CircleAvatar(
+          radius: this.imageRadius,
+          backgroundImage: FileImage(_image),
+        );
+      case ImageSelected.defaultImage:
+        return CircleAvatar(
+          radius: this.imageRadius,
+          backgroundImage: AssetImage(
+            'assets/images/userDefaultProfilePicture.png',
+          ),
+        );
+      case ImageSelected.currentImage:
+        return CircleAvatar(
+          radius: this.imageRadius,
+          child: ProfilePicture(
+            profilePicURL,
+            radius: this.imageRadius,
+          ),
+        );
+      default:
+        return null;
+    }
   }
 
   @override
@@ -49,18 +79,7 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      imageSelected
-                          ? CircleAvatar(
-                              radius: this.imageRadius,
-                              backgroundImage: FileImage(_image),
-                            )
-                          : CircleAvatar(
-                              radius: this.imageRadius,
-                              child: ProfilePicture(
-                                data.profilePicURL,
-                                radius: this.imageRadius,
-                              ),
-                            ),
+                      _getAvatar(data.profilePicURL),
                       Row(
                         children: [
                           IconButton(
@@ -80,12 +99,30 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
                     ],
                   ),
                   SizedBox(height: 20),
+                  Builder(
+                    builder: (context) {
+                      return RoundedButton(
+                        text: "Upload Picture",
+                        onPressed: () async {
+                          if (_image != null) {
+                            data.startLoadingScreen();
+                            await data.updateProfilePicture(newImage: _image);
+                            await _image.delete();
+                            Navigator.pop(context);
+                            data.stopLoadingScreen();
+                          } else
+                            Functions.showSnackBar(
+                                context, "Please Select an Image !");
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10.0),
                   RoundedButton(
-                    text: "Upload Picture",
+                    text: "Remove Picture",
                     onPressed: () async {
                       data.startLoadingScreen();
-                      await data.updateProfilePicture(newImage: _image);
-                      await _image.delete();
+                      await data.removeProfilePicture();
                       Navigator.pop(context);
                       data.stopLoadingScreen();
                     },

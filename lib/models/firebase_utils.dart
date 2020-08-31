@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
+import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/exceptions.dart';
 
 class FirebaseUtils {
@@ -14,9 +15,6 @@ class FirebaseUtils {
   static final Firestore _firestore = Firestore.instance;
   static final PlatformStringCryptor _cryptor = new PlatformStringCryptor();
   static const int LEVELS_OF_ENCRYPTION = 5;
-
-  static final String defaultProfilePicURL =
-      "https://firebasestorage.googleapis.com/v0/b/password-manager-2083b.appspot.com/o/Profile%20Pictures%2FuserDefaultProfilePicture.png?alt=media&token=ee3d17ce-b1e2-4a53-bb86-13dac6d3af09";
 
   static final FirebaseStorage _storage =
       FirebaseStorage(storageBucket: 'gs://password-manager-2083b.appspot.com');
@@ -53,6 +51,22 @@ class FirebaseUtils {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  static Future<void> removeProfilePicture(
+      {String userId, String oldImageURL}) async {
+    try {
+      StorageReference photoRef =
+          await _storage.getReferenceFromUrl(oldImageURL);
+      await photoRef.delete();
+
+      await _firestore.collection("data").document(userId).updateData({
+        'profilePicURL': kDefaultProfilePictureURL,
+      });
+    } catch (e) {
+      print(e.toString());
+      return;
     }
   }
 
@@ -95,7 +109,7 @@ class FirebaseUtils {
       if (dataSnapshot.data == null) {
         fullName = "";
         key = "";
-        profilePicURL = defaultProfilePicURL;
+        profilePicURL = kDefaultProfilePictureURL;
       } else {
         fullName = dataSnapshot.data['fullName'];
         key = dataSnapshot.data['key'];
@@ -164,7 +178,7 @@ class FirebaseUtils {
       final AuthResult user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      String profilePicURL = defaultProfilePicURL;
+      String profilePicURL = kDefaultProfilePictureURL;
       if (image != null) profilePicURL = await uploadFile(user.user.uid, image);
 
       await user.user.sendEmailVerification();
