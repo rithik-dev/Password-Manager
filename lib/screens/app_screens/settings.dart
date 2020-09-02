@@ -161,7 +161,7 @@ class Settings extends StatelessWidget {
                                               Functions.showSnackBar(context,
                                                   "Failed to Delete Account. Please Try Again !",
                                                   duration:
-                                                  Duration(seconds: 2));
+                                                      Duration(seconds: 2));
                                             }
                                           } on DeleteUserException catch (e) {
                                             Functions.showSnackBar(
@@ -188,7 +188,9 @@ class Settings extends StatelessWidget {
                           Navigator.pushReplacementNamed(
                               context, LoginScreen.id);
                           Fluttertoast.showToast(
-                              msg: "Logged Out Successfully");
+                            msg: "Logged Out Successfully",
+                            gravity: ToastGravity.TOP,
+                          );
                         },
                       ),
                     ],
