@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/exceptions.dart';
@@ -192,8 +193,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       imageSelected = false;
                                     });
                                     if (_image != null) await _image.delete();
-                                    Functions.showSnackBar(
-                                        context, "Verification Email Sent !");
+                                    Navigator.pushReplacementNamed(
+                                        context, LoginScreen.id,
+                                        arguments: {
+                                          'defaultEmail': _email,
+                                          'defaultPassword': _password,
+                                        });
+                                    Fluttertoast.showToast(
+                                      msg:
+                                          "Verification Email Sent ! Please Verify and Login !",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.TOP,
+                                    );
                                   } else {
                                     Functions.showSnackBar(context,
                                         'Registering New User Failed !');

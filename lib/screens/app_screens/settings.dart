@@ -153,13 +153,15 @@ class Settings extends StatelessWidget {
                                               Navigator.pushReplacementNamed(
                                                   context, RegisterScreen.id);
                                               Fluttertoast.showToast(
-                                                  msg:
-                                                      "Account Deleted Successfully");
+                                                msg:
+                                                    "Account Deleted Successfully",
+                                                gravity: ToastGravity.TOP,
+                                              );
                                             } else {
                                               Functions.showSnackBar(context,
-                                                  "Failed to Delete Account. Please Login Again and Try Again !",
+                                                  "Failed to Delete Account. Please Try Again !",
                                                   duration:
-                                                      Duration(seconds: 2));
+                                                  Duration(seconds: 2));
                                             }
                                           } on DeleteUserException catch (e) {
                                             Functions.showSnackBar(

@@ -84,7 +84,9 @@ class ChangePasswordScreen extends StatelessWidget {
                                   Navigator.pushReplacementNamed(
                                       context, LoginScreen.id);
                                   Fluttertoast.showToast(
-                                      msg: "Password Changed Successfully");
+                                    msg: "Password Changed Successfully",
+                                    gravity: ToastGravity.TOP,
+                                  );
                                 } else
                                   Functions.showSnackBar(context,
                                       "An Error Occurred While Changing Password");

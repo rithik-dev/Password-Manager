@@ -20,7 +20,11 @@ class RouteGenerator {
             type: PageTransitionType.fade, child: InitialScreenHandler());
       case LoginScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: LoginScreen());
+            type: PageTransitionType.fade,
+            child: LoginScreen(
+              defaultEmail: args is Map ? args['defaultEmail'] : "",
+              defaultPassword: args is Map ? args['defaultPassword'] : "",
+            ));
       case RegisterScreen.id:
         return PageTransition(
             type: PageTransitionType.fade, child: RegisterScreen());

@@ -14,6 +14,12 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   static const id = 'login_screen';
+  String defaultEmail, defaultPassword;
+
+  LoginScreen({this.defaultEmail = "", this.defaultPassword = ""})
+      : _email = defaultEmail,
+        _password = defaultPassword;
+
   String _email, _password;
   final _formKey = GlobalKey<FormState>();
 
@@ -41,6 +47,7 @@ class LoginScreen extends StatelessWidget {
                       MyTextField(
                         labelText: "Email",
                         autofocus: true,
+                        defaultValue: this.defaultEmail,
                         validator: (String email) {
                           if (email == null || email.trim() == "")
                             return "Please Enter Email";
@@ -57,6 +64,7 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(height: 5.0),
                       MyTextField(
                         labelText: "Password",
+                        defaultValue: this.defaultPassword,
                         validator: (String password) {
                           if (password == null || password.trim() == "")
                             return "Please Enter Password";
@@ -80,8 +88,8 @@ class LoginScreen extends StatelessWidget {
 
                                   try {
                                     loginSuccessful =
-                                    await FirebaseUtils.loginUser(
-                                        _email, _password);
+                                        await FirebaseUtils.loginUser(
+                                            _email, _password);
 
                                     if (loginSuccessful) {
                                       await data.setUserLoggedIn();
