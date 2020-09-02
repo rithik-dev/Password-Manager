@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
@@ -92,9 +93,11 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
 
                           editPasswordSuccessful =
                               await data.editPasswordFieldInDatabase(newFields);
-                          if (editPasswordSuccessful)
+                          if (editPasswordSuccessful) {
                             Navigator.pop(context);
-                          else {
+                            Fluttertoast.showToast(
+                                msg: "Edited ${newFields['Title']}");
+                          } else {
                             Functions.showSnackBar(
                                 context, 'Error editing password !');
                           }

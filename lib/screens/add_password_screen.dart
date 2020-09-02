@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
@@ -73,9 +74,11 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                               Functions.capitalizeFirstLetter(fields['Title']);
                           addPasswordSuccessful =
                               await data.addPasswordFieldToDatabase(fields);
-                          if (addPasswordSuccessful)
+                          if (addPasswordSuccessful) {
                             Navigator.pop(context);
-                          else {
+                            Fluttertoast.showToast(
+                                msg: "Added ${fields['Title']}");
+                          } else {
                             Functions.showSnackBar(
                                 context, 'Error adding new password !');
                           }

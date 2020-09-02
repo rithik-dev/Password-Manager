@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/constants.dart';
@@ -111,6 +112,8 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
                             await _image.delete();
                             Navigator.pop(context);
                             data.stopLoadingScreen();
+                            Fluttertoast.showToast(
+                                msg: "Profile Picture Updated");
                           } else
                             Functions.showSnackBar(
                                 context, "Please Select an Image !");
@@ -129,6 +132,8 @@ class _EditProfilePictureScreenState extends State<EditProfilePictureScreen> {
                             await data.removeProfilePicture();
                             Navigator.pop(context);
                             data.stopLoadingScreen();
+                            Fluttertoast.showToast(
+                                msg: "Profile Picture Removed");
                           } else {
                             Functions.showSnackBar(context,
                                 "Profile picture is already removed !");

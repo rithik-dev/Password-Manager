@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
@@ -79,6 +80,9 @@ class ShowPasswordDetails extends StatelessWidget {
                                                 _fields['documentId']);
 
                                         data.stopLoadingScreenOnMainAppScreen();
+
+                                        Fluttertoast.showToast(
+                                            msg: "Deleted ${_fields['Title']}");
                                         if (!deletePasswordSuccessful)
                                           Functions.showSnackBar(context,
                                               'Error Deleting Password !');

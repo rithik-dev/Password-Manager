@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:password_manager/models/exceptions.dart';
 import 'package:password_manager/models/firebase_utils.dart';
 import 'package:password_manager/models/functions.dart';
@@ -151,6 +152,9 @@ class Settings extends StatelessWidget {
                                               data.setDataToNull();
                                               Navigator.pushReplacementNamed(
                                                   context, RegisterScreen.id);
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "Account Deleted Successfully");
                                             } else {
                                               Functions.showSnackBar(context,
                                                   "Failed to Delete Account. Please Login Again and Try Again !",
@@ -181,6 +185,8 @@ class Settings extends StatelessWidget {
                           data.setDataToNull();
                           Navigator.pushReplacementNamed(
                               context, LoginScreen.id);
+                          Fluttertoast.showToast(
+                              msg: "Logged Out Successfully");
                         },
                       ),
                     ],

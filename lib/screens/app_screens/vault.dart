@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
@@ -105,12 +106,15 @@ Tap on the card for more information ...
                                                     "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
                                                 continueButtonOnPressed:
                                                     () async {
-                                                  bool deletePasswordSuccessful;
+                                                      bool deletePasswordSuccessful;
 
                                                   Navigator.pop(context);
 
                                                   data.startLoadingScreenOnMainAppScreen();
                                                   // not using provider as document id is never changed
+                                                  final String title =
+                                                      data.passwords[index]
+                                                          ['Title'];
                                                   deletePasswordSuccessful =
                                                       await data
                                                           .deletePasswordFieldFromDatabase(
@@ -119,6 +123,9 @@ Tap on the card for more information ...
                                                                   'documentId']);
 
                                                   data.stopLoadingScreenOnMainAppScreen();
+
+                                                  Fluttertoast.showToast(
+                                                      msg: "Deleted $title");
 
                                                   if (!deletePasswordSuccessful)
                                                     Functions.showSnackBar(

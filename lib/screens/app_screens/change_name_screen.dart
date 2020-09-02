@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
@@ -46,14 +47,19 @@ class ChangeNameScreen extends StatelessWidget {
 
                           name = Functions.capitalizeFirstLetter(name);
 
-                          if(name == null || name == "")
-                            Functions.showSnackBar(context, "Please Enter New Name !");
+                          if (name == null || name == "")
+                            Functions.showSnackBar(
+                                context, "Please Enter New Name !");
                           else {
                             Functions.popKeyboard(context);
                             final bool changeSuccessful =
                                 await data.changeCurrentUserName(name);
 
-                            if (changeSuccessful) Navigator.pop(context);
+                            if (changeSuccessful) {
+                              Navigator.pop(context);
+                              Fluttertoast.showToast(
+                                  msg: "Name Changed Successfully");
+                            }
                           }
                           data.stopLoadingScreen();
                         },
