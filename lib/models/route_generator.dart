@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/app_screens/app_screen.dart';
+import 'package:password_manager/screens/app_screens/change_email_screen.dart';
 import 'package:password_manager/screens/app_screens/change_name_screen.dart';
 import 'package:password_manager/screens/app_screens/change_password_screen.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
@@ -40,6 +41,9 @@ class RouteGenerator {
       case ChangeNameScreen.id:
         return PageTransition(
             type: PageTransitionType.fade, child: ChangeNameScreen());
+      case ChangeEmailScreen.id:
+        return PageTransition(
+            type: PageTransitionType.fade, child: ChangeEmailScreen());
       case ChangePasswordScreen.id:
         return PageTransition(
             type: PageTransitionType.fade, child: ChangePasswordScreen());

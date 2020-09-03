@@ -28,6 +28,7 @@ class MyTextField extends StatefulWidget {
 class _MyTextFieldState extends State<MyTextField> {
   final Map<String, TextInputType> keyboardTypes = {
     'Email': TextInputType.emailAddress,
+    'New Email': TextInputType.emailAddress,
     'Password': TextInputType.visiblePassword,
     'Phone': TextInputType.phone,
     'Link': TextInputType.url,

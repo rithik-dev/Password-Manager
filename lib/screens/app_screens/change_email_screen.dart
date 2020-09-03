@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,10 +13,10 @@ import 'package:password_manager/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class ChangePasswordScreen extends StatelessWidget {
-  static const id = 'change_password_screen';
-  String newPassword;
-  String oldPassword;
+class ChangeEmailScreen extends StatelessWidget {
+  static const id = 'change_email_screen';
+  String newEmail;
+  String password;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,7 +30,7 @@ class ChangePasswordScreen extends StatelessWidget {
         builder: (context, data, child) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("Change Password"),
+              title: Text("Change Email"),
               centerTitle: true,
             ),
             body: Padding(
@@ -40,32 +41,37 @@ class ChangePasswordScreen extends StatelessWidget {
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     MyTextField(
-                      labelText: "Old Password",
+                      labelText: "New Email",
+                      showTrailingWidget: false,
                       autofocus: true,
-                      validator: (String _oldPass) {
-                        if (_oldPass == null || _oldPass.trim() == "")
-                          return "Please Enter Old Password";
+                      validator: (String _email) {
+                        if (_email == null || _email.trim() == "")
+                          return "Please Enter New Email";
+                        else if (_email.trim() == data.loggedInUser.email)
+                          return "Please Enter New Email";
+                        else if (!(_email.contains(".") &&
+                            _email.contains("@"))) return "Invalid Email";
                         return null;
                       },
                       onChanged: (String value) {
-                        oldPassword = value;
+                        newEmail = value;
                       },
                     ),
                     MyTextField(
-                      labelText: "New Password",
-                      validator: (String _newPass) {
-                        if (_newPass == null || _newPass.trim() == "")
-                          return "Please Enter New Password";
+                      labelText: "Password",
+                      validator: (String _password) {
+                        if (_password == null || _password.trim() == "")
+                          return "Please Enter Password";
                         return null;
                       },
                       onChanged: (String value) {
-                        newPassword = value;
+                        password = value;
                       },
                     ),
                     Builder(
                       builder: (context) {
                         return RoundedButton(
-                          text: "Change Password",
+                          text: "Change Email",
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               Functions.popKeyboard(context);
@@ -73,27 +79,30 @@ class ChangePasswordScreen extends StatelessWidget {
 
                               try {
                                 final bool changeSuccessful =
-                                    await FirebaseUtils
-                                        .changeCurrentUserPassword(
-                                            oldPassword, newPassword);
+                                    await FirebaseUtils.changeCurrentUserEmail(
+                                  newEmail: this.newEmail.trim(),
+                                  password: this.password,
+                                );
 
                                 if (changeSuccessful) {
                                   Navigator.pop(context);
-                                  final String email = data.loggedInUser.email;
                                   await FirebaseUtils.logoutUser();
                                   data.setDataToNull();
                                   Navigator.pushReplacementNamed(
                                       context, LoginScreen.id,
                                       arguments: {
-                                        'defaultEmail': email.trim(),
+                                        'defaultEmail': this.newEmail.trim(),
+                                        'defaultPassword': this.password,
                                       });
                                   Fluttertoast.showToast(
-                                    msg: "Password Changed Successfully",
+                                    msg:
+                                        "Email Changed Successfully !\nPlease Verify New Email and Login",
                                     gravity: ToastGravity.TOP,
+                                    toastLength: Toast.LENGTH_LONG,
                                   );
                                 } else
                                   Functions.showSnackBar(context,
-                                      "An Error Occurred While Changing Password");
+                                      "An Error Occurred While Changing Email");
                               } on ChangePasswordException catch (e) {
                                 Functions.showSnackBar(context, e.message,
                                     duration: Duration(seconds: 3));

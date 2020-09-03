@@ -201,7 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         });
                                     Fluttertoast.showToast(
                                       msg:
-                                          "Verification Email Sent ! Please Verify and Login !",
+                                          "Verification Email Sent !\nPlease Verify and Login !",
                                       toastLength: Toast.LENGTH_LONG,
                                       gravity: ToastGravity.TOP,
                                     );

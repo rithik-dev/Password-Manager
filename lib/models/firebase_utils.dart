@@ -313,8 +313,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> deletePasswordFieldFromDatabase(String documentId,
-      FirebaseUser currentUser) async {
+  static Future<bool> deletePasswordFieldFromDatabase(
+      String documentId, FirebaseUser currentUser) async {
     try {
       final String userId = currentUser.uid;
 
@@ -332,8 +332,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> changeCurrentUserName(String name,
-      FirebaseUser currentUser) async {
+  static Future<bool> changeCurrentUserName(
+      String name, FirebaseUser currentUser) async {
     try {
       await _firestore
           .collection("data")
@@ -346,8 +346,8 @@ class FirebaseUtils {
     }
   }
 
-  static Future<bool> changeCurrentUserPassword(String oldPassword,
-      String newPassword) async {
+  static Future<bool> changeCurrentUserPassword(
+      String oldPassword, String newPassword) async {
     try {
       final FirebaseUser user = await getCurrentUser();
 
@@ -359,6 +359,25 @@ class FirebaseUtils {
       return true;
     } catch (e) {
       print("ERROR WHILE CHANGING CURRENT USER PASSWORD : $e");
+      throw ChangePasswordException(e.message);
+    }
+  }
+
+  static Future<bool> changeCurrentUserEmail(
+      {String newEmail, String password}) async {
+    try {
+      final FirebaseUser user = await getCurrentUser();
+
+      AuthCredential credential = EmailAuthProvider.getCredential(
+          email: user.email, password: password);
+      await user.reauthenticateWithCredential(credential);
+
+      await user.updateEmail(newEmail);
+
+      await user.sendEmailVerification();
+      return true;
+    } catch (e) {
+      print("ERROR WHILE CHANGING CURRENT USER EMAIL : $e");
       throw ChangePasswordException(e.message);
     }
   }
