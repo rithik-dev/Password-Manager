@@ -41,35 +41,55 @@ class Settings extends StatelessWidget {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Stack(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          ProfilePicture(data.profilePicURL, radius: 60),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: Colors.black,
-                              child: IconButton(
-                                iconSize: 15,
-                                color: Colors.white,
-                                icon: Icon(Icons.edit),
-                                onPressed: () => showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) =>
-                                      EditProfilePictureScreen(),
+                          Stack(
+                            children: [
+                              ProfilePicture(data.profilePicURL, radius: 60),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Colors.black,
+                                  child: IconButton(
+                                    iconSize: 15,
+                                    color: Colors.white,
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () => showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) =>
+                                          EditProfilePictureScreen(),
+                                    ),
+                                  ),
                                 ),
+                              )
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                data.name,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.1),
                               ),
-                            ),
+                              SizedBox(height: 15),
+                              Text(
+                                data.loggedInUser.email,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .copyWith(letterSpacing: 1.1),
+                              ),
+                            ],
                           )
                         ],
                       ),
-                      SizedBox(height: 20),
-                      Text(data.name,
-                          style: Theme.of(context).textTheme.headline5),
-                      SizedBox(height: 10),
-                      Text(data.loggedInUser.email,
-                          style: Theme.of(context).textTheme.bodyText1),
                       SizedBox(height: 20),
                       Expanded(
                         child: NotificationListener<

@@ -31,9 +31,14 @@ class PasswordCard extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.content_copy),
             onPressed: () {
-              Functions.copyToClipboard(fields['Password']);
-              Functions.showSnackBar(
-                  context, "Password Copied : ${fields['Title']}");
+              if (fields['Password'] != null &&
+                  fields['Password'].trim() != "") {
+                Functions.copyToClipboard(fields['Password']);
+                Functions.showSnackBar(
+                    context, "Password Copied : ${fields['Title']}");
+              } else
+                Functions.showSnackBar(
+                    context, "Password is not set for ${fields['Title']}");
             },
           ),
         ),

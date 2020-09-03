@@ -74,7 +74,7 @@ class _AppScreenState extends State<AppScreen> {
                     : SizedBox.shrink(),
               ]),
           body: RefreshIndicator(
-            backgroundColor: kScaffoldBackgroundColor,
+            displacement: 20.0,
             onRefresh: () =>
                 Provider.of<ProviderClass>(context, listen: false).getAppData(),
             child: tabs[_selectedIndexBottomNavBar],
