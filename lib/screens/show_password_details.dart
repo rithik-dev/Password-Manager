@@ -81,6 +81,9 @@ class ShowPasswordDetails extends StatelessWidget {
 
                                         data.stopLoadingScreenOnMainAppScreen();
 
+                                        data.setSearchTextToLastSearch();
+                                        Functions.popKeyboard(context);
+
                                         Fluttertoast.showToast(
                                             msg: "Deleted ${_fields['Title']}");
                                         if (!deletePasswordSuccessful)

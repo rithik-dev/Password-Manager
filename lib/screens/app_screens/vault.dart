@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
@@ -12,9 +13,34 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(MyVault());
 
-class MyVault extends StatelessWidget {
+class MyVault extends StatefulWidget {
+  @override
+  _MyVaultState createState() => _MyVaultState();
+}
+
+class _MyVaultState extends State<MyVault> {
+//  TextEditingController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+////    _controller = TextEditingController();
+//    Provider.of<ProviderClass>(context, listen: false).setSearchController();
+    print("initstate called");
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Provider.of<ProviderClass>(context).disposeSearchController();
+    print("dispose c");
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("build called");
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -26,39 +52,42 @@ class MyVault extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 15, 20, 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                "Passwords",
-                                style: TextStyle(
-                                  letterSpacing: 0.5,
-                                  fontSize: 40.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              ProfilePicture(data.profilePicURL),
-                            ],
+                  data.searchController.text != ""
+                      ? SizedBox.shrink()
+                      : Padding(
+                    padding:
+                    const EdgeInsets.fromLTRB(10, 15, 20, 15),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Passwords",
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            fontSize: 40.0,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 20.0),
-                        (data.passwords.length == 0)
-                            ? Expanded(
-                                child: Center(
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      Lottie.asset(
-                                        'assets/lottie/404.json',
-                                        height: 150,
-                                        fit: BoxFit.contain,
-                                        alignment: Alignment.center,
-                                      ),
-                                      SizedBox(height: 30),
-                                      Text(
-                                        """
+                        ProfilePicture(data.profilePicURL),
+                      ],
+                    ),
+                  ),
+                  (data.passwords.length == 0)
+                      ? Expanded(
+                    child: Center(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          Lottie.asset(
+                            'assets/lottie/404.json',
+                            height: 150,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
+                          ),
+                          SizedBox(height: 30),
+                          Text(
+                            """
 No passwords added yet. Start by adding a new password by clicking the + icon on the top right.
                                         
                                         
@@ -71,97 +100,142 @@ OR
 Tap on the card for more information ...
                                         
                                         """,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Expanded(
-                                child: NotificationListener<
-                                    OverscrollIndicatorNotification>(
-                                  onNotification: (overScroll) {
-                                    overScroll.disallowGlow();
-                                    return;
-                                  },
-                                  child: ListView.builder(
-                                    itemBuilder: (context, index) {
-                                      return Dismissible(
-                                        key: UniqueKey(),
-                                        onDismissed:
-                                            (DismissDirection direction) async {
-                                          if (direction ==
-                                              DismissDirection.startToEnd) {
-                                            data.setShowPasswordFields(
-                                                data.passwords[index]);
-                                            Navigator.pushNamed(
-                                                context, EditPasswordScreen.id);
-                                          } else if (direction ==
-                                              DismissDirection.endToStart) {
-                                            data.setShowPasswordFields(
-                                                data.passwords[index]);
-                                            Functions.showAlertDialog(
-                                                context,
-                                                MyAlertDialog(
-                                                  text:
-                                                      "Delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                                  content:
-                                                      "Are you sure you want to delete ${data.showPasswordFields['Title'].toUpperCase()} ?",
-                                                  continueButtonOnPressed:
-                                                      () async {
-                                                    bool
-                                                        deletePasswordSuccessful;
-
-                                                    Navigator.pop(context);
-
-                                                    data.startLoadingScreenOnMainAppScreen();
-                                                    // not using provider as document id is never changed
-                                                    final String title =
-                                                        data.passwords[index]
-                                                            ['Title'];
-                                                    deletePasswordSuccessful =
-                                                        await data
-                                                            .deletePasswordFieldFromDatabase(
-                                                                data.passwords[
-                                                                        index][
-                                                                    'documentId']);
-
-                                                    data.stopLoadingScreenOnMainAppScreen();
-
-                                                    Fluttertoast.showToast(
-                                                        msg: "Deleted $title");
-
-                                                    if (!deletePasswordSuccessful)
-                                                      Functions.showSnackBar(
-                                                          context,
-                                                          'Error Deleting Password !');
-                                                  },
-                                                ));
-                                          }
-                                        },
-                                        background: _slideRightBackground(),
-                                        secondaryBackground:
-                                            _slideLeftBackground(),
-                                        child: PasswordCard(
-                                          data.passwords[index],
-                                        ),
-                                      );
-                                    },
-                                    itemCount: data.passwords.length,
-                                  ),
-                                ),
-                              ),
-                      ],
-                    );
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 17.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : _passwordCardsView(
+                      context, data, data.searchController,
+                      onChangedCallback: (String value) {
+                        data.setSearchText(value);
+                        data.setFilteredPasswords(data.passwords
+                            .where((element) =>
+                            element['Title']
+                                .toLowerCase()
+                                .contains(value.toLowerCase()))
+                            .toList());
+                      }),
+                ],
+              );
             },
           ),
         ),
       ),
     );
   }
+}
+
+Widget _passwordCardsView(BuildContext context, data,
+    TextEditingController controller,
+    {onChangedCallback}) {
+  return Expanded(
+    child: NotificationListener<OverscrollIndicatorNotification>(
+      onNotification: (overScroll) {
+        overScroll.disallowGlow();
+        return;
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.9,
+            decoration: BoxDecoration(
+                color: kSecondaryColor,
+                borderRadius: BorderRadius.circular(30)),
+            child: TextField(
+              controller: controller,
+              onChanged: (String value) => onChangedCallback(value),
+              decoration: InputDecoration(
+                prefixIcon: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Icon(Icons.search),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    Functions.popKeyboard(context);
+                    controller.clear();
+                    data.setFilteredPasswords(data.passwords);
+                  },
+                ),
+                border: InputBorder.none,
+                hintText: "Search",
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (DismissDirection direction) async {
+                    if (direction == DismissDirection.startToEnd) {
+                      data.setShowPasswordFields(data.filteredPasswords[index]);
+                      Navigator.pushNamed(context, EditPasswordScreen.id);
+                    } else if (direction == DismissDirection.endToStart) {
+                      data.setShowPasswordFields(data.filteredPasswords[index]);
+                      Functions.showAlertDialog(
+                          context,
+                          MyAlertDialog(
+                            text:
+                            "Delete ${data.showPasswordFields['Title']
+                                .toUpperCase()} ?",
+                            content:
+                            "Are you sure you want to delete ${data
+                                .showPasswordFields['Title'].toUpperCase()} ?",
+                            continueButtonOnPressed: () async {
+                              bool deletePasswordSuccessful;
+
+                              Navigator.pop(context);
+
+                              data.startLoadingScreenOnMainAppScreen();
+                              // not using provider as document id is never changed
+                              final String title =
+                              data.filteredPasswords[index]['Title'];
+                              deletePasswordSuccessful =
+                              await data.deletePasswordFieldFromDatabase(
+                                  data.filteredPasswords[index]
+                                  ['documentId']);
+
+                              data.stopLoadingScreenOnMainAppScreen();
+
+//                              if (controller.text.trim() != "") {
+//                                Functions.popKeyboard(context);
+//                              }
+                              data.setSearchTextToLastSearch();
+
+                              Fluttertoast.showToast(msg: "Deleted $title");
+
+                              if (!deletePasswordSuccessful)
+                                Functions.showSnackBar(
+                                    context, 'Error Deleting Password !');
+                            },
+                          ));
+                    }
+                  },
+                  background: _slideRightBackground(),
+                  secondaryBackground: _slideLeftBackground(),
+                  child: PasswordCard(
+                    data.filteredPasswords[index],
+                  ),
+                );
+              },
+              itemCount: data.filteredPasswords.length,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget _slideLeftBackground() {

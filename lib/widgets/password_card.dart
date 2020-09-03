@@ -23,6 +23,7 @@ class PasswordCard extends StatelessWidget {
           // if email is null , then show username as subtitle , or blank if both null
           subtitle: Text(fields['Email'] ?? fields['Username'] ?? ""),
           onTap: () {
+            Functions.popKeyboard(context);
             Provider.of<ProviderClass>(context, listen: false)
                 .setShowPasswordFields(fields);
             showModalBottomSheet(

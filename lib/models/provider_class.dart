@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/exceptions.dart';
@@ -12,9 +13,46 @@ class ProviderClass extends ChangeNotifier {
   bool _showLoadingScreen = false; // used for inAsyncCall
   bool _showLoadingScreenOnMainAppScreen = false; // used for inAsyncCall
   List<Map<String, dynamic>> _passwords;
+  List<Map<String, dynamic>> filteredPasswords;
   Map<String, dynamic> _showPasswordFields;
   bool _userLoggedIn; // bool holding true if user is already logged in
   FirebaseUser _loggedInUser; // currently logged in user object
+  TextEditingController _searchController;
+  String _searchText;
+
+  void setSearchController() {
+    this._searchController = TextEditingController();
+    notifyListeners();
+  }
+
+  void disposeSearchController() {
+    this._searchController.dispose();
+    notifyListeners();
+  }
+
+  void setSearchText(String text) {
+    this._searchText = text;
+    notifyListeners();
+  }
+
+//  void setSearchTextController(String text) {
+//    _searchController.text = text;
+//    notifyListeners();
+//  }
+
+  void setSearchTextToLastSearch() {
+    _searchController.text = _searchText;
+    this.filteredPasswords = this
+        ._passwords
+        .where((element) => element['Title']
+            .toLowerCase()
+            .contains(this._searchText.toLowerCase()))
+        .toList();
+    print("set search to $_searchText");
+    notifyListeners();
+  }
+
+  TextEditingController get searchController => this._searchController;
 
   bool get showLoadingScreen => this._showLoadingScreen;
 
@@ -32,6 +70,11 @@ class ProviderClass extends ChangeNotifier {
   bool get userLoggedIn => this._userLoggedIn;
 
   FirebaseUser get loggedInUser => this._loggedInUser;
+
+  void setFilteredPasswords(List<Map> passwords) {
+    this.filteredPasswords = passwords;
+    notifyListeners();
+  }
 
   Future<bool> setUserLoggedIn() async {
     try {
@@ -79,6 +122,8 @@ class ProviderClass extends ChangeNotifier {
       return a['Title'].compareTo(b['Title']);
     });
 
+    this.filteredPasswords = this._passwords;
+
     notifyListeners();
     if (docID != null)
       return true;
@@ -91,8 +136,8 @@ class ProviderClass extends ChangeNotifier {
     newFields = Functions.removeEmptyValuesFromMap(newFields);
 
     bool editPasswordSuccessful =
-        await FirebaseUtils.editPasswordFieldInDatabase(
-            newFields, _loggedInUser, _key);
+    await FirebaseUtils.editPasswordFieldInDatabase(
+        newFields, _loggedInUser, _key);
 
     for (int index = 0; index < this._passwords.length; index++) {
       if (this._passwords[index]['documentId'] == newFields['documentId']) {
@@ -100,20 +145,24 @@ class ProviderClass extends ChangeNotifier {
       }
     }
 
+    this.filteredPasswords = this._passwords;
+
     notifyListeners();
     return editPasswordSuccessful;
   }
 
   Future<bool> deletePasswordFieldFromDatabase(String documentId) async {
     bool deletePasswordSuccessful =
-        await FirebaseUtils.deletePasswordFieldFromDatabase(
-            documentId, _loggedInUser);
+    await FirebaseUtils.deletePasswordFieldFromDatabase(
+        documentId, _loggedInUser);
 
     Map<String, dynamic> passwordToDelete = this
         ._passwords
         .where((element) => element['documentId'] == documentId)
         .first;
     this._passwords.remove(passwordToDelete);
+
+    this.filteredPasswords = this._passwords;
 
     notifyListeners();
     return deletePasswordSuccessful;
@@ -151,6 +200,7 @@ class ProviderClass extends ChangeNotifier {
   void setDataToNull() {
     this._name = null;
     this._passwords = null;
+    this.filteredPasswords = null;
     this._showPasswordFields = null;
     this._userLoggedIn = null;
     this._loggedInUser = null;
@@ -160,10 +210,12 @@ class ProviderClass extends ChangeNotifier {
   }
 
   Future<void> getAppData() async {
+    this.setSearchController();
     final Map<String, dynamic> appData =
     await FirebaseUtils.getAppData(_loggedInUser);
     this._name = appData['name'];
     this._passwords = appData['passwords'];
+    this.filteredPasswords = appData['passwords'];
     this._key = appData['key'];
     this._profilePicURL = appData['profilePicURL'];
     notifyListeners();

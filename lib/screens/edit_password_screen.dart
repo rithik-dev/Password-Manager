@@ -94,6 +94,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                           editPasswordSuccessful =
                               await data.editPasswordFieldInDatabase(newFields);
                           if (editPasswordSuccessful) {
+                            data.setSearchTextToLastSearch();
                             Navigator.pop(context);
                             Fluttertoast.showToast(
                                 msg: "Edited ${newFields['Title']}");
