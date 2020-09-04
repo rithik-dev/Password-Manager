@@ -109,8 +109,8 @@ Tap on the card for more information ...
   }
 }
 
-Widget _passwordCardsView(BuildContext context, data,
-    TextEditingController controller,
+Widget _passwordCardsView(
+    BuildContext context, data, TextEditingController controller,
     {onChangedCallback}) {
   return Expanded(
     child: NotificationListener<OverscrollIndicatorNotification>(
@@ -122,7 +122,7 @@ Widget _passwordCardsView(BuildContext context, data,
         children: [
           SizedBox(height: 20),
           Container(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.center,
             padding: EdgeInsets.all(5),
             width: MediaQuery
                 .of(context)
@@ -138,12 +138,14 @@ Widget _passwordCardsView(BuildContext context, data,
               decoration: InputDecoration(
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Icon(Icons.search),
+                  child: Icon(Icons.search, size: 30, color: Colors.deepOrange),
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(Icons.cancel),
+                  splashRadius: 1,
                   onPressed: () {
                     Functions.popKeyboard(context);
+                    data.setSearchText("");
                     controller.clear();
                     data.setFilteredPasswords(data.passwords);
                   },
