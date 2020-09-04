@@ -80,7 +80,6 @@ class _AppScreenState extends State<AppScreen> {
                       : SizedBox.shrink(),
                 ]),
             body: RefreshIndicator(
-              displacement: 20.0,
               onRefresh: () =>
                   Provider.of<ProviderClass>(context, listen: false)
                       .getAppData(),

@@ -19,6 +19,21 @@ class MyVault extends StatefulWidget {
 }
 
 class _MyVaultState extends State<MyVault> {
+  FocusNode _searchFocus = FocusNode();
+  static final double kDefaultContainerHeight = 130;
+  bool profilePicContainerExpanded = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _searchFocus.addListener(() {
+      setState(() {
+        profilePicContainerExpanded = !this._searchFocus.hasFocus;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,45 +44,47 @@ class _MyVaultState extends State<MyVault> {
               return (data.passwords == null)
                   ? SpinKitChasingDots(
                       color: Theme.of(context).accentColor,
-                    )
+              )
                   : Column(
-                      children: [
-                        data.searchController.text != ""
-                            ? SizedBox.shrink()
-                            : Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 15, 20, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      "Passwords",
-                                      style: TextStyle(
-                                        letterSpacing: 0.5,
-                                        fontSize: 40.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    ProfilePicture(data.profilePicURL),
-                                  ],
-                                ),
-                              ),
-                        (data.passwords.length == 0)
-                            ? Expanded(
-                                child: Center(
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      Lottie.asset(
-                                        'assets/lottie/404.json',
-                                        height: 150,
-                                        fit: BoxFit.contain,
-                                        alignment: Alignment.center,
-                                      ),
-                                      SizedBox(height: 30),
-                                      Text(
-                                        """
+                children: [
+                  AnimatedContainer(
+                    padding: EdgeInsets.fromLTRB(10, 15, 20, 0),
+                    curve: Curves.easeOutExpo,
+                    duration: Duration(milliseconds: 500),
+                    height: (profilePicContainerExpanded ||
+                        data.passwords.length == 0)
+                        ? kDefaultContainerHeight
+                        : 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Passwords",
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            fontSize: 40.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        ProfilePicture(data.profilePicURL),
+                      ],
+                    ),
+                  ),
+                  (data.passwords.length == 0)
+                      ? Expanded(
+                    child: Center(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          Lottie.asset(
+                            'assets/lottie/404.json',
+                            height: 150,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
+                          ),
+                          SizedBox(height: 30),
+                          Text(
+                            """
 No passwords added yet. Start by adding a new password by clicking the + icon on the top right.
                                         
                                         
@@ -80,27 +97,28 @@ OR
 Tap on the card for more information ...
                                         
                                         """,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : _passwordCardsView(
-                                context, data, data.searchController,
-                                onChangedCallback: (String value) {
-                                data.setSearchText(value);
-                                data.setFilteredPasswords(data.passwords
-                                    .where((element) => element['Title']
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
-                                    .toList());
-                              }),
-                      ],
-                    );
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 17.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : _passwordCardsView(context, data,
+                      data.searchController, _searchFocus,
+                      onChangedCallback: (String value) {
+                        data.setSearchText(value);
+                        data.setFilteredPasswords(data.passwords
+                            .where((element) =>
+                            element['Title']
+                                .toLowerCase()
+                                .contains(value.toLowerCase()))
+                            .toList());
+                      }),
+                ],
+              );
             },
           ),
         ),
@@ -109,8 +127,8 @@ Tap on the card for more information ...
   }
 }
 
-Widget _passwordCardsView(
-    BuildContext context, data, TextEditingController controller,
+Widget _passwordCardsView(BuildContext context, data,
+    TextEditingController controller, FocusNode searchFocusNode,
     {onChangedCallback}) {
   return Expanded(
     child: NotificationListener<OverscrollIndicatorNotification>(
@@ -120,10 +138,10 @@ Widget _passwordCardsView(
       },
       child: Column(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.all(10),
             width: MediaQuery
                 .of(context)
                 .size
@@ -132,7 +150,7 @@ Widget _passwordCardsView(
                 color: kSecondaryColor,
                 borderRadius: BorderRadius.circular(30)),
             child: TextField(
-              autofocus: false,
+              focusNode: searchFocusNode,
               controller: controller,
               onChanged: (String value) => onChangedCallback(value),
               decoration: InputDecoration(
@@ -141,7 +159,7 @@ Widget _passwordCardsView(
                   child: Icon(Icons.search, size: 30, color: Colors.deepOrange),
                 ),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.cancel),
+                  icon: Icon(Icons.cancel, size: 25),
                   splashRadius: 1,
                   onPressed: () {
                     Functions.popKeyboard(context);

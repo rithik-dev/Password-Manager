@@ -84,7 +84,7 @@ class Settings extends StatelessWidget {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2
-                                    .copyWith(letterSpacing: 1.1),
+                                    .copyWith(letterSpacing: 0.5),
                               ),
                             ],
                           )

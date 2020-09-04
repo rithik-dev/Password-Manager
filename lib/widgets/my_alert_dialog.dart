@@ -14,7 +14,7 @@ class MyAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      scrollable: false,
+      scrollable: passwordTextField != null ? true : false,
       title: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -23,11 +23,11 @@ class MyAlertDialog extends StatelessWidget {
           Text("$content\n\nThis action is irreversible !"),
           this.passwordTextField != null
               ? Column(
-            children: <Widget>[
-              SizedBox(height: 20),
-              this.passwordTextField
-            ],
-          )
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    this.passwordTextField
+                  ],
+                )
               : SizedBox.shrink(),
         ],
       ),
