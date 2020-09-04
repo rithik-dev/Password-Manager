@@ -36,7 +36,7 @@ class _MyVaultState extends State<MyVault> {
                             ? SizedBox.shrink()
                             : Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(10, 15, 20, 15),
+                                    const EdgeInsets.fromLTRB(10, 15, 20, 0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -122,7 +122,8 @@ Widget _passwordCardsView(BuildContext context, data,
         children: [
           SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.all(10),
+            alignment: Alignment.bottomCenter,
+            padding: EdgeInsets.all(5),
             width: MediaQuery
                 .of(context)
                 .size
@@ -136,7 +137,7 @@ Widget _passwordCardsView(BuildContext context, data,
               onChanged: (String value) => onChangedCallback(value),
               decoration: InputDecoration(
                 prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Icon(Icons.search),
                 ),
                 suffixIcon: IconButton(
