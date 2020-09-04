@@ -27,18 +27,12 @@ class ProviderClass extends ChangeNotifier {
 
   void disposeSearchController() {
     this._searchController.dispose();
-    notifyListeners();
   }
 
   void setSearchText(String text) {
     this._searchText = text;
     notifyListeners();
   }
-
-//  void setSearchTextController(String text) {
-//    _searchController.text = text;
-//    notifyListeners();
-//  }
 
   void setSearchTextToLastSearch() {
     _searchController.text = _searchText;
@@ -48,7 +42,11 @@ class ProviderClass extends ChangeNotifier {
             .toLowerCase()
             .contains(this._searchText.toLowerCase()))
         .toList();
-    print("set search to $_searchText");
+
+    if (this.filteredPasswords.length == 0) {
+      _searchController.text = "";
+      this.filteredPasswords = this._passwords;
+    }
     notifyListeners();
   }
 

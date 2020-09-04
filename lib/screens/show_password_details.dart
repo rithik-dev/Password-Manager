@@ -82,7 +82,6 @@ class ShowPasswordDetails extends StatelessWidget {
                                         data.stopLoadingScreenOnMainAppScreen();
 
                                         data.setSearchTextToLastSearch();
-                                        Functions.popKeyboard(context);
 
                                         Fluttertoast.showToast(
                                             msg: "Deleted ${_fields['Title']}");
@@ -114,15 +113,14 @@ class ShowPasswordDetails extends StatelessWidget {
                                   Text(data.showPasswordFields[keys[index]]),
                               isThreeLine:
                                   data.showPasswordFields[keys[index]].length >
-                                  30,
+                                      30,
                               trailing: IconButton(
                                 icon: Icon(Icons.content_copy),
                                 onPressed: () {
                                   Functions.copyToClipboard(
                                       data.showPasswordFields[keys[index]]);
                                   Functions.showSnackBar(context,
-                                      "${keys[index]} Copied : ${data
-                                          .showPasswordFields['Title']}");
+                                      "${keys[index]} Copied : ${data.showPasswordFields['Title']}");
                                 },
                               ),
                             );

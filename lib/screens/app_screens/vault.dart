@@ -19,28 +19,8 @@ class MyVault extends StatefulWidget {
 }
 
 class _MyVaultState extends State<MyVault> {
-//  TextEditingController _controller;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-////    _controller = TextEditingController();
-//    Provider.of<ProviderClass>(context, listen: false).setSearchController();
-    print("initstate called");
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    Provider.of<ProviderClass>(context).disposeSearchController();
-    print("dispose c");
-  }
-
   @override
   Widget build(BuildContext context) {
-    print("build called");
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -52,42 +32,42 @@ class _MyVaultState extends State<MyVault> {
                     )
                   : Column(
                       children: [
-                  data.searchController.text != ""
-                      ? SizedBox.shrink()
-                      : Padding(
-                    padding:
-                    const EdgeInsets.fromLTRB(10, 15, 20, 15),
-                    child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Passwords",
-                          style: TextStyle(
-                            letterSpacing: 0.5,
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ProfilePicture(data.profilePicURL),
-                      ],
-                    ),
-                  ),
-                  (data.passwords.length == 0)
-                      ? Expanded(
-                    child: Center(
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: [
-                          Lottie.asset(
-                            'assets/lottie/404.json',
-                            height: 150,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.center,
-                          ),
-                          SizedBox(height: 30),
-                          Text(
-                            """
+                        data.searchController.text != ""
+                            ? SizedBox.shrink()
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 15, 20, 15),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "Passwords",
+                                      style: TextStyle(
+                                        letterSpacing: 0.5,
+                                        fontSize: 40.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    ProfilePicture(data.profilePicURL),
+                                  ],
+                                ),
+                              ),
+                        (data.passwords.length == 0)
+                            ? Expanded(
+                                child: Center(
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: [
+                                      Lottie.asset(
+                                        'assets/lottie/404.json',
+                                        height: 150,
+                                        fit: BoxFit.contain,
+                                        alignment: Alignment.center,
+                                      ),
+                                      SizedBox(height: 30),
+                                      Text(
+                                        """
 No passwords added yet. Start by adding a new password by clicking the + icon on the top right.
                                         
                                         
@@ -100,28 +80,27 @@ OR
 Tap on the card for more information ...
                                         
                                         """,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                      : _passwordCardsView(
-                      context, data, data.searchController,
-                      onChangedCallback: (String value) {
-                        data.setSearchText(value);
-                        data.setFilteredPasswords(data.passwords
-                            .where((element) =>
-                            element['Title']
-                                .toLowerCase()
-                                .contains(value.toLowerCase()))
-                            .toList());
-                      }),
-                ],
-              );
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : _passwordCardsView(
+                                context, data, data.searchController,
+                                onChangedCallback: (String value) {
+                                data.setSearchText(value);
+                                data.setFilteredPasswords(data.passwords
+                                    .where((element) => element['Title']
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()))
+                                    .toList());
+                              }),
+                      ],
+                    );
             },
           ),
         ),
@@ -141,6 +120,7 @@ Widget _passwordCardsView(BuildContext context, data,
       },
       child: Column(
         children: [
+          SizedBox(height: 20),
           Container(
             padding: EdgeInsets.all(10),
             width: MediaQuery
@@ -151,6 +131,7 @@ Widget _passwordCardsView(BuildContext context, data,
                 color: kSecondaryColor,
                 borderRadius: BorderRadius.circular(30)),
             child: TextField(
+              autofocus: false,
               controller: controller,
               onChanged: (String value) => onChangedCallback(value),
               decoration: InputDecoration(
@@ -208,9 +189,6 @@ Widget _passwordCardsView(BuildContext context, data,
 
                               data.stopLoadingScreenOnMainAppScreen();
 
-//                              if (controller.text.trim() != "") {
-//                                Functions.popKeyboard(context);
-//                              }
                               data.setSearchTextToLastSearch();
 
                               Fluttertoast.showToast(msg: "Deleted $title");

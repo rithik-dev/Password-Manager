@@ -29,81 +29,89 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalProgressHUD(
-      progressIndicator: SpinKitChasingDots(
-        color: Theme.of(context).accentColor,
-      ),
-      inAsyncCall:
-          Provider.of<ProviderClass>(context).showLoadingScreenOnMainAppScreen,
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-              title: (_selectedIndexBottomNavBar == 0)
-                  ? (Provider.of<ProviderClass>(context).name == null)
-                      ? Text("Vault")
-                      : Text(
-                          "${Provider.of<ProviderClass>(context).name}'s Vault")
-                  : Text(titles[_selectedIndexBottomNavBar]),
-              centerTitle: true,
-              automaticallyImplyLeading: false,
-              // if user is on vault page , show + icon on app bar to add a new password
-              actions: <Widget>[
-                _selectedIndexBottomNavBar == 0
-                    ? IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {
-                          Navigator.pushNamed(context, AddPasswordScreen.id);
-                        },
-                      )
-                    : SizedBox.shrink(),
-                _selectedIndexBottomNavBar == 2
-                    ? IconButton(
-                        icon: Icon(Icons.exit_to_app),
-                        onPressed: () async {
-                          await FirebaseUtils.logoutUser();
-                          Provider.of<ProviderClass>(context, listen: false)
-                              .setDataToNull();
-                          Navigator.pushReplacementNamed(
-                              context, LoginScreen.id);
-                          Fluttertoast.showToast(
-                            msg: "Logged Out Successfully",
-                            gravity: ToastGravity.TOP,
-                          );
-                        },
-                      )
-                    : SizedBox.shrink(),
-              ]),
-          body: RefreshIndicator(
-            displacement: 20.0,
-            onRefresh: () =>
-                Provider.of<ProviderClass>(context, listen: false).getAppData(),
-            child: tabs[_selectedIndexBottomNavBar],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            iconSize: 30.0,
-            backgroundColor: kSecondaryColor,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.lock),
-                title: Text('Vault'),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.security),
-                title: Text('Password Generator'),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                title: Text('Settings'),
-              ),
-            ],
-            currentIndex: _selectedIndexBottomNavBar,
-            selectedItemColor: Colors.lightBlueAccent,
-            onTap: (int index) {
-              setState(() {
-                _selectedIndexBottomNavBar = index;
-              });
-            },
+    return WillPopScope(
+      onWillPop: () {
+        Provider.of<ProviderClass>(context, listen: false)
+            .disposeSearchController();
+        return Future.value(true);
+      },
+      child: ModalProgressHUD(
+        progressIndicator: SpinKitChasingDots(
+          color: Theme.of(context).accentColor,
+        ),
+        inAsyncCall: Provider.of<ProviderClass>(context)
+            .showLoadingScreenOnMainAppScreen,
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+                title: (_selectedIndexBottomNavBar == 0)
+                    ? (Provider.of<ProviderClass>(context).name == null)
+                        ? Text("Vault")
+                        : Text(
+                            "${Provider.of<ProviderClass>(context).name}'s Vault")
+                    : Text(titles[_selectedIndexBottomNavBar]),
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+                // if user is on vault page , show + icon on app bar to add a new password
+                actions: <Widget>[
+                  _selectedIndexBottomNavBar == 0
+                      ? IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            Navigator.pushNamed(context, AddPasswordScreen.id);
+                          },
+                        )
+                      : SizedBox.shrink(),
+                  _selectedIndexBottomNavBar == 2
+                      ? IconButton(
+                          icon: Icon(Icons.exit_to_app),
+                          onPressed: () async {
+                            await FirebaseUtils.logoutUser();
+                            Provider.of<ProviderClass>(context, listen: false)
+                                .setDataToNull();
+                            Navigator.pushReplacementNamed(
+                                context, LoginScreen.id);
+                            Fluttertoast.showToast(
+                              msg: "Logged Out Successfully",
+                              gravity: ToastGravity.TOP,
+                            );
+                          },
+                        )
+                      : SizedBox.shrink(),
+                ]),
+            body: RefreshIndicator(
+              displacement: 20.0,
+              onRefresh: () =>
+                  Provider.of<ProviderClass>(context, listen: false)
+                      .getAppData(),
+              child: tabs[_selectedIndexBottomNavBar],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              iconSize: 30.0,
+              backgroundColor: kSecondaryColor,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.lock),
+                  title: Text('Vault'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.security),
+                  title: Text('Password Generator'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  title: Text('Settings'),
+                ),
+              ],
+              currentIndex: _selectedIndexBottomNavBar,
+              selectedItemColor: Colors.lightBlueAccent,
+              onTap: (int index) {
+                setState(() {
+                  _selectedIndexBottomNavBar = index;
+                });
+              },
+            ),
           ),
         ),
       ),
