@@ -67,26 +67,31 @@ class Settings extends StatelessWidget {
                               )
                             ],
                           ),
-                          Column(
-                            children: [
-                              Text(
-                                data.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5
-                                    .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1.1),
-                              ),
-                              SizedBox(height: 15),
-                              Text(
-                                data.loggedInUser.email,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .copyWith(letterSpacing: 0.5),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                  data.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24,
+                                    letterSpacing: 1.1,
+                                  ),
+                                ),
+                                SizedBox(height: 15),
+                                Text(
+                                  data.loggedInUser.email,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         ],
                       ),

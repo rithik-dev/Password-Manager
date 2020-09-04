@@ -44,12 +44,14 @@ class _MyTextFieldState extends State<MyTextField> {
 
   Widget getTrailingWidget(String labelText) {
     IconButton addButton = IconButton(
+      splashRadius: 1,
       color: Colors.lightBlueAccent,
       icon: Icon(Icons.add, size: 30.0),
       onPressed: this.widget.trailingFunction,
     );
 
     IconButton deleteButton = IconButton(
+      splashRadius: 1,
       color: Colors.lightBlueAccent,
       icon: Icon(Icons.delete, size: 25.0),
       onPressed: this.widget.trailingFunction,
@@ -61,6 +63,7 @@ class _MyTextFieldState extends State<MyTextField> {
       return addButton;
     else if (labelText.contains("Password")) {
       return IconButton(
+        splashRadius: 1,
         color: Colors.lightBlueAccent,
         icon: _showPassword
             ? Icon(Icons.visibility, size: 25.0)
