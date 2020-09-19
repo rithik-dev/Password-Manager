@@ -141,10 +141,7 @@ Widget _passwordCardsView(BuildContext context, data,
           Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(10),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
                 color: kSecondaryColor,
                 borderRadius: BorderRadius.circular(30)),
@@ -174,7 +171,23 @@ Widget _passwordCardsView(BuildContext context, data,
           ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                if (data.filteredPasswords[index]['Title'][0] !=
+                    data.filteredPasswords[index + 1]['Title'][0])
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    child: Text(
+                      data.filteredPasswords[index + 1]['Title'][0],
+                      style: TextStyle(
+                        color: Color(0xFF7D8AB7),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                else
+                  return SizedBox.shrink();
+              },
               itemBuilder: (context, index) {
                 return Dismissible(
                   key: UniqueKey(),

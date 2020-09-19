@@ -35,12 +35,12 @@ class ProviderClass extends ChangeNotifier {
   }
 
   void setSearchTextToLastSearch() {
-    _searchController.text = _searchText;
+    _searchController.text = _searchText ?? "";
     this.filteredPasswords = this
         ._passwords
         .where((element) => element['Title']
             .toLowerCase()
-            .contains(this._searchText.toLowerCase()))
+            .contains(this._searchText?.toLowerCase() ?? ""))
         .toList();
 
     if (this.filteredPasswords.length == 0) {
