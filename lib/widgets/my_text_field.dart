@@ -86,6 +86,7 @@ class _MyTextFieldState extends State<MyTextField> {
         controller: this.widget.controller,
         validator: this.widget.validator,
         initialValue: this.widget.defaultValue,
+        textAlignVertical: TextAlignVertical.center,
         textAlign: TextAlign.center,
         autofocus: this.widget.autofocus,
         keyboardType:

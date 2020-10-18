@@ -35,11 +35,10 @@ class RouteGenerator {
             type: PageTransitionType.scale, child: AppScreen());
       case AddPasswordScreen.id:
         return PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: AddPasswordScreen());
+            type: PageTransitionType.scale, child: AddPasswordScreen());
       case EditPasswordScreen.id:
         return PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
+            type: PageTransitionType.scale,
             child: EditPasswordScreen());
       case ChangeNameScreen.id:
         return PageTransition(
