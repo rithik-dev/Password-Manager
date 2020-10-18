@@ -76,7 +76,6 @@ class _MyVaultState extends State<MyVault> {
                       ? Expanded(
                     child: Center(
                       child: ListView(
-                        physics: BouncingScrollPhysics(),
                         shrinkWrap: true,
                         children: [
                           Lottie.asset(
