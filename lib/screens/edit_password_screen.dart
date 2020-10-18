@@ -113,17 +113,18 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
             ),
             body: Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: <Widget>[
                   ColumnBuilder(
                     itemBuilder: (context, index) {
                       return MyTextField(
+                          key: ObjectKey(textFieldStrings[index]),
                           labelText: textFieldStrings[index],
                           autofocus: textFieldStrings[index] == "Title",
                           defaultValue:
-                          newFields[textFieldStrings[index]] ?? "",
+                              newFields[textFieldStrings[index]] ?? "",
                           onChanged: (String value) {
                             newFields[textFieldStrings[index]] = value;
                           },

@@ -99,10 +99,13 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                   ColumnBuilder(
                     itemBuilder: (context, index) {
                       return MyTextField(
+                          key: ObjectKey(textFieldStrings[index]),
                           labelText: textFieldStrings[index],
                           autofocus: textFieldStrings[index] == "Title",
                           onChanged: (String value) {
-                            fields[textFieldStrings[index]] = value;
+                            setState(() {
+                              fields[textFieldStrings[index]] = value;
+                            });
                           },
                           trailingFunction: () {
                             setState(() {

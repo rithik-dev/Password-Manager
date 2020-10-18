@@ -34,6 +34,7 @@ class ShowPasswordDetails extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         data.showPasswordFields['Title'].toUpperCase(),

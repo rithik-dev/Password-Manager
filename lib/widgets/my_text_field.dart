@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:password_manager/constants.dart';
 
 class MyTextField extends StatefulWidget {
+  final Key key;
   final String labelText;
   final Function onChanged;
   final Function trailingFunction;
@@ -14,6 +15,7 @@ class MyTextField extends StatefulWidget {
   MyTextField(
       {@required this.labelText,
       @required this.onChanged,
+      this.key,
       this.trailingFunction,
       this.showTrailingWidget = true,
       this.defaultValue,
