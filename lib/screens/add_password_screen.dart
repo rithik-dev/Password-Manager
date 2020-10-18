@@ -108,6 +108,7 @@ class _AddPasswordScreenState extends State<AddPasswordScreen> {
                             });
                           },
                           trailingFunction: () {
+                            fields.remove(textFieldStrings[index]);
                             setState(() {
                               textFieldStrings.removeAt(index);
                             });
