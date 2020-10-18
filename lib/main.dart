@@ -6,13 +6,7 @@ import 'package:password_manager/models/route_generator.dart';
 import 'package:password_manager/screens/initial_screen_handler.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final ThemeData appTheme = ThemeData(
@@ -32,6 +26,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return ChangeNotifierProvider<ProviderClass>(
       create: (context) => ProviderClass(),
       child: MaterialApp(

@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:password_manager/constants.dart';
@@ -43,20 +42,18 @@ class _MyVaultState extends State<MyVault> {
           child: Consumer<ProviderClass>(
             builder: (context, data, child) {
               return (data.passwords == null)
-                  ? SpinKitChasingDots(
-                color: Theme.of(context).accentColor,
-              )
+                  ? Lottie.asset('assets/lottie/loading_vault.json')
                   : Column(
-                children: [
-                  AnimatedContainer(
-                    padding: EdgeInsets.fromLTRB(10, 15, 20, 0),
-                    curve: Curves.easeInOutQuad,
-                    duration: Duration(milliseconds: 300),
-                    height: (profilePicContainerExpanded ||
-                        data.passwords.length == 0)
-                        ? kDefaultContainerHeight
-                        : 0,
-                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          padding: EdgeInsets.fromLTRB(10, 15, 20, 0),
+                          curve: Curves.easeInOutQuad,
+                          duration: Duration(milliseconds: 300),
+                          height: (profilePicContainerExpanded ||
+                                  data.passwords.length == 0)
+                              ? kDefaultContainerHeight
+                              : 0,
+                          child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                               Expanded(
@@ -79,11 +76,12 @@ class _MyVaultState extends State<MyVault> {
                       ? Expanded(
                     child: Center(
                       child: ListView(
+                        physics: BouncingScrollPhysics(),
                         shrinkWrap: true,
                         children: [
                           Lottie.asset(
                             'assets/lottie/404.json',
-                            height: 150,
+                            height: 200,
                             fit: BoxFit.contain,
                             alignment: Alignment.center,
                           ),

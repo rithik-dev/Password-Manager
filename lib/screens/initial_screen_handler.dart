@@ -34,10 +34,18 @@ class _InitialScreenHandlerState extends State<InitialScreenHandler> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SpinKitChasingDots(
-          color: Theme.of(context).accentColor,
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(
+            Icons.verified_user,
+            size: 150,
+            color: Colors.tealAccent,
+          ),
+          SpinKitChasingDots(
+            color: Theme.of(context).accentColor,
+          ),
+        ],
       ),
     );
   }

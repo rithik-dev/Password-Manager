@@ -21,6 +21,12 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
 
   String getStringFromBoolean(bool boolean) => boolean ? "on" : "off";
 
+  final String _uppercaseLettersSubtitle = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  String _lowercaseLettersSubtitle = "abcdefghijklmnopqrstuvwxyz";
+  String _numbersSubtitle = "0123456789";
+  final String _specialCharactersSubtitle =
+      "( < > ` ! ? @ # \$ % ^ & * ( ) . , _ - )";
+
   @override
   Widget build(BuildContext context) {
     url = "";
@@ -40,6 +46,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                   children: <Widget>[
                     MySwitchCard(
                       title: "Uppercase Letters",
+                      subtitle: this._uppercaseLettersSubtitle,
                       currentValue: upper,
                       onChanged: (bool newValue) {
                         setState(() {
@@ -49,6 +56,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                     ),
                     MySwitchCard(
                       title: "Lowercase Letters",
+                      subtitle: this._lowercaseLettersSubtitle,
                       currentValue: lower,
                       onChanged: (bool newValue) {
                         setState(() {
@@ -59,6 +67,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                     MySwitchCard(
                       title: "Numbers",
                       currentValue: numbers,
+                      subtitle: this._numbersSubtitle,
                       onChanged: (bool newValue) {
                         setState(() {
                           numbers = newValue;
@@ -68,7 +77,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
                     MySwitchCard(
                       title: "Special Characters",
                       currentValue: special,
-                      subtitle: "( < > ` ! ? @ # \$ % ^ & * ( ) . , _ - )",
+                      subtitle: this._specialCharactersSubtitle,
                       onChanged: (bool newValue) {
                         setState(() {
                           special = newValue;

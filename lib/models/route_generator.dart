@@ -21,32 +21,35 @@ class RouteGenerator {
             type: PageTransitionType.fade, child: InitialScreenHandler());
       case LoginScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade,
+            type: PageTransitionType.leftToRightWithFade,
             child: LoginScreen(
               defaultEmail: args is Map ? args['defaultEmail'] : "",
               defaultPassword: args is Map ? args['defaultPassword'] : "",
             ));
       case RegisterScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: RegisterScreen());
+            type: PageTransitionType.leftToRightWithFade,
+            child: RegisterScreen());
       case AppScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: AppScreen());
+            type: PageTransitionType.scale, child: AppScreen());
       case AddPasswordScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: AddPasswordScreen());
+            type: PageTransitionType.rightToLeftWithFade,
+            child: AddPasswordScreen());
       case EditPasswordScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: EditPasswordScreen());
+            type: PageTransitionType.rightToLeftWithFade,
+            child: EditPasswordScreen());
       case ChangeNameScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: ChangeNameScreen());
+            type: PageTransitionType.downToUp, child: ChangeNameScreen());
       case ChangeEmailScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: ChangeEmailScreen());
+            type: PageTransitionType.downToUp, child: ChangeEmailScreen());
       case ChangePasswordScreen.id:
         return PageTransition(
-            type: PageTransitionType.fade, child: ChangePasswordScreen());
+            type: PageTransitionType.downToUp, child: ChangePasswordScreen());
 // Validation of correct data type
 //        if (args is String) {
 //          return MaterialPageRoute(

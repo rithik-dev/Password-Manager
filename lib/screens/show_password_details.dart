@@ -39,7 +39,7 @@ class ShowPasswordDetails extends StatelessWidget {
                       child: Text(
                         data.showPasswordFields['Title'].toUpperCase(),
                         style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                            fontSize: 20.0, fontWeight: FontWeight.w900),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
