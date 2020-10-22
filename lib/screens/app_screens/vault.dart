@@ -143,10 +143,7 @@ Widget _passwordCardsView(BuildContext context, data,
           Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(10),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.9,
+            width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
                 color: kSecondaryColor,
                 borderRadius: BorderRadius.circular(30)),
@@ -172,13 +169,12 @@ Widget _passwordCardsView(BuildContext context, data,
                     ),
                   ),
                 ),
-                IconButton(
+                searchFocusNode.hasFocus
+                    ? IconButton(
                   icon: Icon(
                     Icons.cancel,
                     size: 25,
-                    color: searchFocusNode.hasFocus
-                        ? Colors.tealAccent
-                        : Colors.white,
+                    color: Colors.tealAccent,
                   ),
                   splashRadius: 1,
                   onPressed: () {
@@ -187,7 +183,8 @@ Widget _passwordCardsView(BuildContext context, data,
                     controller.clear();
                     data.setFilteredPasswords(data.passwords);
                   },
-                ),
+                )
+                    : SizedBox.shrink(),
               ],
             ),
           ),
