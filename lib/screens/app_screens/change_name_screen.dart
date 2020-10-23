@@ -22,51 +22,53 @@ class ChangeNameScreen extends StatelessWidget {
       inAsyncCall: Provider.of<ProviderClass>(context).showLoadingScreen,
       child: Consumer<ProviderClass>(
         builder: (context, data, child) {
-          return Scaffold(
-            appBar: AppBar(title: Text("Change Name"), centerTitle: true),
-            body: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ListView(
-                children: <Widget>[
-                  SizedBox(height: 20.0),
-                  MyTextField(
-                    labelText: "Name",
-                    showTrailingWidget: false,
-                    defaultValue: data.name,
-                    autofocus: true,
-                    onChanged: (String value) {
-                      name = value;
-                    },
-                  ),
-                  Builder(
-                    builder: (context) {
-                      return RoundedButton(
-                        text: "Change Name",
-                        onPressed: () async {
-                          data.startLoadingScreen();
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(title: Text("Change Name"), centerTitle: true),
+              body: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ListView(
+                  children: <Widget>[
+                    SizedBox(height: 20.0),
+                    MyTextField(
+                      labelText: "Name",
+                      showTrailingWidget: false,
+                      defaultValue: data.name,
+                      autofocus: true,
+                      onChanged: (String value) {
+                        name = value;
+                      },
+                    ),
+                    Builder(
+                      builder: (context) {
+                        return RoundedButton(
+                          text: "Change Name",
+                          onPressed: () async {
+                            data.startLoadingScreen();
 
-                          name = Functions.capitalizeFirstLetter(name);
+                            name = Functions.capitalizeFirstLetter(name);
 
-                          if (name == null || name == "")
-                            Functions.showSnackBar(
-                                context, "Please Enter New Name !");
-                          else {
-                            Functions.popKeyboard(context);
-                            final bool changeSuccessful =
-                                await data.changeCurrentUserName(name);
+                            if (name == null || name == "")
+                              Functions.showSnackBar(
+                                  context, "Please Enter New Name !");
+                            else {
+                              Functions.popKeyboard(context);
+                              final bool changeSuccessful =
+                                  await data.changeCurrentUserName(name);
 
-                            if (changeSuccessful) {
-                              Navigator.pop(context);
-                              Fluttertoast.showToast(
-                                  msg: "Name Changed Successfully");
+                              if (changeSuccessful) {
+                                Navigator.pop(context);
+                                Fluttertoast.showToast(
+                                    msg: "Name Changed Successfully");
+                              }
                             }
-                          }
-                          data.stopLoadingScreen();
-                        },
-                      );
-                    },
-                  )
-                ],
+                            data.stopLoadingScreen();
+                          },
+                        );
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
           );

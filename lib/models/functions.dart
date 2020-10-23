@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,7 +38,8 @@ class Functions {
   }
 
   static void showAlertDialog(BuildContext context, Widget alertDialog) {
-    showDialog(
+    showModal(
+      configuration: FadeScaleTransitionConfiguration(),
       context: context,
       builder: (BuildContext context) {
         return alertDialog;

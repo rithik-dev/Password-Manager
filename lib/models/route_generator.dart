@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:password_manager/screens/add_password_screen.dart';
 import 'package:password_manager/screens/app_screens/app_screen.dart';
 import 'package:password_manager/screens/app_screens/change_email_screen.dart';
@@ -17,38 +16,28 @@ class RouteGenerator {
 
     switch (settings.name) {
       case InitialScreenHandler.id:
-        return PageTransition(
-            type: PageTransitionType.fade, child: InitialScreenHandler());
+        return MaterialPageRoute(builder: (context) => InitialScreenHandler());
       case LoginScreen.id:
-        return PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: LoginScreen(
-              defaultEmail: args is Map ? args['defaultEmail'] : "",
-              defaultPassword: args is Map ? args['defaultPassword'] : "",
-            ));
+        return MaterialPageRoute(
+          builder: (context) => LoginScreen(
+            defaultEmail: args is Map ? args['defaultEmail'] : "",
+            defaultPassword: args is Map ? args['defaultPassword'] : "",
+          ),
+        );
       case RegisterScreen.id:
-        return PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: RegisterScreen());
+        return MaterialPageRoute(builder: (context) => RegisterScreen());
       case AppScreen.id:
-        return PageTransition(
-            type: PageTransitionType.scale, child: AppScreen());
+        return MaterialPageRoute(builder: (context) => AppScreen());
       case AddPasswordScreen.id:
-        return PageTransition(
-            type: PageTransitionType.scale, child: AddPasswordScreen());
+        return MaterialPageRoute(builder: (context) => AddPasswordScreen());
       case EditPasswordScreen.id:
-        return PageTransition(
-            type: PageTransitionType.scale,
-            child: EditPasswordScreen());
+        return MaterialPageRoute(builder: (context) => EditPasswordScreen());
       case ChangeNameScreen.id:
-        return PageTransition(
-            type: PageTransitionType.downToUp, child: ChangeNameScreen());
+        return MaterialPageRoute(builder: (context) => ChangeNameScreen());
       case ChangeEmailScreen.id:
-        return PageTransition(
-            type: PageTransitionType.downToUp, child: ChangeEmailScreen());
+        return MaterialPageRoute(builder: (context) => ChangeEmailScreen());
       case ChangePasswordScreen.id:
-        return PageTransition(
-            type: PageTransitionType.downToUp, child: ChangePasswordScreen());
+        return MaterialPageRoute(builder: (context) => ChangePasswordScreen());
 // Validation of correct data type
 //        if (args is String) {
 //          return MaterialPageRoute(

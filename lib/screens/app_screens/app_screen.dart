@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -46,9 +47,9 @@ class _AppScreenState extends State<AppScreen> {
             appBar: AppBar(
                 title: (_selectedIndexBottomNavBar == 0)
                     ? (Provider.of<ProviderClass>(context).name == null)
-                        ? Text("Vault")
-                        : Text(
-                            "${Provider.of<ProviderClass>(context).name}'s Vault")
+                    ? Text("Vault")
+                    : Text(
+                    "${Provider.of<ProviderClass>(context).name}'s Vault")
                     : Text(titles[_selectedIndexBottomNavBar]),
                 centerTitle: true,
                 automaticallyImplyLeading: false,
@@ -56,34 +57,45 @@ class _AppScreenState extends State<AppScreen> {
                 actions: <Widget>[
                   _selectedIndexBottomNavBar == 0
                       ? IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            Navigator.pushNamed(context, AddPasswordScreen.id);
-                          },
-                        )
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.pushNamed(context, AddPasswordScreen.id);
+                    },
+                  )
                       : SizedBox.shrink(),
                   _selectedIndexBottomNavBar == 2
                       ? IconButton(
-                          icon: Icon(Icons.exit_to_app),
-                          onPressed: () async {
-                            await FirebaseUtils.logoutUser();
-                            Provider.of<ProviderClass>(context, listen: false)
-                                .setDataToNull();
-                            Navigator.pushReplacementNamed(
-                                context, LoginScreen.id);
-                            Fluttertoast.showToast(
-                              msg: "Logged Out Successfully",
-                              gravity: ToastGravity.TOP,
-                            );
-                          },
-                        )
+                    icon: Icon(Icons.exit_to_app),
+                    onPressed: () async {
+                      await FirebaseUtils.logoutUser();
+                      Provider.of<ProviderClass>(context, listen: false)
+                          .setDataToNull();
+                      Navigator.pushReplacementNamed(
+                          context, LoginScreen.id);
+                      Fluttertoast.showToast(
+                        msg: "Logged Out Successfully",
+                        gravity: ToastGravity.TOP,
+                      );
+                    },
+                  )
                       : SizedBox.shrink(),
                 ]),
             body: RefreshIndicator(
               onRefresh: () =>
                   Provider.of<ProviderClass>(context, listen: false)
                       .getAppData(),
-              child: tabs[_selectedIndexBottomNavBar],
+              child: PageTransitionSwitcher(
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) {
+                  return FadeThroughTransition(
+                    fillColor: Colors.transparent,
+                    animation: primaryAnimation,
+                    secondaryAnimation: secondaryAnimation,
+                    child: child,
+                  );
+                },
+                child: tabs[_selectedIndexBottomNavBar],
+              ),
             ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,

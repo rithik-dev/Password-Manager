@@ -27,84 +27,87 @@ class ChangePasswordScreen extends StatelessWidget {
       ),
       child: Consumer<ProviderClass>(
         builder: (context, data, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Change Password"),
-              centerTitle: true,
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    MyTextField(
-                      labelText: "Old Password",
-                      autofocus: true,
-                      validator: (String _oldPass) {
-                        if (_oldPass == null || _oldPass.trim() == "")
-                          return "Please Enter Old Password";
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        oldPassword = value;
-                      },
-                    ),
-                    MyTextField(
-                      labelText: "New Password",
-                      validator: (String _newPass) {
-                        if (_newPass == null || _newPass.trim() == "")
-                          return "Please Enter New Password";
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        newPassword = value;
-                      },
-                    ),
-                    Builder(
-                      builder: (context) {
-                        return RoundedButton(
-                          text: "Change Password",
-                          onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              Functions.popKeyboard(context);
-                              data.startLoadingScreen();
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text("Change Password"),
+                centerTitle: true,
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      SizedBox(height: 20.0),
+                      MyTextField(
+                        labelText: "Old Password",
+                        autofocus: true,
+                        validator: (String _oldPass) {
+                          if (_oldPass == null || _oldPass.trim() == "")
+                            return "Please Enter Old Password";
+                          return null;
+                        },
+                        onChanged: (String value) {
+                          oldPassword = value;
+                        },
+                      ),
+                      MyTextField(
+                        labelText: "New Password",
+                        validator: (String _newPass) {
+                          if (_newPass == null || _newPass.trim() == "")
+                            return "Please Enter New Password";
+                          return null;
+                        },
+                        onChanged: (String value) {
+                          newPassword = value;
+                        },
+                      ),
+                      Builder(
+                        builder: (context) {
+                          return RoundedButton(
+                            text: "Change Password",
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                Functions.popKeyboard(context);
+                                data.startLoadingScreen();
 
-                              try {
-                                final bool changeSuccessful =
-                                    await FirebaseUtils
-                                        .changeCurrentUserPassword(
-                                            oldPassword, newPassword);
+                                try {
+                                  final bool changeSuccessful =
+                                      await FirebaseUtils
+                                          .changeCurrentUserPassword(
+                                              oldPassword, newPassword);
 
-                                if (changeSuccessful) {
-                                  Navigator.pop(context);
-                                  final String email = data.loggedInUser.email;
-                                  await FirebaseUtils.logoutUser();
-                                  data.setDataToNull();
-                                  Navigator.pushReplacementNamed(
-                                      context, LoginScreen.id,
-                                      arguments: {
-                                        'defaultEmail': email.trim(),
-                                      });
-                                  Fluttertoast.showToast(
-                                    msg: "Password Changed Successfully",
-                                    gravity: ToastGravity.TOP,
-                                  );
-                                } else
-                                  Functions.showSnackBar(context,
-                                      "An Error Occurred While Changing Password");
-                              } on ChangePasswordException catch (e) {
-                                Functions.showSnackBar(context, e.message,
-                                    duration: Duration(seconds: 3));
+                                  if (changeSuccessful) {
+                                    Navigator.pop(context);
+                                    final String email =
+                                        data.loggedInUser.email;
+                                    await FirebaseUtils.logoutUser();
+                                    data.setDataToNull();
+                                    Navigator.pushReplacementNamed(
+                                        context, LoginScreen.id,
+                                        arguments: {
+                                          'defaultEmail': email.trim(),
+                                        });
+                                    Fluttertoast.showToast(
+                                      msg: "Password Changed Successfully",
+                                      gravity: ToastGravity.TOP,
+                                    );
+                                  } else
+                                    Functions.showSnackBar(context,
+                                        "An Error Occurred While Changing Password");
+                                } on ChangePasswordException catch (e) {
+                                  Functions.showSnackBar(context, e.message,
+                                      duration: Duration(seconds: 3));
+                                }
+                                data.stopLoadingScreen();
                               }
-                              data.stopLoadingScreen();
-                            }
-                          },
-                        );
-                      },
-                    )
-                  ],
+                            },
+                          );
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
