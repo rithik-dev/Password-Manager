@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
-import 'package:password_manager/constants.dart';
 import 'package:password_manager/models/functions.dart';
 import 'package:password_manager/models/provider_class.dart';
 import 'package:password_manager/screens/edit_password_screen.dart';
@@ -142,50 +141,43 @@ Widget _passwordCardsView(BuildContext context, data,
           SizedBox(height: 10),
           Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
-                color: kSecondaryColor,
-                borderRadius: BorderRadius.circular(30)),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    focusNode: searchFocusNode,
-                    textAlignVertical: TextAlignVertical.center,
-                    controller: controller,
-                    onChanged: (String value) => onChangedCallback(value),
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Icon(
-                          Icons.search,
-                          size: 30,
-                          color: Colors.deepOrange,
-                        ),
-                      ),
-                      border: InputBorder.none,
-                      hintText: "Search",
-                    ),
-                  ),
+              color: Color(0xFF111d5e),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextField(
+              focusNode: searchFocusNode,
+              textAlignVertical: TextAlignVertical.center,
+              controller: controller,
+              onChanged: onChangedCallback,
+              cursorColor: Colors.tealAccent,
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.search,
+                  size: 30,
+                  color: Colors.tealAccent,
                 ),
-                searchFocusNode.hasFocus
+                suffixIcon: searchFocusNode.hasFocus
                     ? IconButton(
-                  icon: Icon(
-                    Icons.cancel,
-                    size: 25,
-                    color: Colors.tealAccent,
-                  ),
-                  splashRadius: 1,
-                  onPressed: () {
-                    Functions.popKeyboard(context);
-                    data.setSearchText("");
-                    controller.clear();
-                    data.setFilteredPasswords(data.passwords);
-                  },
-                )
-                    : SizedBox.shrink(),
-              ],
+                        icon: Icon(
+                          Icons.cancel,
+                          size: 25,
+                          color: Colors.tealAccent,
+                        ),
+                        splashRadius: 1,
+                        onPressed: () {
+                          Functions.popKeyboard(context);
+                          data.setSearchText("");
+                          controller.clear();
+                          data.setFilteredPasswords(data.passwords);
+                        },
+                      )
+                    : null,
+                border: InputBorder.none,
+                hintText: "Search",
+              ),
             ),
           ),
           SizedBox(height: 10),
