@@ -147,19 +147,28 @@ Widget _passwordCardsView(BuildContext context, data,
               color: Color(0xFF111d5e),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: TextField(
-              focusNode: searchFocusNode,
-              textAlignVertical: TextAlignVertical.center,
-              controller: controller,
-              onChanged: onChangedCallback,
-              cursorColor: Colors.tealAccent,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  size: 30,
-                  color: Colors.tealAccent,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    focusNode: searchFocusNode,
+                    textAlignVertical: TextAlignVertical.center,
+                    controller: controller,
+                    onChanged: onChangedCallback,
+                    cursorColor: Colors.tealAccent,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.search,
+                        size: 30,
+                        color: Colors.tealAccent,
+                      ),
+                      border: InputBorder.none,
+                      hintText: "Search",
+                    ),
+                  ),
                 ),
-                suffixIcon: searchFocusNode.hasFocus
+                (searchFocusNode.hasFocus ||
+                        (controller?.text != null && controller?.text != ""))
                     ? IconButton(
                         icon: Icon(
                           Icons.cancel,
@@ -174,10 +183,8 @@ Widget _passwordCardsView(BuildContext context, data,
                           data.setFilteredPasswords(data.passwords);
                         },
                       )
-                    : null,
-                border: InputBorder.none,
-                hintText: "Search",
-              ),
+                    : SizedBox.shrink(),
+              ],
             ),
           ),
           SizedBox(height: 10),
